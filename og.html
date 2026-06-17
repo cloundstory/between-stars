@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>og</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1200px;height:630px;overflow:hidden}
+  .og{position:relative;width:1200px;height:630px;background:radial-gradient(120% 90% at 50% 18%,#10142a 0%,#070a16 55%,#04060d 100%);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+    font-family:"Noto Sans Thai","Space Grotesk",sans-serif;color:#eef2fb}
+  .stars{position:absolute;inset:0}
+  .stars i{position:absolute;background:#dfe6ff;border-radius:50%}
+  .ring{position:absolute;border:1px solid rgba(243,201,122,.18);border-radius:50%}
+  .r1{width:760px;height:760px;left:220px;top:-65px}
+  .r2{width:1080px;height:1080px;left:60px;top:-225px;border-color:rgba(243,201,122,.08)}
+  .sun{position:absolute;width:18px;height:18px;border-radius:50%;background:#f3c97a;box-shadow:0 0 40px 12px rgba(243,201,122,.6);
+    left:591px;top:80px}
+  .over{position:relative;font-family:"Space Grotesk",sans-serif;font-size:18px;letter-spacing:.4em;text-transform:uppercase;
+    color:#7e8aa6;margin-bottom:26px}
+  h1{position:relative;font-weight:300;font-size:128px;line-height:1;letter-spacing:.02em}
+  .en{position:relative;font-family:"Space Grotesk",sans-serif;font-weight:300;letter-spacing:.52em;text-transform:uppercase;
+    font-size:26px;color:#aeb8d2;margin-top:30px;padding-left:.52em}
+  .tag{position:relative;font-size:24px;color:rgba(238,242,251,.62);margin-top:44px;line-height:1.7}
+  .foot{position:absolute;bottom:40px;font-family:"Space Grotesk",sans-serif;font-size:15px;letter-spacing:.16em;
+    text-transform:uppercase;color:#4a5470}
+</style>
+</head>
+<body>
+<div class="og">
+  <div class="stars" id="stars"></div>
+  <div class="ring r1"></div><div class="ring r2"></div><div class="sun"></div>
+  <div class="over">An interactive journey through space</div>
+  <h1>ห้วงดาว</h1>
+  <div class="en">Between Stars</div>
+  <div class="tag">ให้หัวใจทุกดวงได้มีที่พัก · เอกภพจะโอบกอดคุณเสมอ</div>
+  <div class="foot">between-stars.pages.dev</div>
+</div>
+<script>
+  var s=document.getElementById('stars'),h='';
+  for(var i=0;i<160;i++){var x=Math.random()*1200,y=Math.random()*630,r=Math.random()*1.6+.3,a=Math.random()*.6+.15;
+    h+='<i style="left:'+x+'px;top:'+y+'px;width:'+r+'px;height:'+r+'px;opacity:'+a+'"></i>';}
+  s.innerHTML=h;
+</script>
+</body>
+</html>

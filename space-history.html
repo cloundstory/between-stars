@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ประวัติศาสตร์อวกาศ · ห้วงดาว</title>
+<meta name="description" content="70 ปีที่มนุษย์เอื้อมมือออกไปหาดวงดาว — จากสปุตนิกถึงเจมส์ เวบบ์ เล่าผ่านภาพและเรื่องราว">
+<meta name="theme-color" content="#04060d">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="ห้วงดาว · Between Stars">
+<meta property="og:title" content="ประวัติศาสตร์อวกาศ · ห้วงดาว">
+<meta property="og:description" content="70 ปีที่มนุษย์เอื้อมมือออกไปหาดวงดาว — จากสปุตนิกถึงเจมส์ เวบบ์">
+<meta property="og:url" content="https://between-stars.pages.dev/space-history.html">
+<meta property="og:image" content="https://between-stars.pages.dev/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="th_TH">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://between-stars.pages.dev/og-image.png">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#04060d; --ink:#eef2fb; --muted:#7e8aa6; --faint:#4a5470;
+    --gold:#f3c97a; --gold-dim:rgba(243,201,122,.13); --line:rgba(255,255,255,.08);
+    --panel:rgba(8,11,20,.6);
+    --eng:"Space Grotesk","Noto Sans Thai",sans-serif;
+    --th:"Noto Sans Thai","Space Grotesk",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-snap-type:y proximity}
+  body{background:var(--bg);color:var(--ink);font-family:var(--th);-webkit-font-smoothing:antialiased;
+    overflow-x:hidden;line-height:1.75}
+  body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:
+      radial-gradient(1200px 700px at 78% 8%,rgba(60,40,120,.20),transparent 60%),
+      radial-gradient(1100px 800px at 12% 92%,rgba(20,50,110,.22),transparent 60%),
+      radial-gradient(900px 600px at 50% 50%,rgba(120,60,90,.07),transparent 70%)}
+  #stars{position:fixed;inset:0;z-index:-2;display:block}
+  .eng{font-family:var(--eng)}
+
+  .home{position:fixed;top:24px;left:28px;z-index:30;font-family:var(--eng);font-size:12px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted);text-decoration:none;padding:8px 14px;border:1px solid var(--line);
+    border-radius:20px;background:var(--panel);backdrop-filter:blur(10px);transition:.25s}
+  .home:hover{color:var(--gold);border-color:var(--gold)}
+
+  /* progress bar (top) */
+  .prog{position:fixed;top:0;left:0;height:3px;width:0;z-index:30;background:linear-gradient(90deg,#b8965a,var(--gold));
+    box-shadow:0 0 12px rgba(243,201,122,.6);transition:width .15s linear}
+
+  /* rail */
+  .rail{position:fixed;top:50%;right:30px;transform:translateY(-50%);z-index:30;display:flex;flex-direction:column;gap:2px;align-items:flex-end}
+  .rail a{display:flex;align-items:center;gap:9px;text-decoration:none;cursor:pointer;padding:4px 0;opacity:.5;transition:.3s}
+  .rail a:hover,.rail a.on{opacity:1}
+  .rail .ry{font-family:var(--eng);font-size:10px;letter-spacing:.06em;color:var(--muted);width:34px;text-align:right;transition:.3s}
+  .rail a.on .ry{color:var(--gold)}
+  .rail .rd{width:7px;height:7px;border-radius:50%;border:1px solid var(--muted);transition:.3s;flex:0 0 auto}
+  .rail a.on .rd{background:var(--gold);border-color:var(--gold);box-shadow:0 0 10px var(--gold)}
+
+  .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;scroll-snap-align:center;position:relative}
+  .hero .over{font-family:var(--eng);text-transform:uppercase;letter-spacing:.4em;font-size:11px;color:var(--muted);margin-bottom:24px}
+  .hero h1{font-family:var(--th);font-weight:300;font-size:clamp(40px,8vw,104px);line-height:1.02;letter-spacing:.01em}
+  .hero h1 b{font-weight:600;color:var(--gold)}
+  .hero .lead{margin-top:26px;max-width:560px;font-size:clamp(15px,2vw,18px);color:#c7d0e4}
+  .hero .en{font-family:var(--eng);letter-spacing:.45em;text-transform:uppercase;font-size:clamp(10px,1.3vw,13px);color:var(--faint);margin-top:30px;padding-left:.5em}
+  .scrollhint{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);font-family:var(--eng);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--faint);display:flex;flex-direction:column;align-items:center;gap:10px}
+  .scrollhint .ln{width:1px;height:40px;background:linear-gradient(var(--gold),transparent);animation:drop 2s ease-in-out infinite}
+  @keyframes drop{0%{transform:scaleY(.2);transform-origin:top;opacity:.3}50%{transform:scaleY(1);opacity:1}100%{transform:scaleY(.2);transform-origin:bottom;opacity:.3}}
+
+  .chapter{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:90px 40px;scroll-snap-align:center;position:relative;overflow:hidden}
+  .chapter::before{content:attr(data-year);position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    font-family:var(--eng);font-weight:700;font-size:46vh;line-height:1;color:rgba(255,255,255,.028);z-index:0;pointer-events:none;white-space:nowrap;letter-spacing:-.02em}
+  .wrap{position:relative;z-index:1;max-width:1120px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+  .chapter:nth-of-type(even) .art{order:2}
+  .art{display:flex;align-items:center;justify-content:center;opacity:0;transform:translateY(40px) scale(.97);
+    transition:opacity 1s cubic-bezier(.16,1,.3,1),transform 1s cubic-bezier(.16,1,.3,1);will-change:transform}
+  .txt{opacity:0;transform:translateY(40px);transition:opacity 1s .12s cubic-bezier(.16,1,.3,1),transform 1s .12s cubic-bezier(.16,1,.3,1)}
+  .chapter.in .art,.chapter.in .txt{opacity:1;transform:none}
+
+  /* figure: ภาพจริง + SVG fallback */
+  .figure{position:relative;width:min(100%,470px);aspect-ratio:4/3;border-radius:14px;overflow:hidden;
+    border:1px solid var(--line);box-shadow:0 22px 64px rgba(0,0,0,.55)}
+  .figure .svgfb{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(120% 120% at 50% 30%,#0b1020,#05070e)}
+  .figure .svgfb svg{width:78%;height:78%}
+  .figure img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .9s ease;filter:saturate(1.04) contrast(1.05)}
+  .figure img.on{opacity:1}
+  .figure .cap{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:26px 14px 11px;font-family:var(--eng);
+    font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(231,238,250,.82);
+    background:linear-gradient(transparent,rgba(4,6,13,.92))}
+  .figure .frm{position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:14px;box-shadow:inset 0 0 0 1px rgba(243,201,122,.16)}
+
+  .yr{font-family:var(--eng);font-weight:600;font-size:clamp(40px,5.5vw,68px);color:var(--gold);line-height:1;letter-spacing:.02em}
+  .kick{font-family:var(--eng);text-transform:uppercase;letter-spacing:.26em;font-size:11px;color:var(--muted);margin:16px 0 12px}
+  .chapter h2{font-family:var(--th);font-weight:600;font-size:clamp(26px,3.4vw,40px);line-height:1.15;margin-bottom:18px;letter-spacing:-.01em}
+  .chapter p{font-size:clamp(14.5px,1.5vw,16px);color:#c2ccdf;max-width:540px;margin-bottom:13px}
+  .chapter p b{color:var(--ink);font-weight:600}
+  .quote{margin-top:6px;padding-left:18px;border-left:2px solid var(--gold);font-style:italic;color:var(--gold);font-size:clamp(14px,1.5vw,16px);max-width:520px}
+  .stats{display:flex;flex-wrap:wrap;gap:12px 26px;margin-top:26px}
+  .stat .v{font-family:var(--eng);font-size:17px;font-weight:600;color:var(--ink)}
+  .stat .k{font-family:var(--th);font-size:11.5px;color:var(--muted);margin-top:2px}
+  .golink{display:inline-flex;align-items:center;gap:8px;margin-top:24px;font-family:var(--eng);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);text-decoration:none;padding:11px 18px;border:1px solid var(--gold);border-radius:9px;background:var(--gold-dim);transition:.25s}
+  .golink:hover{background:rgba(243,201,122,.22);gap:13px}
+
+  .end{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 40px;scroll-snap-align:center}
+  .end h2{font-family:var(--th);font-weight:300;font-size:clamp(30px,5vw,60px);line-height:1.12;margin-bottom:22px}
+  .end h2 b{font-weight:600;color:var(--gold)}
+  .end p{max-width:520px;color:#c2ccdf;margin-bottom:34px;font-size:clamp(14.5px,1.6vw,17px)}
+  .credit{margin-top:64px;font-family:var(--eng);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
+
+  @media(max-width:820px){
+    .rail{display:none}
+    .wrap{grid-template-columns:1fr;gap:28px}
+    .chapter:nth-of-type(even) .art{order:0}
+    .chapter::before{font-size:28vh}
+    .home{top:14px;left:14px}
+  }
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="prog" id="prog"></div>
+<a class="home" href="solar-system.html">← ระบบสุริยะ</a>
+<nav class="rail" id="rail"></nav>
+
+<section class="hero">
+  <div class="over">An interactive history · ประวัติศาสตร์เชิงโต้ตอบ</div>
+  <h1>การเดินทาง<b>สู่อวกาศ</b></h1>
+  <div class="lead">70 ปีที่มนุษย์ก้าวออกจากโลก — จากเสียงบี๊บดวงแรกในวงโคจร สู่ดวงตาที่มองเห็นต้นกำเนิดของจักรวาล</div>
+  <div class="en">Seventy Years Beyond Earth</div>
+  <div class="scrollhint"><span>เลื่อนเพื่อเริ่ม</span><span class="ln"></span></div>
+</section>
+
+<main id="chapters"></main>
+
+<section class="end">
+  <h2>70 ปีก่อน เราแค่<b>ส่งเสียงบี๊บ</b><br>วันนี้ เรามองเห็น<b>ต้นกำเนิดของเวลา</b></h2>
+  <p>และพรุ่งนี้ — เรากำลังจะออกเดินทางต่อ</p>
+  <a class="golink" href="solar-system.html">สำรวจระบบสุริยะแบบอินเทอแร็กทิฟ →</a>
+  <div class="credit">The Solar System · An interactive model</div>
+</section>
+
+<script>
+// ====== ข้อมูลเหตุการณ์ (เพิ่ม/แก้ที่นี่ที่เดียว) ======
+const MILESTONES=[
+ {year:'1957',rail:'Sputnik',kicker:'Sputnik 1 · สหภาพโซเวียต',title:'ยุคอวกาศเริ่มต้น',
+  img:{file:'Sputnik_asm.jpg',credit:'ภาพ: แบบจำลอง Sputnik 1 · NASA',alt:'Sputnik 1 satellite'},
+  body:['4 ตุลาคม 1957 สหภาพโซเวียตส่งดาวเทียมดวงแรกของโลกขึ้นสู่วงโคจรได้สำเร็จ ทรงกลมโลหะขนาดเท่าลูกบาสเกตบอลพร้อมเสาอากาศสี่ก้าน ส่งสัญญาณวิทยุ <b>"บี๊บ…บี๊บ…"</b> ที่ใคร ๆ ทั่วโลกจับฟังได้ด้วยวิทยุธรรมดา',
+    'เสียงเล็ก ๆ นั้นสั่นสะเทือนทั้งโลก จุดชนวน <b>การแข่งขันอวกาศ</b> ระหว่างสองมหาอำนาจ และผลักดันให้สหรัฐฯ ก่อตั้ง NASA ขึ้นในปีถัดมา'],
+  stats:[['83.6 กก.','น้ำหนัก'],['96 นาที','ต่อหนึ่งรอบโลก'],['29,000 กม./ชม.','ความเร็ว'],['3 เดือน','อยู่ในวงโคจร']],
+  svg:`<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><ellipse cx="200" cy="200" rx="160" ry="56" fill="none" stroke="#f3c97a" stroke-width="1" opacity=".35" transform="rotate(-18 200 200)"/><g stroke="#cdd6e6" stroke-width="3" stroke-linecap="round"><line x1="200" y1="200" x2="296" y2="124"/><line x1="200" y1="200" x2="308" y2="172"/><line x1="200" y1="200" x2="96" y2="120"/><line x1="200" y1="200" x2="92" y2="172"/></g><circle cx="200" cy="200" r="46" fill="#11151f" stroke="#cdd6e6" stroke-width="3"/><circle cx="186" cy="186" r="10" fill="#f3c97a" opacity=".9"/></svg>`},
+
+ {year:'1961',rail:'Gagarin',kicker:'Vostok 1 · ยูริ กาการิน',title:'มนุษย์คนแรกในอวกาศ',
+  img:{file:'Yuri_Gagarin_(1961)_-_Restoration.jpg',credit:'ภาพ: ยูริ กาการิน, 1961 · public domain',alt:'Yuri Gagarin'},
+  body:['12 เมษายน 1961 <b>ยูริ กาการิน</b> นักบินโซเวียตวัย 27 ปี ขึ้นยานวอสตอค 1 โคจรรอบโลกหนึ่งรอบในเวลา 108 นาที กลายเป็นมนุษย์คนแรกที่ออกไปสู่อวกาศ และคนแรกที่ได้เห็นโลกทั้งใบเป็นทรงกลมสีน้ำเงิน',
+    'เที่ยวบินนี้เกือบทั้งหมดถูกควบคุมแบบอัตโนมัติ เพราะยังไม่มีใครรู้ว่ามนุษย์จะทำงานได้ปกติไหมในภาวะไร้น้ำหนัก เมื่อกลับถึงพื้นโลก กาการินกลายเป็นวีรบุรุษของคนทั้งโลกในชั่วข้ามคืน'],
+  quote:'"โลกเป็นสีฟ้า… ช่างงดงามเหลือเกิน"',
+  stats:[['108 นาที','ในอวกาศ'],['1 รอบ','รอบโลก'],['327 กม.','ความสูงสุด'],['27 ปี','อายุ']],
+  svg:`<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><circle cx="200" cy="210" r="150" fill="none" stroke="#6ab8ff" stroke-width="1" opacity=".3"/><path d="M200 60 a150 150 0 0 1 106 256" fill="none" stroke="#f3c97a" stroke-width="2" opacity=".6"/><circle cx="200" cy="210" r="72" fill="url(#e1)"/><path d="M170 182 q20 -14 44 -2 q14 22 -4 40 q-30 12 -46 -8 q-6 -20 6 -30Z" fill="#3f7a4a" opacity=".7"/><g transform="rotate(-18 306 96)"><circle cx="306" cy="96" r="14" fill="#11151f" stroke="#cdd6e6" stroke-width="3"/><path d="M294 104 l-14 16" stroke="#f3c97a" stroke-width="3" stroke-linecap="round"/></g><defs><radialGradient id="e1" cx=".36" cy=".32" r=".85"><stop offset="0" stop-color="#2b5fb0"/><stop offset="1" stop-color="#0a1730"/></radialGradient></defs></svg>`},
+
+ {year:'1969',rail:'Apollo 11',kicker:'Apollo 11 · NASA',title:'ก้าวแรกบนดวงจันทร์',
+  img:{file:'Aldrin_Apollo_11_original.jpg',credit:'ภาพ: บัซ อัลดริน บนดวงจันทร์ · NASA',alt:'Buzz Aldrin on the Moon'},
+  body:['20 กรกฎาคม 1969 ยานลงดวงจันทร์ "อีเกิล" แตะพื้นทะเลแห่งความเงียบสงบ <b>นีล อาร์มสตรอง</b> ก้าวลงเป็นคนแรก ตามด้วย <b>บัซ อัลดริน</b> ขณะที่ผู้คนกว่า 600 ล้านคนทั่วโลกเฝ้าดูการถ่ายทอดสด',
+    'ทั้งคู่ใช้เวลาราวสองชั่วโมงครึ่งเดินสำรวจนอกยาน เก็บตัวอย่างหิน ปักธง และติดตั้งอุปกรณ์ทดลอง ก่อนเดินทางกลับอย่างปลอดภัย — ชัยชนะครั้งประวัติศาสตร์ของโครงการอะพอลโล'],
+  quote:'"ก้าวเล็ก ๆ ของคนคนหนึ่ง แต่เป็นก้าวกระโดดอันยิ่งใหญ่ของมวลมนุษยชาติ"',
+  stats:[['3 คน','นักบินอวกาศ'],['21 ชม.','บนดวงจันทร์'],['22 กก.','ตัวอย่างหิน'],['384,400 กม.','จากโลก']],
+  svg:`<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><circle cx="280" cy="120" r="90" fill="url(#m1)"/><circle cx="258" cy="104" r="11" fill="#000" opacity=".12"/><circle cx="300" cy="150" r="7" fill="#000" opacity=".12"/><g stroke="#d9b25a" stroke-width="3" stroke-linecap="round"><path d="M150 250 l40 0 l8 -34 l-56 0Z" fill="#c9a24f" stroke="none"/><rect x="158" y="196" width="40" height="26" rx="4" fill="#e3e8f0" stroke="none"/><line x1="142" y1="250" x2="120" y2="300"/><line x1="198" y1="250" x2="220" y2="300"/></g><line x1="250" y1="300" x2="250" y2="250" stroke="#cdd6e6" stroke-width="2"/><path d="M250 250 l26 4 l0 16 l-26 -4Z" fill="#f3c97a"/><line x1="60" y1="312" x2="340" y2="312" stroke="#23304a" stroke-width="2" opacity=".7"/><defs><radialGradient id="m1" cx=".4" cy=".36" r=".8"><stop offset="0" stop-color="#cfd3dc"/><stop offset="1" stop-color="#6f7585"/></radialGradient></defs></svg>`},
+
+ {year:'1977',rail:'Voyager',kicker:'Voyager 1 & 2 · NASA',title:'ทัวร์ใหญ่สู่ห้วงดวงดาว',
+  img:{file:'Voyager_spacecraft.jpg',credit:'ภาพ: ยานวอยเอเจอร์ · NASA / JPL',alt:'Voyager spacecraft'},
+  body:['ปี 1977 NASA ส่งยานคู่แฝด <b>วอยเอเจอร์ 1 และ 2</b> ออกเดินทาง อาศัยการเรียงตัวของดาวเคราะห์ที่เกิดขึ้นเพียงทุก ~175 ปี ใช้แรงโน้มถ่วงเหวี่ยงต่อกันไปเยือนดาวพฤหัสบดี เสาร์ ยูเรนัส และเนปจูน',
+    'ภารกิจที่วางไว้เพียง 5 ปี กลายเป็นการเดินทางกว่า <b>47 ปี</b> วันนี้ทั้งคู่อยู่ในห้วงอวกาศระหว่างดาว เป็นวัตถุฝีมือมนุษย์ที่ไกลที่สุด ยังส่งสัญญาณกลับมา และพกแผ่นเสียงทองคำบันทึกเสียงของโลกติดไปด้วย'],
+  link:{href:'solar-system.html',text:'ดูเส้นทางจริงในแผนที่ระบบสุริยะ →'},
+  stats:[['2 ลำ','คู่แฝด'],['>24,000 ล้าน กม.','ระยะทาง'],['~17 กม./วิ','ความเร็ว'],['>47 ปี','ยังเดินทาง']],
+  svg:`<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><circle cx="80" cy="320" r="28" fill="#ffcf57" opacity=".9"/><path d="M80 320 C 160 260 150 150 230 140 C 300 132 330 96 350 60" fill="none" stroke="#f3c97a" stroke-width="2" stroke-dasharray="2 7" opacity=".75"/><g transform="translate(232 138) rotate(28)"><ellipse cx="0" cy="-26" rx="40" ry="40" fill="none" stroke="#e3e8f0" stroke-width="3"/><ellipse cx="0" cy="-26" rx="40" ry="14" fill="#1a2233" opacity=".5"/><rect x="-13" y="-6" width="26" height="22" rx="3" fill="#d9b25a"/><line x1="0" y1="16" x2="0" y2="40" stroke="#cdd6e6" stroke-width="3"/><line x1="13" y1="6" x2="74" y2="6" stroke="#9aa6bd" stroke-width="2"/><rect x="74" y="-2" width="12" height="14" rx="2" fill="#b39cff"/><line x1="-13" y1="6" x2="-58" y2="20" stroke="#9aa6bd" stroke-width="2"/><circle cx="-62" cy="22" r="6" fill="#c2cad6"/></g></svg>`},
+
+ {year:'1981',rail:'Shuttle',kicker:'Space Shuttle · NASA',title:'จรวดที่กลับมาใช้ใหม่ได้',
+  img:{file:'Space_Shuttle_Columbia_launching.jpg',credit:'ภาพ: กระสวยโคลัมเบีย ทะยานขึ้น · NASA',alt:'Space Shuttle Columbia launch'},
+  body:['12 เมษายน 1981 กระสวยอวกาศ <b>โคลัมเบีย</b> ทะยานขึ้นเป็นครั้งแรก เป็นยานอวกาศลำแรกที่ออกแบบให้บินขึ้นด้วยจรวด แล้วร่อนกลับมาลงจอดบนรันเวย์เหมือนเครื่องบิน และนำกลับมาใช้ใหม่ได้',
+    'ตลอด 30 ปี ฝูงกระสวย 5 ลำบินรวม 135 เที่ยว เป็นม้างานที่ส่งกล้องฮับเบิลขึ้นสู่อวกาศ และประกอบสถานีอวกาศนานาชาติทีละชิ้น แม้ต้องแลกมาด้วยโศกนาฏกรรมสองครั้งที่เตือนถึงความเสี่ยงของการเดินทางนี้'],
+  stats:[['135 เที่ยว','ตลอด 30 ปี'],['5 ลำ','ในฝูงบิน'],['~2 ล้าน กก.','ตอนปล่อย'],['27,000 กม./ชม.','เข้าวงโคจร']],
+  svg:`<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><g transform="translate(200 200) rotate(38)"><path d="M0 -150 C 22 -120 30 0 30 80 L 30 120 L -30 120 L -30 80 C -30 0 -22 -120 0 -150Z" fill="#e3e8f0"/><path d="M0 -150 C 12 -120 16 -20 16 70 L -16 70 C -16 -20 -12 -120 0 -150Z" fill="#11151f" opacity=".25"/><path d="M-30 70 L -120 120 L -120 138 L -30 110Z" fill="#cdd6e6"/><path d="M30 70 L 120 120 L 120 138 L 30 110Z" fill="#cdd6e6"/><path d="M0 -150 l-8 26 l16 0Z" fill="#11151f"/><path d="M-14 120 q14 60 28 0Z" fill="#ff8a3d"/></g></svg>`},
+
+ {year:'1990',rail:'Hubble',kicker:'Hubble · NASA / ESA',title:'ดวงตาเหนือชั้นบรรยากาศ',
+  img:{file:'HST-SM4.jpeg',credit:'ภาพ: กล้องฮับเบิลในวงโคจร · NASA',alt:'Hubble Space Telescope'},
+  body:['กล้องโทรทรรศน์อวกาศ <b>ฮับเบิล</b> ถูกส่งขึ้นโดยกระสวยในปี 1990 โคจรเหนือชั้นบรรยากาศที่คอยบิดเบือนแสง จึงถ่ายภาพห้วงอวกาศได้คมชัดอย่างไม่เคยมีมาก่อน',
+    'ภาพ "ห้วงลึกฮับเบิล" ที่เล็งไปยังผืนฟ้ามืดเล็กจิ๋ว กลับเผยให้เห็นกาแล็กซีนับพันแห่ง เปลี่ยนความเข้าใจของเราเรื่องอายุ ขนาด และการขยายตัวของเอกภพไปตลอดกาล'],
+  stats:[['540 กม.','ความสูงวงโคจร'],['>1.5 ล้าน','ภาพที่ถ่าย'],['2.4 ม.','กระจกหลัก'],['>30 ปี','ยังใช้งาน']],
+  svg:`<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><g transform="translate(200 200) rotate(-24)"><rect x="-44" y="-110" width="88" height="220" rx="20" fill="#c2cad6"/><rect x="-44" y="-110" width="40" height="220" rx="20" fill="#11151f" opacity=".18"/><circle cx="0" cy="-110" r="42" fill="#0c0f17" stroke="#9aa6bd" stroke-width="3"/><circle cx="0" cy="-110" r="28" fill="#1c2740"/><rect x="44" y="-70" width="118" height="58" rx="4" fill="#2b3a66" stroke="#6ab8ff" stroke-width="1"/><rect x="-162" y="-70" width="118" height="58" rx="4" fill="#2b3a66" stroke="#6ab8ff" stroke-width="1"/></g></svg>`},
+
+ {year:'1998',rail:'ISS',kicker:'ISS · ความร่วมมือนานาชาติ',title:'บ้านของมนุษย์ในวงโคจร',
+  img:{file:'International_Space_Station_after_undocking_of_STS-132.jpg',credit:'ภาพ: สถานีอวกาศนานาชาติ · NASA',alt:'International Space Station'},
+  body:['ปลายปี 1998 โมดูลแรกของ <b>สถานีอวกาศนานาชาติ</b> ถูกส่งขึ้นวงโคจร จากนั้นต่อเติมทีละชิ้นจนใหญ่เท่าสนามฟุตบอล กลายเป็นสิ่งก่อสร้างที่แพงและซับซ้อนที่สุดเท่าที่มนุษย์เคยสร้างนอกโลก',
+    'ตั้งแต่ปี 2000 เป็นต้นมา <b>มีมนุษย์อาศัยอยู่บนนั้นต่อเนื่องไม่ขาดสาย</b> เป็นห้องทดลองไร้น้ำหนักและสัญลักษณ์ความร่วมมือของ 15 ประเทศ ที่โคจรรอบโลกครบรอบทุก 90 นาที'],
+  stats:[['~400 กม.','ความสูงวงโคจร'],['28,000 กม./ชม.','ความเร็ว'],['15 ประเทศ','ร่วมมือ'],['>24 ปี','มีคนอยู่ตลอด']],
+  svg:`<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><g transform="translate(200 200)"><line x1="0" y1="-92" x2="0" y2="92" stroke="#b6c0d0" stroke-width="5"/><rect x="-70" y="-12" width="140" height="24" rx="10" fill="#c2cad6"/><circle cx="-70" cy="0" r="15" fill="#9aa6bd"/><circle cx="70" cy="0" r="15" fill="#9aa6bd"/><g fill="#2b3a66" stroke="#f3c97a" stroke-width="1"><rect x="-150" y="-94" width="118" height="38" rx="3"/><rect x="-150" y="-48" width="118" height="38" rx="3"/><rect x="-150" y="10" width="118" height="38" rx="3"/><rect x="-150" y="56" width="118" height="38" rx="3"/><rect x="32" y="-94" width="118" height="38" rx="3"/><rect x="32" y="-48" width="118" height="38" rx="3"/><rect x="32" y="10" width="118" height="38" rx="3"/><rect x="32" y="56" width="118" height="38" rx="3"/></g></g></svg>`},
+
+ {year:'2012',rail:'Curiosity',kicker:'Curiosity · NASA / JPL',title:'ห้องแล็บเคลื่อนที่บนดาวอังคาร',
+  img:{file:'Curiosity_Self-Portrait_at_%27Big_Sky%27_Drilling_Site.jpg',credit:'ภาพ: เซลฟีของคิวริออซิตี · NASA / JPL-Caltech / MSSS',alt:'Curiosity rover selfie on Mars'},
+  body:['6 สิงหาคม 2012 รถสำรวจ <b>คิวริออซิตี</b> ขนาดเท่ารถยนต์ ลงจอดบนดาวอังคารด้วยปฏิบัติการ "เครนลอยฟ้า" อันหวาดเสียว เพื่อค้นหาว่าดาวแดงเคยมีสภาพแวดล้อมที่เอื้อต่อสิ่งมีชีวิตหรือไม่',
+    'มันพบหลักฐานว่าครั้งหนึ่งดาวอังคารเคยมี <b>น้ำและทะเลสาบ</b> เปิดทางให้ภารกิจรุ่นต่อมาอย่าง <b>เพอร์เซเวียแรนซ์</b> (2021) ที่พกเฮลิคอปเตอร์จิ๋วลำแรกที่บินบนดาวดวงอื่น และเริ่มเก็บตัวอย่างหินเพื่อส่งกลับมายังโลก'],
+  stats:[['899 กก.','น้ำหนักรถ'],['~225 ล้าน กม.','จากโลก'],['>32 กม.','ระยะที่ขับ'],['>12 ปี','ยังทำงาน']],
+  svg:`<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><circle cx="120" cy="120" r="44" fill="#e1623d" opacity=".22"/><line x1="40" y1="300" x2="360" y2="296" stroke="#7a3b27" stroke-width="3" opacity=".55"/><g transform="translate(200 210)"><rect x="-70" y="-30" width="140" height="46" rx="8" fill="#c9a24f"/><rect x="-70" y="-30" width="140" height="13" rx="6" fill="#e3e8f0" opacity=".4"/><circle cx="-50" cy="36" r="21" fill="none" stroke="#9aa6bd" stroke-width="6"/><circle cx="0" cy="36" r="21" fill="none" stroke="#9aa6bd" stroke-width="6"/><circle cx="50" cy="36" r="21" fill="none" stroke="#9aa6bd" stroke-width="6"/><line x1="40" y1="-30" x2="55" y2="-78" stroke="#9aa6bd" stroke-width="5"/><rect x="42" y="-96" width="34" height="20" rx="3" fill="#11151f" stroke="#cdd6e6" stroke-width="2"/><circle cx="59" cy="-86" r="4" fill="#f3c97a"/><line x1="-50" y1="-10" x2="-96" y2="-30" stroke="#9aa6bd" stroke-width="4"/><circle cx="-100" cy="-30" r="6" fill="#b39cff"/></g></svg>`},
+
+ {year:'2015',rail:'SpaceX',kicker:'SpaceX · จรวดนำกลับมาใช้ใหม่',title:'จรวดที่ลงจอดกลับมาเองได้',
+  img:{file:'Falcon_Heavy_side_boosters_landing_at_KSC_04.jpg',credit:'ภาพ: บูสเตอร์ Falcon Heavy ลงจอดคู่ (2018) · SpaceX',alt:'Falcon Heavy boosters landing'},
+  body:['21 ธันวาคม 2015 บริษัทเอกชน <b>SpaceX</b> ทำสิ่งที่หลายคนเคยคิดว่าเป็นไปไม่ได้ — นำท่อนแรกของจรวด Falcon 9 ที่เพิ่งส่งดาวเทียมขึ้นไป <b>กลับลงจอดตั้งตรง</b> บนพื้นได้สำเร็จเป็นครั้งแรก',
+    'การนำจรวดกลับมาใช้ซ้ำลดต้นทุนการขึ้นสู่อวกาศลงมหาศาล เปิดยุคใหม่ที่เอกชนกลายเป็นกำลังหลัก และทำให้ความฝันเรื่องการส่งมนุษย์ไปตั้งถิ่นฐานบนดาวอังคารดูใกล้ความจริงขึ้นทุกที'],
+  stats:[['ลงจอดเอง','ตั้งตรงบนพื้น'],['>20 ครั้ง','ใช้ซ้ำต่อลำ'],['หลายเท่า','ลดต้นทุน']],
+  svg:`<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><g transform="translate(200 0)"><rect x="-20" y="40" width="40" height="208" rx="10" fill="#e3e8f0"/><rect x="-20" y="40" width="13" height="208" rx="7" fill="#11151f" opacity=".18"/><path d="M-20 40 q20 -34 40 0Z" fill="#cdd6e6"/><rect x="-20" y="150" width="40" height="6" fill="#9aa6bd"/><line x1="-20" y1="248" x2="-54" y2="300" stroke="#9aa6bd" stroke-width="5"/><line x1="20" y1="248" x2="54" y2="300" stroke="#9aa6bd" stroke-width="5"/><path d="M-14 248 q14 56 28 0Z" fill="#f3c97a"/><path d="M-8 248 q8 86 16 0Z" fill="#ff8a3d"/></g><line x1="60" y1="312" x2="340" y2="312" stroke="#23304a" stroke-width="3"/></svg>`},
+
+ {year:'2021',rail:'Webb',kicker:'James Webb · NASA / ESA / CSA',title:'ย้อนเวลาไปต้นจักรวาล',
+  img:{file:'Webb%27s_First_Deep_Field.jpg',credit:'ภาพ: ห้วงลึกแรกจาก JWST · NASA / ESA / CSA / STScI',alt:'JWST First Deep Field'},
+  body:['ปลายปี 2021 กล้อง <b>เจมส์ เวบบ์</b> กล้องอวกาศที่ใหญ่และทรงพลังที่สุด ถูกส่งไปประจำที่จุด L2 ห่างจากโลก 1.5 ล้านกิโลเมตร แล้วกางกระจกทองคำหกเหลี่ยมและแผ่นบังแดดขนาดเท่าสนามเทนนิส',
+    'ด้วยการมองในย่าน <b>อินฟราเรด</b> มันจับแสงจากกาแล็กซีรุ่นแรก ๆ ที่เดินทางมานานกว่า 13,000 ล้านปี เท่ากับเรากำลังมองเห็นภาพอดีตของเอกภพเมื่อครั้งเพิ่งถือกำเนิด'],
+  stats:[['6.5 ม.','กระจกหลัก'],['1.5 ล้าน กม.','จุด L2'],['−233 °C','อุณหภูมิทำงาน'],['>13,000 ล้านปี','ย้อนอดีต']],
+  svg:`<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><g transform="translate(200 150)" fill="#f3c97a" stroke="#0c0f17" stroke-width="1.5"><polygon points="0,-46 40,-23 40,23 0,46 -40,23 -40,-23"/><polygon points="0,-138 40,-115 40,-69 0,-46 -40,-69 -40,-115"/><polygon points="80,-92 120,-69 120,-23 80,0 40,-23 40,-69"/><polygon points="-80,-92 -40,-69 -40,-23 -80,0 -120,-23 -120,-69"/><polygon points="80,0 120,23 120,69 80,92 40,69 40,23"/><polygon points="-80,0 -40,23 -40,69 -80,92 -120,69 -120,23"/><polygon points="0,46 40,69 40,115 0,138 -40,115 -40,69"/></g><g transform="translate(200 300)"><path d="M-160 0 L160 0 L120 48 L-120 48Z" fill="#6e6cae" opacity=".35" stroke="#b39cff" stroke-width="1"/></g></svg>`},
+
+ {year:'2022',rail:'Artemis',kicker:'Artemis · NASA + พันธมิตร',title:'กลับสู่ดวงจันทร์ และไกลกว่านั้น',
+  img:{file:'Artemis_I_Launch_(NHQ202211160017).jpg',credit:'ภาพ: จรวด SLS ภารกิจอาร์เทมิส 1 ทะยานขึ้น · NASA',alt:'Artemis I launch'},
+  body:['16 พฤศจิกายน 2022 จรวด SLS ที่ทรงพลังที่สุดเท่าที่ NASA เคยสร้าง พายาน <b>โอไรออน</b> ขึ้นสู่อวกาศในภารกิจอาร์เทมิส 1 บินไปโคจรรอบดวงจันทร์โดยยังไม่มีลูกเรือ เพื่อทดสอบเส้นทางก่อนส่งมนุษย์จริง',
+    'เป้าหมายของอาร์เทมิสคือพามนุษย์กลับไปเหยียบดวงจันทร์อีกครั้งในรอบกว่า 50 ปี รวมถึง <b>ผู้หญิงคนแรก</b> และสร้างฐานที่อยู่ถาวร เพื่อปูทางสู่ก้าวต่อไปที่ยิ่งใหญ่กว่า — <b>ดาวอังคาร</b>'],
+  quote:'การเดินทางของเรายังไม่จบ… มันเพิ่งจะเริ่มต้น',
+  stats:[['SLS','จรวดแรงที่สุด'],['รอบดวงจันทร์','อาร์เทมิส 1'],['ดวงจันทร์ → ดาวอังคาร','เป้าหมาย']],
+  svg:`<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><circle cx="110" cy="140" r="66" fill="url(#m2)"/><circle cx="96" cy="126" r="8" fill="#000" opacity=".12"/><circle cx="330" cy="300" r="38" fill="#e1623d" opacity=".85"/><path d="M150 196 C 220 206 250 248 300 280" fill="none" stroke="#f3c97a" stroke-width="2" stroke-dasharray="2 8" opacity=".7"/><g transform="translate(226 228) rotate(35)"><rect x="-14" y="-22" width="28" height="34" rx="6" fill="#c2cad6"/><path d="M-14 12 L14 12 L8 30 L-8 30Z" fill="#9aa6bd"/><rect x="-30" y="-14" width="16" height="22" rx="3" fill="#2b3a66" stroke="#6ab8ff" stroke-width="1"/><rect x="14" y="-14" width="16" height="22" rx="3" fill="#2b3a66" stroke="#6ab8ff" stroke-width="1"/><path d="M0 -22 q8 -16 0 -30 q-8 14 0 30Z" fill="#f3c97a"/></g><defs><radialGradient id="m2" cx=".4" cy=".36" r=".8"><stop offset="0" stop-color="#cfd3dc"/><stop offset="1" stop-color="#6f7585"/></radialGradient></defs></svg>`},
+];
+
+// ====== สร้าง section จากข้อมูล ======
+const IMG_BASE='https://commons.wikimedia.org/wiki/Special:FilePath/';
+function figure(m){
+  const src=IMG_BASE+m.img.file+'?width=1100';
+  return '<div class="figure"><div class="svgfb">'+m.svg+'</div>'+
+    '<img src="'+src+'" alt="'+m.img.alt+'" loading="lazy" decoding="async" '+
+    'onload="this.classList.add(\'on\')" onerror="this.remove()">'+
+    '<div class="cap">'+m.img.credit+'</div><span class="frm"></span></div>';
+}
+function section(m){
+  return '<section class="chapter" data-year="'+m.year+'"><div class="wrap">'+
+    '<div class="art">'+figure(m)+'</div>'+
+    '<div class="txt"><div class="yr">'+m.year+'</div><div class="kick">'+m.kicker+'</div>'+
+    '<h2>'+m.title+'</h2>'+
+    m.body.map(p=>'<p>'+p+'</p>').join('')+
+    (m.quote?'<div class="quote">'+m.quote+'</div>':'')+
+    (m.link?'<a class="golink" href="'+m.link.href+'">'+m.link.text+'</a>':'')+
+    '<div class="stats">'+m.stats.map(s=>'<div class="stat"><div class="v">'+s[0]+'</div><div class="k">'+s[1]+'</div></div>').join('')+'</div>'+
+    '</div></div></section>';
+}
+document.getElementById('chapters').innerHTML=MILESTONES.map(section).join('');
+
+// ====== rail ======
+const chapters=[...document.querySelectorAll('.chapter')];
+const rail=document.getElementById('rail');
+const railItems=MILESTONES.map((m,i)=>{const el=document.createElement('a');el.href='#';
+  el.title=m.kicker;el.innerHTML='<span class="ry">'+m.year+'</span><span class="rd"></span>';
+  el.onclick=e=>{e.preventDefault();chapters[i].scrollIntoView({behavior:'smooth',block:'center'});};
+  rail.appendChild(el);return el;});
+
+// ====== reveal + active (IntersectionObserver + scroll fallback) ======
+function setActive(i){railItems.forEach((r,k)=>r.classList.toggle('on',k===i));}
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>{es.forEach(en=>{const i=chapters.indexOf(en.target);
+    if(en.isIntersecting){en.target.classList.add('in');if(en.intersectionRatio>.5)setActive(i);}});},{threshold:[.25,.55]});
+  chapters.forEach(ch=>io.observe(ch));
+}
+function revealCheck(){const vh=innerHeight;chapters.forEach((ch,i)=>{const r=ch.getBoundingClientRect();
+  if(r.top<vh*0.82&&r.bottom>vh*0.18){ch.classList.add('in');if(r.top<vh*0.6&&r.bottom>vh*0.4)setActive(i);}});}
+addEventListener('load',revealCheck);setTimeout(revealCheck,400);revealCheck();
+
+// ====== progress bar + parallax ======
+const prog=document.getElementById('prog');
+let ticking=false;
+function onScroll(){ticking=false;const h=document.documentElement;
+  const p=h.scrollTop/(h.scrollHeight-h.clientHeight||1);prog.style.width=(p*100)+'%';
+  revealCheck();
+  const vh=innerHeight;
+  for(const ch of chapters){if(!ch.classList.contains('in'))continue;const r=ch.getBoundingClientRect();
+    if(r.bottom<-vh||r.top>vh*2)continue;const off=((r.top+r.height/2)-vh/2)/vh;
+    const art=ch.querySelector('.art');if(art)art.style.transform='translateY('+(off*-24)+'px)';}}
+addEventListener('scroll',()=>{if(!ticking){ticking=true;requestAnimationFrame(onScroll);}},{passive:true});
+
+// ====== starfield ======
+const cv=document.getElementById('stars'),cx=cv.getContext('2d');
+let stars=[],W,H;
+function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight;
+  const n=Math.min(260,Math.round(W*H/9000));stars=[];
+  const pal=['255,255,255','190,210,255','255,225,180','255,190,170','180,230,255'];
+  for(let i=0;i<n;i++)stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.5+.3,
+    a:Math.random()*.6+.2,tw:Math.random()*6.28,sp:Math.random()*1.5+.4,c:pal[Math.random()*pal.length|0],d:Math.random()*.5+.4});}
+resize();addEventListener('resize',resize);
+let sY=0;addEventListener('scroll',()=>{sY=window.scrollY;},{passive:true});
+function draw(t){cx.clearRect(0,0,W,H);
+  for(const s of stars){const tw=.6+.4*Math.sin(t*.001*s.sp+s.tw);
+    let y=(s.y-sY*s.d*.12)%H;if(y<0)y+=H;
+    cx.globalAlpha=s.a*tw;cx.fillStyle='rgba('+s.c+',1)';
+    cx.beginPath();cx.arc(s.x,y,s.r,0,6.2832);cx.fill();}
+  cx.globalAlpha=1;requestAnimationFrame(draw);}
+requestAnimationFrame(draw);
+</script>
+<script src="warp.js"></script>
+</body>
+</html>

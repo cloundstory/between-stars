@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แผนที่ดาวส่วนตัว · ห้วงดาว</title>
+<meta name="description" content="ท้องฟ้า ณ วันเวลาและสถานที่ที่คุณเลือก — เก็บช่วงเวลาสำคัญไว้เป็นแผนที่ดาวของคุณเอง">
+<meta name="theme-color" content="#05060f">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ห้วงดาว · Between Stars">
+<meta property="og:title" content="แผนที่ดาวส่วนตัว · ห้วงดาว">
+<meta property="og:description" content="ท้องฟ้า ณ วันเวลาและสถานที่ที่คุณเลือก เก็บไว้เป็นแผนที่ดาวของคุณเอง">
+<meta property="og:url" content="https://between-stars.pages.dev/starmap.html">
+<meta property="og:image" content="https://between-stars.pages.dev/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="th_TH">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://between-stars.pages.dev/og-image.png">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="favicon.svg">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&family=Trirong:wght@400;500;600&display=swap');
+:root{
+  --bg:#05060f; --accent:#8b6cff; --accent2:#5b8cff;
+  --glass:rgba(255,255,255,.045); --glass2:rgba(255,255,255,.07);
+  --line:rgba(255,255,255,.10); --txt:#e9eaf5; --muted:#9aa0bd;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:'Prompt',system-ui,sans-serif;color:var(--txt);min-height:100vh;display:flex;
+  background:
+    radial-gradient(1100px 760px at 82% -12%, rgba(58,86,200,.28), transparent 60%),
+    radial-gradient(900px 700px at -8% 112%, rgba(140,60,180,.26), transparent 60%),
+    radial-gradient(700px 600px at 50% 50%, rgba(20,28,70,.4), transparent 70%),
+    var(--bg);}
+.stars{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+  background-image:
+    radial-gradient(1px 1px at 20px 30px,#fff,transparent),
+    radial-gradient(1px 1px at 90px 70px,rgba(255,255,255,.6),transparent),
+    radial-gradient(1.4px 1.4px at 130px 40px,rgba(255,255,255,.75),transparent),
+    radial-gradient(1px 1px at 50px 120px,rgba(255,255,255,.5),transparent),
+    radial-gradient(1.4px 1.4px at 160px 100px,rgba(255,255,255,.6),transparent);
+  background-size:180px 180px;background-repeat:repeat;}
+.panel{width:354px;flex:none;padding:26px 24px 40px;height:100vh;overflow-y:auto;position:relative;z-index:1;
+  background:rgba(12,14,28,.62);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-right:1px solid var(--line);}
+.brand{display:flex;align-items:center;gap:9px;margin-bottom:3px;}
+.brand .mark{font-size:20px;color:var(--accent);}
+.panel h1{font-size:19px;margin:0;font-weight:600;letter-spacing:.2px;
+  background:linear-gradient(90deg,#cfd0ff,#b79cff);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.panel .sub{font-size:12px;color:var(--muted);margin:4px 0 24px;font-weight:300;}
+label{display:block;font-size:12px;color:var(--muted);margin:16px 0 6px;font-weight:400;}
+input,select{width:100%;padding:11px 12px;background:var(--glass);border:1px solid var(--line);border-radius:11px;
+  color:var(--txt);font-size:14px;font-family:inherit;transition:border-color .15s,box-shadow .15s,background .15s;}
+input::placeholder{color:#6a6f8c;}
+input:hover,select:hover{background:var(--glass2);}
+input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(139,108,255,.18);background:var(--glass2);}
+select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+  background-position:calc(100% - 17px) 18px,calc(100% - 12px) 18px;background-size:5px 5px,5px 5px;background-repeat:no-repeat;}
+optgroup{color:var(--accent);background:#12142a;font-weight:500;}
+option{color:var(--txt);background:#12142a;}
+.row{display:flex;gap:11px;}.row>div{flex:1;}
+.themes{display:flex;gap:9px;margin-top:7px;}
+.themes button{flex:1;height:38px;border-radius:11px;border:2px solid transparent;cursor:pointer;transition:transform .12s,box-shadow .15s;}
+.themes button:hover{transform:translateY(-2px);}
+.themes button.on{border-color:#fff;box-shadow:0 0 0 3px rgba(139,108,255,.35);}
+.chk{display:flex;align-items:center;gap:10px;margin-top:15px;font-size:13px;color:#d4d7e6;cursor:pointer;font-weight:300;}
+.chk input{width:auto;accent-color:var(--accent);}
+.btn{width:100%;margin-top:22px;padding:13px;border:none;border-radius:12px;color:#fff;font-size:14px;
+  font-weight:500;font-family:inherit;cursor:pointer;transition:filter .15s,transform .1s;
+  background:linear-gradient(135deg,#7b5cff,#9b5cff);box-shadow:0 8px 26px -8px rgba(123,92,255,.7);}
+.btn:hover{filter:brightness(1.09);}.btn:active{transform:scale(.99);}
+.btn.ghost{background:var(--glass);border:1px solid var(--line);color:#d4d7e6;box-shadow:none;margin-top:11px;}
+.btn.ghost:hover{background:var(--glass2);}
+.hint{font-size:11px;color:#646985;margin-top:20px;line-height:1.7;font-weight:300;}
+.stage{flex:1;display:flex;gap:30px;flex-wrap:wrap;align-items:center;justify-content:center;padding:36px;
+  overflow:auto;position:relative;z-index:1;}
+.poster{width:430px;max-width:100%;aspect-ratio:3/4;border-radius:14px;padding:28px;display:flex;
+  flex-direction:column;align-items:center;box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.06);}
+.poster canvas{width:100%;border-radius:50%;display:block;}
+.p-title{font-family:'Trirong',serif;font-size:28px;margin-top:22px;text-align:center;line-height:1.2;}
+.p-sub{font-size:14px;margin-top:7px;text-align:center;letter-spacing:2px;font-weight:300;}
+.p-meta{font-size:12px;margin-top:13px;text-align:center;line-height:1.8;opacity:.8;font-weight:300;}
+.chart{width:316px;flex:none;border-radius:16px;padding:22px 22px 24px;position:relative;z-index:1;
+  background:rgba(14,16,32,.66);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.45);}
+.chart h2{font-size:16px;margin:0 0 2px;font-weight:600;}
+.chart .csub{font-size:11px;color:var(--muted);margin:0 0 18px;font-weight:300;}
+.crow{display:flex;align-items:flex-start;gap:13px;padding:14px 0;border-top:1px solid rgba(255,255,255,.07);}
+.crow:first-of-type{border-top:none;}
+.cglyph{width:42px;height:42px;flex:none;border-radius:12px;color:#cdbcff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(140deg,rgba(139,108,255,.25),rgba(91,140,255,.18));border:1px solid rgba(255,255,255,.1);}
+.crole{font-size:11px;color:var(--muted);font-weight:300;}
+.csign{font-size:17px;font-weight:500;margin:2px 0 3px;}
+.cmeta{font-size:11px;color:#aab0cd;font-weight:300;}
+.ctrait{font-size:11px;color:#bca6ff;margin-top:4px;}
+.cpred{font-size:12.5px;color:#dcdef0;line-height:1.8;margin-top:18px;padding:15px 16px;font-weight:300;
+  background:linear-gradient(150deg,rgba(139,108,255,.13),rgba(91,140,255,.07));
+  border:1px solid rgba(139,108,255,.25);border-radius:12px;}
+.cpred b{color:#c9a9ff;font-weight:500;}
+.cempty{font-size:12.5px;color:var(--muted);line-height:1.8;text-align:center;padding:26px 8px;font-weight:300;}
+.cnote{font-size:10.5px;color:#5f6480;line-height:1.7;margin-top:15px;font-weight:300;}
+::-webkit-scrollbar{width:10px;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.2);}
+</style>
+</head>
+<body>
+<div class="stars"></div>
+
+<div class="panel">
+  <div class="brand"><span class="mark">&#10022;</span><h1>แผนที่ดาวส่วนตัว</h1></div>
+  <p class="sub">ดาวจริงตามวันเวลาและสถานที่ · พร้อมดวงชะตา</p>
+
+  <label>ข้อความหลัก</label>
+  <input id="title" placeholder="เช่น คืนที่เราพบกัน">
+  <label>ข้อความรอง</label>
+  <input id="sub" placeholder="เช่น ชื่อคุณ ♡ ชื่อเขา">
+
+  <div class="row">
+    <div><label>วันที่</label><input id="date" type="date"></div>
+    <div><label>เวลา</label><input id="time" type="time"></div>
+  </div>
+
+  <label>จังหวัด / สถานที่</label>
+  <select id="city"></select>
+  <div class="row" id="customloc" style="display:none">
+    <div><label>ละติจูด</label><input id="lat" type="number" step="0.0001" placeholder="13.7563"></div>
+    <div><label>ลองจิจูด</label><input id="lon" type="number" step="0.0001" placeholder="100.5018"></div>
+  </div>
+
+  <label>ธีมสี</label>
+  <div class="themes" id="themes"></div>
+
+  <label class="chk"><input type="checkbox" id="showcon" checked> แสดงเส้นกลุ่มดาว</label>
+  <label class="chk"><input type="checkbox" id="showhorizon" checked> วงขอบฟ้า + ทิศ</label>
+  <label class="chk"><input type="checkbox" id="showastro" checked> แสดงดวงชะตา (สายมู)</label>
+  <label class="chk"><input type="checkbox" id="sidereal" checked> ระบบนิรายนะ · โหราศาสตร์ไทย</label>
+
+  <button class="btn" id="dl">ดาวน์โหลดรูป PNG</button>
+  <button class="btn ghost" id="now">ใช้เวลาตอนนี้</button>
+
+  <p class="hint">กรอกวันเกิด เวลา และจังหวัด เพื่อดูท้องฟ้าจริงในคืนนั้น พร้อมดวงชะตา · ดาว 8,920 ดวงที่ตาเปล่าเห็น</p>
+</div>
+
+<div class="stage">
+  <div class="poster" id="poster">
+    <canvas id="cv" width="900" height="900"></canvas>
+    <div class="p-title" id="pt"></div>
+    <div class="p-sub" id="ps"></div>
+    <div class="p-meta" id="pm"></div>
+  </div>
+
+  <div class="chart" id="chart">
+    <h2>ดวงชะตา</h2>
+    <p class="csub" id="csys">โหราศาสตร์ไทย · ระบบนิรายนะ (Lahiri)</p>
+    <div id="chartbody">
+      <div class="crow">
+        <div class="cglyph">&#9737;</div>
+        <div><div class="crole">อาทิตย์ — ตัวตน/พลังชีวิต</div><div class="csign" id="a-sun">—</div><div class="cmeta" id="a-sun-m"></div><div class="ctrait" id="a-sun-t"></div></div>
+      </div>
+      <div class="crow">
+        <div class="cglyph">&#9789;</div>
+        <div><div class="crole">จันทร์ — อารมณ์/จิตใจ</div><div class="csign" id="a-moon">—</div><div class="cmeta" id="a-moon-m"></div><div class="ctrait" id="a-moon-t"></div></div>
+      </div>
+      <div class="crow">
+        <div class="cglyph">&#9650;</div>
+        <div><div class="crole">ลัคนา — ภาพลักษณ์/ชะตาชีวิต</div><div class="csign" id="a-asc">—</div><div class="cmeta" id="a-asc-m"></div><div class="ctrait" id="a-asc-t"></div></div>
+      </div>
+      <div class="cpred" id="cpred"></div>
+    </div>
+    <div class="cempty" id="cempty" style="display:none">กรอกวันเกิด เวลา และจังหวัด<br>เพื่อดูดวงชะตาของคุณ</div>
+    <p class="cnote" id="cnote"></p>
+  </div>
+</div>
+
+<script src="starcat.js"></script>
+<script>
+const STARCAT = window.STARCAT;
+const THEMES=[
+  {bg:'#0a1232',sky:'#05081c',star:'#ffffff',ac:'#9fb4ff',fg:'#ffffff'},
+  {bg:'#1a1a1a',sky:'#0d0d0d',star:'#f5e6c8',ac:'#d4af37',fg:'#f5e6c8'},
+  {bg:'#2a1530',sky:'#160a1c',star:'#f3d9ff',ac:'#c98bff',fg:'#f3d9ff'},
+  {bg:'#f4f1ea',sky:'#e7e2d4',star:'#1a1a1a',ac:'#7a6f55',fg:'#2c2c2a'}
+];
+let theme=0;
+const TH_MONTH=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const D2R=Math.PI/180, R2D=180/Math.PI;
+
+function julianDate(Y,M,D,h,m){
+  if(M<=2){Y-=1;M+=12;}
+  const A=Math.floor(Y/100), B=2-A+Math.floor(A/4);
+  return Math.floor(365.25*(Y+4716))+Math.floor(30.6001*(M+1))+D+B-1524.5+(h+m/60)/24;
+}
+function gmst(JD){
+  const T=(JD-2451545.0)/36525;
+  let g=280.46061837+360.98564736629*(JD-2451545.0)+0.000387933*T*T-T*T*T/38710000;
+  return ((g%360)+360)%360;
+}
+function altaz(raDeg,decDeg,latDeg,lstDeg){
+  const ha=((lstDeg-raDeg)%360)*D2R;
+  const dec=decDeg*D2R, lat=latDeg*D2R;
+  const sinAlt=Math.sin(dec)*Math.sin(lat)+Math.cos(dec)*Math.cos(lat)*Math.cos(ha);
+  const alt=Math.asin(Math.max(-1,Math.min(1,sinAlt)));
+  let cosAz=(Math.sin(dec)-Math.sin(alt)*Math.sin(lat))/(Math.cos(alt)*Math.cos(lat));
+  cosAz=Math.max(-1,Math.min(1,cosAz));
+  let az=Math.acos(cosAz);
+  if(Math.sin(ha)>0) az=2*Math.PI-az;
+  return {alt:alt*R2D, az:az*R2D};
+}
+function project(alt,az,R){
+  const z=(90-alt)*D2R;
+  const r=R*Math.tan(z/2);
+  const a=az*D2R;
+  return {x:-r*Math.sin(a), y:-r*Math.cos(a)};
+}
+
+// ---------- astrology (โหราศาสตร์) ----------
+const ZSIGN=['เมษ','พฤษภ','เมถุน','กรกฎ','สิงห์','กันย์','ตุลย์','พิจิก','ธนู','มกร','กุมภ์','มีน'];
+const ZELEM=['ไฟ','ดิน','ลม','น้ำ'];
+const ZRULER=['อังคาร','ศุกร์','พุธ','จันทร์','อาทิตย์','พุธ','ศุกร์','อังคาร','พฤหัสบดี','เสาร์','เสาร์','พฤหัสบดี'];
+const ZTRAIT=['ผู้นำ กล้าได้กล้าเสีย','มั่นคง อดทน','ฉลาด ช่างเจรจา','อ่อนโยน รักครอบครัว','มั่นใจ มีเสน่ห์','ละเอียด รอบคอบ','รักความยุติธรรม','ลึกซึ้ง มุ่งมั่น','รักอิสระ มองกว้าง','ทะเยอทะยาน มีวินัย','คิดต่าง มีอุดมการณ์','ช่างฝัน เห็นใจคน'];
+const ZDESC=[
+'มีไฟและความกล้า ชอบเริ่มต้นสิ่งใหม่ เป็นผู้นำโดยธรรมชาติ ใจร้อนแต่จริงใจ เหมาะกับงานที่ได้บุกเบิก',
+'หนักแน่น อดทน รักความสงบและความสวยงาม ทำอะไรช้าแต่ชัวร์ เก็บออมเก่ง ซื่อสัตย์กับคนที่ไว้ใจ',
+'หัวไว ช่างพูดช่างคุย ปรับตัวเก่ง สนใจหลายเรื่อง เข้ากับคนง่าย เหมาะกับงานสื่อสารและความคิดสร้างสรรค์',
+'จิตใจอ่อนโยน ผูกพันครอบครัวและบ้าน ดูแลเอาใจใส่คนรอบข้าง อ่อนไหวแต่มีสัญชาตญาณแม่นยำ',
+'มีความมั่นใจและบารมี ใจกว้าง โอบอ้อมอารี ชอบช่วยเหลือและเป็นที่พึ่ง มีเสน่ห์ดึงดูดคน',
+'ละเอียดรอบคอบ ขยันและมีระเบียบ ใส่ใจรายละเอียด ชอบช่วยเหลือผู้อื่นอย่างเงียบๆ เชื่อถือได้',
+'รักความยุติธรรมและความสมดุล มีรสนิยม เข้าสังคมเก่ง รักสงบ มองหาความกลมกลืนในทุกความสัมพันธ์',
+'จิตใจเข้มข้นและลึกซึ้ง มุ่งมั่นสูง รักจริงเกลียดจริง มีพลังภายในและสัญชาตญาณที่เฉียบคม',
+'รักอิสระ มองโลกกว้าง ชอบเรียนรู้และผจญภัย มองโลกในแง่ดี ตรงไปตรงมา ใฝ่หาความหมายของชีวิต',
+'ทะเยอทะยานและอดทน มีวินัยและความรับผิดชอบสูง ตั้งเป้าหมายชัดเจน ค่อยๆ ไต่สู่ความสำเร็จที่ยั่งยืน',
+'คิดต่างและมีอุดมการณ์ รักอิสระทางความคิด มองการณ์ไกล ใส่ใจส่วนรวม มีความเป็นมิตรแต่ไม่ตามใคร',
+'ช่างฝันและมีจินตนาการ อ่อนโยน เห็นอกเห็นใจผู้อื่น มีพรสวรรค์ด้านศิลปะและสัญชาตญาณทางจิตวิญญาณ'];
+function norm360(x){return ((x%360)+360)%360;}
+function sunLon(JD){const n=JD-2451545.0;const L=norm360(280.460+0.9856474*n);const g=norm360(357.528+0.9856003*n)*D2R;return norm360(L+1.915*Math.sin(g)+0.020*Math.sin(2*g));}
+function ayanamsa(JD){return 23.853+(JD-2451545.0)/365.25*0.013969;}
+function moonLon(JD){
+  const d=JD-2451543.5;
+  const N=norm360(125.1228-0.0529538083*d), i=5.1454;
+  const w=norm360(318.0634+0.1643573223*d), e=0.054900;
+  const M=norm360(115.3654+13.0649929509*d)*D2R;
+  const E=M+e*Math.sin(M)*(1+e*Math.cos(M));
+  const x=Math.cos(E)-e, y=Math.sqrt(1-e*e)*Math.sin(E);
+  const v=Math.atan2(y,x)*R2D, r=Math.sqrt(x*x+y*y);
+  const Nr=N*D2R, vw=(v+w)*D2R, ir=i*D2R;
+  const xe=r*(Math.cos(Nr)*Math.cos(vw)-Math.sin(Nr)*Math.sin(vw)*Math.cos(ir));
+  const ye=r*(Math.sin(Nr)*Math.cos(vw)+Math.cos(Nr)*Math.sin(vw)*Math.cos(ir));
+  let lon=norm360(Math.atan2(ye,xe)*R2D);
+  const Ms=norm360(356.0470+0.9856002585*d)*D2R;
+  const Lm=norm360(N+w+v), Ls=norm360(282.9404+4.70935e-5*d+356.0470+0.9856002585*d);
+  const Dm=(Lm-Ls)*D2R, Mm=M;
+  lon+= -1.274*Math.sin(Mm-2*Dm)+0.658*Math.sin(2*Dm)-0.186*Math.sin(Ms)
+        -0.059*Math.sin(2*Mm-2*Dm)-0.057*Math.sin(Mm-2*Dm+Ms)
+        +0.053*Math.sin(Mm+2*Dm)+0.046*Math.sin(2*Dm-Ms)
+        +0.041*Math.sin(Mm-Ms)-0.035*Math.sin(Dm)-0.031*Math.sin(Mm+Ms);
+  return norm360(lon);
+}
+function ascendant(JD,latDeg,lonDeg){
+  const ramc=norm360(gmst(JD)+lonDeg)*D2R, eps=23.4393*D2R, phi=latDeg*D2R;
+  const y=Math.cos(ramc), x=-(Math.sin(ramc)*Math.cos(eps)+Math.tan(phi)*Math.sin(eps));
+  return norm360(Math.atan2(y,x)*R2D);
+}
+function signInfo(lon){
+  const idx=Math.floor(norm360(lon)/30);
+  return {idx, name:ZSIGN[idx], deg:(norm360(lon)%30).toFixed(1), elem:ZELEM[idx%4], ruler:ZRULER[idx], trait:ZTRAIT[idx]};
+}
+
+function isComplete(){
+  const c=document.getElementById('city').value;
+  if(!document.getElementById('date').value||!document.getElementById('time').value) return false;
+  if(c==='') return false;
+  if(c==='custom' && (!document.getElementById('lat').value||!document.getElementById('lon').value)) return false;
+  return true;
+}
+function parseWhen(){
+  const dv=document.getElementById('date').value, tv=document.getElementById('time').value;
+  if(dv&&tv){const d=dv.split('-').map(Number),t=tv.split(':').map(Number);return {Y:d[0],M:d[1],D:d[2],h:t[0],m:t[1]};}
+  const n=new Date();return {Y:n.getFullYear(),M:n.getMonth()+1,D:n.getDate(),h:n.getHours(),m:n.getMinutes()};
+}
+function getLoc(){
+  const v=document.getElementById('city').value;
+  if(v===''||v==='custom'){
+    const la=parseFloat(document.getElementById('lat').value), lo=parseFloat(document.getElementById('lon').value);
+    if(!isNaN(la)&&!isNaN(lo)) return {lat:la,lon:lo,tz:7};
+    return {lat:13.7563,lon:100.5018,tz:7};
+  }
+  const p=v.split(','); return {lat:+p[0],lon:+p[1],tz:+p[2]};
+}
+
+function renderAstro(){
+  const card=document.getElementById('chart');
+  if(!document.getElementById('showastro').checked){card.style.display='none';return;}
+  card.style.display='block';
+  const body=document.getElementById('chartbody'), empty=document.getElementById('cempty'), note=document.getElementById('cnote');
+  if(!isComplete()){body.style.display='none';empty.style.display='block';note.textContent='';
+    document.getElementById('csys').textContent='พร้อมคำนวณเมื่อกรอกข้อมูลครบ';return;}
+  body.style.display='block';empty.style.display='none';
+  const w=parseWhen(), loc=getLoc();
+  const JD=julianDate(w.Y,w.M,w.D,w.h-loc.tz,w.m);
+  const sid=document.getElementById('sidereal').checked;
+  const off=sid?ayanamsa(JD):0;
+  document.getElementById('csys').textContent=sid?'โหราศาสตร์ไทย · ระบบนิรายนะ (Lahiri)':'ระบบสากล · สายนะ (tropical)';
+  const sun=signInfo(sunLon(JD)-off), moon=signInfo(moonLon(JD)-off), asc=signInfo(ascendant(JD,loc.lat,loc.lon)-off);
+  function fill(p,info){
+    document.getElementById('a-'+p).textContent='ราศี'+info.name+'  '+info.deg+'°';
+    document.getElementById('a-'+p+'-m').textContent='ธาตุ'+info.elem+' · ดาวเจ้าเรือน '+info.ruler;
+    document.getElementById('a-'+p+'-t').textContent=info.trait;
+  }
+  fill('sun',sun);fill('moon',moon);fill('asc',asc);
+  document.getElementById('cpred').innerHTML='<b>คำทำนายลัคนาราศี'+asc.name+'</b><br>'+ZDESC[asc.idx];
+  note.textContent=sid
+    ?'คำนวณจากตำแหน่งจริงของดวงอาทิตย์ ดวงจันทร์ และจุดขึ้นทางทิศตะวันออก ณ เวลาเกิด หักด้วยอายนางศะ '+ayanamsa(JD).toFixed(2)+'° ตามหลักโหราศาสตร์ไทย/เวท · ลัคนาแม่นเมื่อเวลาเกิดถูกต้อง'
+    :'คำนวณจากตำแหน่งดวงอาทิตย์ ดวงจันทร์ และลัคนา แบบจักรราศีสายนะ (โหราศาสตร์ตะวันตก)';
+}
+
+function draw(){
+  const t=THEMES[theme];
+  const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+  const W=cv.width, cx=W/2, cy=W/2, R=W/2-6;
+  ctx.clearRect(0,0,W,W);
+  ctx.save();
+  ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.clip();
+  ctx.fillStyle=t.sky;ctx.fillRect(0,0,W,W);
+
+  const w=parseWhen(), loc=getLoc();
+  const JD=julianDate(w.Y,w.M,w.D,w.h-loc.tz,w.m);
+  const lst=(gmst(JD)+loc.lon+360)%360;
+
+  if(document.getElementById('showcon').checked){
+    ctx.strokeStyle=t.ac;ctx.lineWidth=1.1;ctx.globalAlpha=.45;
+    for(const poly of STARCAT.lines){
+      let prev=null;
+      for(const pt of poly){
+        const aa=altaz(pt[0],pt[1],loc.lat,lst);
+        if(aa.alt>0){
+          const p=project(aa.alt,aa.az,R);const X=cx+p.x,Y=cy+p.y;
+          if(prev){ctx.beginPath();ctx.moveTo(prev.X,prev.Y);ctx.lineTo(X,Y);ctx.stroke();}
+          prev={X,Y};
+        } else prev=null;
+      }
+    }
+    ctx.globalAlpha=1;
+  }
+  for(const s of STARCAT.stars){
+    const aa=altaz(s[0],s[1],loc.lat,lst);
+    if(aa.alt<=0) continue;
+    const p=project(aa.alt,aa.az,R);
+    const rad=Math.max(.4,(6.9-s[2])*0.42);
+    ctx.globalAlpha=Math.min(1,.35+(6.5-s[2])*0.12);
+    ctx.fillStyle=t.star;
+    ctx.beginPath();ctx.arc(cx+p.x,cy+p.y,rad,0,7);ctx.fill();
+  }
+  ctx.globalAlpha=1;ctx.restore();
+
+  if(document.getElementById('showhorizon').checked){
+    ctx.strokeStyle=t.ac;ctx.lineWidth=3;ctx.globalAlpha=.7;
+    ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.stroke();ctx.globalAlpha=1;
+    ctx.fillStyle=t.ac;ctx.font='600 26px Prompt, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    const card=[['N',0],['E',90],['S',180],['W',270]];
+    for(const c of card){const a=c[1]*D2R, rr=R-22;ctx.fillText(c[0], cx-rr*Math.sin(a), cy-rr*Math.cos(a));}
+  } else {
+    ctx.strokeStyle=t.ac;ctx.lineWidth=2;ctx.globalAlpha=.6;
+    ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.stroke();ctx.globalAlpha=1;
+  }
+  syncText();
+}
+
+function syncText(){
+  const t=THEMES[theme];
+  document.getElementById('poster').style.background=t.bg;
+  const pt=document.getElementById('pt'),ps=document.getElementById('ps'),pm=document.getElementById('pm');
+  const tv=document.getElementById('title').value, sv=document.getElementById('sub').value;
+  pt.textContent=tv||'พาดหัวของคุณ';pt.style.color=t.fg;pt.style.opacity=tv?1:.35;
+  ps.textContent=sv||'ข้อความรอง';ps.style.color=t.ac;ps.style.opacity=sv?1:.35;
+  if(isComplete()){
+    const d=document.getElementById('date').value.split('-'), loc=getLoc();
+    const cityName=document.getElementById('city').selectedOptions[0].text;
+    pm.innerHTML=(document.getElementById('city').value==='custom'?'พิกัดที่กำหนด':cityName)+' · '+document.getElementById('time').value+'<br>'+
+      (+d[2])+' '+TH_MONTH[+d[1]-1]+' '+d[0]+' &nbsp;·&nbsp; '+loc.lat.toFixed(2)+'°N '+loc.lon.toFixed(2)+'°E';
+    pm.style.opacity=.8;
+  } else {
+    pm.innerHTML='เลือกวัน เวลา และจังหวัด';pm.style.opacity=.45;
+  }
+  pm.style.color=t.fg;
+  renderAstro();
+}
+
+(function buildCities(){
+  const sel=document.getElementById('city');
+  const ph=document.createElement('option');ph.value='';ph.textContent='เลือกจังหวัด…';ph.selected=true;sel.appendChild(ph);
+  (window.PROVINCES||[]).forEach(reg=>{
+    const og=document.createElement('optgroup');og.label=reg[0];
+    reg[1].forEach(p=>{
+      const o=document.createElement('option');o.value=p[1]+','+p[2]+',7';o.textContent=p[0];og.appendChild(o);
+    });
+    sel.appendChild(og);
+  });
+  const oc=document.createElement('option');oc.value='custom';oc.textContent='กำหนดเอง…';sel.appendChild(oc);
+})();
+
+const tw=document.getElementById('themes');
+THEMES.forEach((t,i)=>{
+  const b=document.createElement('button');
+  b.style.background=t.bg;if(i===0)b.className='on';
+  b.onclick=()=>{theme=i;[...tw.children].forEach(c=>c.className='');b.className='on';draw();};
+  tw.appendChild(b);
+});
+document.getElementById('city').onchange=e=>{
+  document.getElementById('customloc').style.display=e.target.value==='custom'?'flex':'none';draw();
+};
+['title','sub','date','time','lat','lon'].forEach(id=>document.getElementById(id).addEventListener('input',draw));
+['showcon','showhorizon','showastro','sidereal'].forEach(id=>document.getElementById(id).addEventListener('change',draw));
+document.getElementById('now').onclick=()=>{
+  const n=new Date();
+  document.getElementById('date').value=n.toISOString().slice(0,10);
+  document.getElementById('time').value=n.toTimeString().slice(0,5);draw();
+};
+document.getElementById('dl').onclick=()=>{
+  const a=document.createElement('a');a.download='starmap.png';a.href=document.getElementById('cv').toDataURL('image/png');a.click();
+};
+draw();
+</script>
+</body>
+</html>

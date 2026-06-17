@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ความเป็นส่วนตัว &amp; แนวปฏิบัติ · ห้วงดาว</title>
+<meta name="description" content="นโยบายความเป็นส่วนตัว แนวปฏิบัติเนื้อหา และข้อจำกัดความรับผิดของห้วงดาว">
+<meta name="theme-color" content="#04060d">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#04060d;--ink:#eef2fb;--muted:#7e8aa6;--faint:#4a5470;--gold:#f3c97a;--line:rgba(255,255,255,.07);
+    --eng:"Space Grotesk","Noto Sans Thai",sans-serif;--th:"Noto Sans Thai","Space Grotesk",sans-serif;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--th);-webkit-font-smoothing:antialiased;line-height:1.85}
+  a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+  .wrap{max-width:780px;margin:0 auto;padding:70px 24px 90px}
+  .back{font-family:var(--eng);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+  .back:hover{color:var(--gold);text-decoration:none}
+  h1{font-family:var(--th);font-weight:300;font-size:clamp(30px,5vw,46px);margin:24px 0 4px}
+  .upd{font-family:var(--eng);font-size:10px;letter-spacing:.12em;color:var(--faint);margin-bottom:8px}
+  .lead{color:rgba(238,242,251,.6);font-size:15px}
+  h2{font-family:var(--eng);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);
+    margin:46px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line);scroll-margin-top:24px}
+  p{font-size:14.5px;color:rgba(238,242,251,.78);margin:12px 0}
+  ul{margin:10px 0 10px 4px;list-style:none}
+  li{font-size:14px;color:rgba(238,242,251,.72);padding:5px 0 5px 20px;position:relative}
+  li::before{content:'·';position:absolute;left:4px;color:var(--gold)}
+  .box{background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:16px 0;
+    font-size:13.5px;color:rgba(238,242,251,.62)}
+  b{color:var(--ink);font-weight:500}
+  footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);font-size:13px;color:var(--faint)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← ห้วงดาว</a>
+  <h1>ความเป็นส่วนตัว &amp; แนวปฏิบัติ</h1>
+  <div class="upd">ปรับปรุงล่าสุด · มิถุนายน 2569</div>
+  <p class="lead">ห้วงดาวให้ความสำคัญกับความเป็นส่วนตัวของคุณ หน้านี้อธิบายว่าเราเก็บอะไร เก็บที่ไหน และคุณควบคุมมันได้อย่างไร ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA)</p>
+
+  <h2>ข้อมูลที่เราเก็บ</h2>
+  <p>ปัจจุบันห้วงดาว<b>ไม่มีเซิร์ฟเวอร์เก็บข้อมูล (no backend)</b> — ข้อมูลทุกอย่างที่เกิดจากการใช้งานถูกเก็บไว้ใน <b>localStorage บนเครื่องและเบราว์เซอร์ของคุณเองเท่านั้น</b> ไม่ถูกส่งออกไปที่ใด ได้แก่:</p>
+  <ul>
+    <li>ข้อความที่คุณเขียน (Golden Record, คำฝาก, เสียงสะท้อน/Resonance)</li>
+    <li>รหัสประจำตัวสุ่ม (Signal ID) ที่สร้างขึ้นในเครื่องคุณ — ไม่ผูกกับตัวตนจริง</li>
+    <li>การตั้งค่า เช่น เสียง โหมด และสถานะที่เคยดูแล้ว</li>
+    <li>อีเมล (เฉพาะกรณีคุณกรอกในช่องเชื่อมต่อ) — เก็บในเครื่องคุณ <b>ยังไม่มีการส่งออกหรือส่งอีเมลจริง</b></li>
+  </ul>
+
+  <h2>สิ่งที่เราไม่ทำ</h2>
+  <ul>
+    <li>ไม่ใช้คุกกี้เพื่อการติดตาม (tracking cookies)</li>
+    <li>ไม่มีเครื่องมือวิเคราะห์ของบุคคลที่สาม (third-party analytics)</li>
+    <li>ไม่ขาย ไม่แลกเปลี่ยน ไม่ส่งต่อข้อมูลของคุณ</li>
+  </ul>
+  <div class="box">หมายเหตุทางเทคนิค: ห้วงดาวโหลดแบบอักษร ไลบรารี และภาพบางส่วนจากผู้ให้บริการภายนอก (Google Fonts, jsDelivr CDN, Wikimedia) ซึ่งอาจเห็นเลข IP ของคุณตามปกติของการเรียกไฟล์บนอินเทอร์เน็ต ดูรายการได้ที่หน้า <a href="credits.html">อ้างอิง &amp; เครดิต</a></div>
+
+  <h2>คุณควบคุมข้อมูลของคุณ</h2>
+  <p>เพราะข้อมูลอยู่บนเครื่องคุณ คุณจึงมีสิทธิ์เต็มในการเข้าถึง แก้ไข และลบได้ด้วยตัวเองทุกเมื่อ — เพียงล้างข้อมูลเว็บไซต์ (Clear site data / ล้างข้อมูลการเรียกดู) ในเบราว์เซอร์ ข้อมูลทั้งหมดจะหายไปทันที</p>
+  <p>หากในอนาคตเราเพิ่มระบบเก็บข้อมูลบนเซิร์ฟเวอร์ (เพื่อให้ข้อความเดินทางข้ามเครื่องถึงผู้อื่นได้) เราจะแจ้งและขอความยินยอมก่อนเสมอ</p>
+
+  <h2 id="content">แนวปฏิบัติเนื้อหาที่คุณเขียน</h2>
+  <p>พื้นที่ในห้วงดาวออกแบบให้คุณฝากความรู้สึก ปัจจุบันข้อความเก็บในเครื่องคุณ เมื่อมีระบบแชร์ข้ามผู้ใช้ในอนาคต ข้อความบางส่วนอาจถูกสุ่มแสดงให้ผู้อื่นเห็น <b>แบบไม่ระบุตัวตน</b> ดังนั้นโปรด:</p>
+  <ul>
+    <li>ไม่เขียนข้อมูลส่วนตัวที่ระบุตัวคุณหรือผู้อื่น (ชื่อจริง เบอร์ ที่อยู่ ฯลฯ)</li>
+    <li>ไม่เขียนเนื้อหาผิดกฎหมาย ความรุนแรง เกลียดชัง คุกคาม ลามกอนาจาร หรือสแปม</li>
+    <li>เคารพผู้อื่น — ที่นี่เป็นที่พักใจ ไม่ใช่ที่ทำร้ายกัน</li>
+  </ul>
+  <p>เรามีปุ่มรายงาน (report) และขอสงวนสิทธิ์ในการซ่อนหรือลบเนื้อหาที่ละเมิดแนวปฏิบัติ หากพบเนื้อหาไม่เหมาะสม แจ้งได้ที่ <a href="mailto:cloundstory@gmail.com">cloundstory@gmail.com</a></p>
+
+  <h2>เนื้อหาเชิงโหราศาสตร์</h2>
+  <p>ตำแหน่งดาวและราศีในห้วงดาวคำนวณจากข้อมูลดาราศาสตร์จริง แต่การตีความเชิงโหราศาสตร์ ราศี หรือคำทำนาย จัดทำขึ้น<b>เพื่อความบันเทิงและการใคร่ครวญเท่านั้น</b> ไม่ใช่คำแนะนำทางการแพทย์ การเงิน กฎหมาย หรือการตัดสินใจสำคัญในชีวิต</p>
+
+  <h2>ข้อจำกัดความรับผิด</h2>
+  <p>ห้วงดาวให้บริการ "ตามสภาพที่เป็น" (as is) โดยไม่มีการรับประกัน เราพยายามให้ข้อมูลถูกต้องที่สุด แต่ไม่รับผิดต่อความเสียหายที่เกิดจากการใช้งาน</p>
+
+  <h2>ติดต่อ</h2>
+  <p>ข้อสงสัยเรื่องความเป็นส่วนตัว การใช้สิทธิ์ตาม PDPA หรือเรื่องเนื้อหา ติดต่อ: <a href="mailto:cloundstory@gmail.com">cloundstory@gmail.com</a></p>
+
+  <footer>
+    ห้วงดาว · Between Stars · เรียบเรียงโดย Golf · เขียนโค้ดโดย Claude Code<br>
+    <a href="index.html">หน้าแรก</a> · <a href="credits.html">อ้างอิง &amp; เครดิต</a>
+  </footer>
+</div>
+</body>
+</html>

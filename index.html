@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ห้วงดาว · Between Stars</title>
+<meta name="description" content="ห้วงดาว — พาคุณออกไปสัมผัสอวกาศ: ระบบสุริยะที่อิงตำแหน่งดาวจริง เรื่องราวการเดินทางของมนุษย์ และพื้นที่ให้หัวใจทุกดวงได้พัก">
+<link rel="canonical" href="https://between-stars.pages.dev/">
+<!-- Open Graph / Twitter — อัปเดต URL หลัง deploy จริงบน Cloudflare Pages -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ห้วงดาว · Between Stars">
+<meta property="og:title" content="ห้วงดาว · Between Stars">
+<meta property="og:description" content="ให้หัวใจทุกดวงได้มีที่พัก — ไม่ว่ายังไง เอกภพก็จะโอบกอดคุณเสมอ">
+<meta property="og:url" content="https://between-stars.pages.dev/">
+<meta property="og:image" content="https://between-stars.pages.dev/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="th_TH">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ห้วงดาว · Between Stars">
+<meta name="twitter:description" content="ให้หัวใจทุกดวงได้มีที่พัก — ไม่ว่ายังไง เอกภพก็จะโอบกอดคุณเสมอ">
+<meta name="twitter:image" content="https://between-stars.pages.dev/og-image.png">
+<meta name="theme-color" content="#04060d">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#04060d; --ink:#eef2fb; --muted:#7e8aa6; --faint:#4a5470;
+    --gold:#f3c97a; --gold-dim:rgba(243,201,122,.13); --line:rgba(255,255,255,.07);
+    --panel:rgba(8,11,20,.72);
+    --eng:"Space Grotesk","Noto Sans Thai",sans-serif;
+    --th:"Noto Sans Thai","Space Grotesk",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{min-height:100vh;background:var(--bg);color:var(--ink);font-family:var(--th);
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;position:relative}
+  a{color:inherit;text-decoration:none}
+  #stars{position:fixed;inset:0;z-index:0;pointer-events:none}
+  .wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 24px}
+  /* hero */
+  .hero{min-height:90vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px 40px}
+  .hero .over{font-family:var(--eng);font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--faint);margin-bottom:22px}
+  .hero h1{font-family:var(--th);font-weight:300;font-size:clamp(46px,9vw,104px);line-height:.98;letter-spacing:.02em}
+  .hero .en{font-family:var(--eng);font-weight:300;letter-spacing:.46em;text-transform:uppercase;
+    font-size:clamp(11px,1.5vw,15px);color:var(--muted);margin-top:24px;padding-left:.46em}
+  .hero .tag{font-family:var(--th);font-size:clamp(14px,2vw,17px);color:rgba(238,242,251,.62);
+    line-height:1.9;margin-top:34px;max-width:540px}
+  .scroll-cue{margin-top:54px;font-family:var(--eng);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--faint);
+    animation:bob 2.4s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(6px);opacity:1}}
+  /* cards */
+  .section-label{font-family:var(--eng);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);
+    text-align:center;margin:30px 0 26px}
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;padding-bottom:30px;max-width:740px;margin:0 auto}
+  .card{position:relative;display:flex;flex-direction:column;min-height:280px;padding:26px 24px;border-radius:16px;
+    background:var(--panel);border:1px solid var(--line);overflow:hidden;transition:.32s cubic-bezier(.22,.68,0,1.1);cursor:pointer}
+  .card:hover{transform:translateY(-6px);border-color:rgba(243,201,122,.35)}
+  .card .glyph{font-size:30px;line-height:1;margin-bottom:auto;color:rgba(243,201,122,.9)}
+  .card h3{font-family:var(--th);font-weight:500;font-size:21px;margin-top:18px}
+  .card .ce{font-family:var(--eng);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+  .card p{font-family:var(--th);font-size:13px;color:rgba(238,242,251,.5);line-height:1.75;margin-top:12px}
+  .card .go{font-family:var(--eng);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-top:16px;opacity:.8}
+  .card .halo{position:absolute;right:-40px;top:-40px;width:140px;height:140px;border-radius:50%;
+    background:radial-gradient(circle,rgba(243,201,122,.12),transparent 70%);pointer-events:none}
+  .card.soon{cursor:default;border-style:dashed;border-color:rgba(255,255,255,.11);opacity:.6}
+  .card.soon:hover{transform:none;border-color:rgba(255,255,255,.16)}
+  .card.soon .glyph{color:rgba(255,255,255,.3)}
+  .card.soon .go{color:var(--muted)}
+  .soon-badge{position:absolute;top:18px;right:18px;font-family:var(--eng);font-size:8px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--gold);border:1px solid rgba(243,201,122,.32);border-radius:12px;padding:4px 11px}
+  /* about */
+  .about{max-width:660px;margin:70px auto;text-align:center}
+  .about .q{font-family:var(--th);font-size:clamp(17px,2.6vw,22px);font-weight:300;line-height:1.9;color:rgba(238,242,251,.82)}
+  .about .sub{font-family:var(--th);font-size:14px;color:rgba(238,242,251,.5);line-height:1.9;margin-top:24px}
+  .about .more{margin-top:26px;display:inline-block;font-family:var(--eng);font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--gold);border:1px solid rgba(243,201,122,.3);border-radius:18px;padding:9px 20px;cursor:pointer;transition:.2s}
+  .about .more:hover{background:var(--gold-dim);border-color:var(--gold)}
+  /* footer */
+  footer{border-top:1px solid var(--line);margin-top:40px;padding:34px 24px 50px;text-align:center}
+  .flinks{display:flex;flex-wrap:wrap;gap:8px 22px;justify-content:center;font-family:var(--th);font-size:13px}
+  .flinks a{color:rgba(238,242,251,.55);transition:.2s}
+  .flinks a:hover{color:var(--gold)}
+  .fcredit{font-family:var(--eng);font-size:10px;letter-spacing:.1em;color:var(--faint);margin-top:20px;line-height:1.8}
+  /* about modal */
+  #aboutModal{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);
+    display:none;align-items:center;justify-content:center;padding:24px}
+  #aboutModal.on{display:flex}
+  .am-card{position:relative;width:100%;max-width:480px;max-height:86vh;overflow-y:auto;background:rgba(10,12,22,.98);
+    border:1px solid rgba(243,201,122,.16);border-radius:18px;padding:34px 30px}
+  .am-x{position:absolute;top:14px;right:16px;background:none;border:none;color:rgba(255,255,255,.3);font-size:22px;cursor:pointer}
+  .am-x:hover{color:#fff}
+  .am-pre{font-family:var(--eng);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(243,201,122,.5)}
+  .am-title{font-family:var(--th);font-size:26px;font-weight:300;margin:8px 0 18px}
+  .am-card p{font-family:var(--th);font-size:14px;line-height:1.95;color:rgba(238,242,251,.7);margin-bottom:14px}
+  .am-card .em{color:var(--gold)}
+  .am-meta{border-top:1px solid var(--line);margin-top:18px;padding-top:16px;font-family:var(--th);font-size:13px;
+    color:rgba(238,242,251,.55);line-height:1.9}
+  .am-meta a{color:var(--gold)}
+  #betaBadge{position:fixed;top:18px;right:18px;z-index:5;font-family:var(--eng);font-size:9px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--gold);background:rgba(243,201,122,.08);border:1px solid rgba(243,201,122,.28);
+    border-radius:14px;padding:6px 13px;backdrop-filter:blur(6px)}
+  #betaBadge b{font-weight:600}
+  @media(max-width:720px){.cards{grid-template-columns:1fr}.card{min-height:0}}
+  @media(max-width:520px){#betaBadge{top:12px;right:12px;font-size:8px;padding:5px 10px}}
+</style>
+</head>
+<body>
+<div id="betaBadge"><b>BETA</b> · เวอร์ชันทดลอง</div>
+<canvas id="stars"></canvas>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="over">An interactive journey · การเดินทางเชิงโต้ตอบ</div>
+    <h1>ห้วงดาว</h1>
+    <div class="en">Between Stars</div>
+    <p class="tag">ให้หัวใจทุกดวงได้มีที่พัก<br>ไม่ว่าคืนนี้คุณจะเป็นอย่างไร เอกภพก็จะโอบกอดคุณไว้เสมอ</p>
+    <div class="scroll-cue">เลื่อนลงเพื่อเริ่ม ↓</div>
+  </header>
+
+  <div class="section-label">เลือกการเดินทาง</div>
+  <main class="cards">
+    <a class="card" href="solar-system.html">
+      <div class="halo"></div>
+      <div class="glyph">☉</div>
+      <h3>ระบบสุริยะ</h3>
+      <div class="ce">The Solar System</div>
+      <p>ดาวเคราะห์เคลื่อนตามตำแหน่งจริงของวันนี้ · ค้นหาสุริยุปราคา · ตามรอยยานวอยเอเจอร์สู่ห้วงดาว</p>
+      <div class="go">เข้าสู่ระบบสุริยะ →</div>
+    </a>
+    <div class="card soon" aria-disabled="true">
+      <div class="soon-badge">เร็วๆ นี้</div>
+      <div class="glyph">✦</div>
+      <h3>ความรู้อวกาศ</h3>
+      <div class="ce">Coming soon</div>
+      <p>เรื่องราวและความรู้เกี่ยวกับอวกาศ กำลังเตรียมข้อมูลให้ดีที่สุด · อีกไม่นานเกินรอ</p>
+      <div class="go">กำลังจัดเตรียม…</div>
+    </div>
+  </main>
+
+  <section class="about" id="about">
+    <div class="q">"เราตัวเล็กนิดเดียว<br>แต่เราคือสิ่งเดียวที่รู้ว่าตัวเองตัวเล็ก"</div>
+    <p class="sub">ห้วงดาวสร้างขึ้นเพื่อให้คุณได้เงยหน้ามองดาว แล้วรู้สึกว่าตัวเองเป็นส่วนหนึ่งของบางสิ่งที่ใหญ่กว่า — และมีพื้นที่ให้คุณฝากความรู้สึกไว้กับห้วงอวกาศ เผื่อสักวันมันจะลอยไปถึงใครสักคน</p>
+    <span class="more" onclick="document.getElementById('aboutModal').classList.add('on')">เกี่ยวกับเรา</span>
+  </section>
+
+  <footer>
+    <nav class="flinks">
+      <a onclick="document.getElementById('aboutModal').classList.add('on')" style="cursor:pointer">เกี่ยวกับ</a>
+      <a href="credits.html">อ้างอิง &amp; เครดิต</a>
+      <a href="privacy.html">ความเป็นส่วนตัว</a>
+      <a href="privacy.html#content">แนวปฏิบัติเนื้อหา</a>
+      <a href="mailto:cloundstory@gmail.com">ติดต่อ</a>
+    </nav>
+    <div class="fcredit">ห้วงดาว · Between Stars · 2026<br>เรียบเรียงโดย Golf · เขียนโค้ดโดย Claude Code</div>
+  </footer>
+</div>
+
+<!-- About modal -->
+<div id="aboutModal">
+  <div class="am-card">
+    <button class="am-x" onclick="document.getElementById('aboutModal').classList.remove('on')">×</button>
+    <div class="am-pre">เกี่ยวกับ</div>
+    <div class="am-title">ห้วงดาว · Between Stars</div>
+    <p>ห้วงดาวสร้างขึ้นเพื่อให้หัวใจทุกดวงได้มีที่พัก</p>
+    <p>ไม่ว่าคืนนี้คุณจะเป็นอย่างไร — เหนื่อย เศร้า หรือเพียงอยากเงียบ ๆ เอกภพก็จะโอบกอดคุณไว้เสมอ</p>
+    <p>ที่นี่มี<span class="em">ระบบสุริยะ</span>ที่เคลื่อนตามตำแหน่งดาวจริง · เรื่องราว<span class="em">70 ปี</span>ที่มนุษย์เอื้อมไปหาดวงดาว · และพื้นที่ให้คุณ<span class="em">ฝากความรู้สึก</span>ไว้กับห้วงอวกาศ</p>
+    <div class="am-meta">
+      เรียบเรียงโดย <b>Golf</b><br>
+      เขียนโค้ดโดย <b>Claude Code</b><br>
+      ติดต่อ · ข้อเสนอแนะ: <a href="mailto:cloundstory@gmail.com">cloundstory@gmail.com</a><br>
+      <a href="credits.html">แหล่งข้อมูล &amp; เครดิต</a> · <a href="privacy.html">ความเป็นส่วนตัว</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// starfield เบาๆ
+(function(){
+  var c=document.getElementById('stars'),x=c.getContext('2d'),st=[],W,H;
+  function rs(){W=c.width=innerWidth;H=c.height=innerHeight;st=[];var n=Math.round(W*H/9000);
+    for(var i=0;i<n;i++)st.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.3+.2,a:Math.random()*.6+.15,p:Math.random()*6.28});}
+  rs();addEventListener('resize',rs);
+  var t=0;
+  (function loop(){t+=.016;x.clearRect(0,0,W,H);
+    for(var i=0;i<st.length;i++){var s=st[i],tw=s.a*(.65+.35*Math.sin(t*1.4+s.p));
+      x.beginPath();x.arc(s.x,s.y,s.r,0,6.2832);x.fillStyle='rgba(220,228,255,'+tw+')';x.fill();}
+    requestAnimationFrame(loop);})();
+})();
+// ปิด modal ด้วย ESC / คลิกพื้นหลัง
+addEventListener('keydown',function(e){if(e.key==='Escape')document.getElementById('aboutModal').classList.remove('on');});
+document.getElementById('aboutModal').addEventListener('click',function(e){if(e.target.id==='aboutModal')this.classList.remove('on');});
+</script>
+<script src="warp.js"></script>
+</body>
+</html>
