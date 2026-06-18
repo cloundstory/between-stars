@@ -934,7 +934,7 @@ import * as Astronomy from 'https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19
 const D2R=Math.PI/180;
 const TEX='https://cdn.jsdelivr.net/gh/jeromeetienne/threex.planets@master/images/';
 const dracoLoader=new DRACOLoader();
-dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/');
+dracoLoader.setDecoderPath('/draco/');
 const gltfLoader=new GLTFLoader();
 gltfLoader.setDRACOLoader(dracoLoader);
 // normalize GLB ให้พอดีขนาด targetSize แล้ว center ที่ origin
