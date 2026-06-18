@@ -1644,6 +1644,10 @@ function addCardText(ctx,CW,CH){
   const cx=CW/2;
   ctx.setTransform(1,0,0,1,0,0);
   ctx.direction='ltr';
+  ctx.textAlign='left';
+  // bypass textAlign='center' browser quirks — manually center via measureText
+  const _ct=(t,y)=>{ctx.fillText(t,Math.round(cx-ctx.measureText(t).width*.5),y);};
+
   const grad=ctx.createLinearGradient(0,CH*0.76,0,CH);
   grad.addColorStop(0,'rgba(3,5,8,0)');
   grad.addColorStop(0.22,'rgba(3,5,8,0.92)');
@@ -1662,20 +1666,18 @@ function addCardText(ctx,CW,CH){
   ctx.font='500 11px "Space Grotesk",sans-serif';
   ctx.letterSpacing='0.28em';
   ctx.fillStyle='rgba(243,201,122,0.5)';
-  ctx.textAlign='center';
-  ctx.fillText('PROJECT CHRONOS LENS',cx,sepY+26);
+  _ct('PROJECT CHRONOS LENS',sepY+26);
   ctx.restore();
   ctx.letterSpacing='0px';
 
   ctx.save();
   ctx.shadowColor='rgba(0,0,0,0.9)';ctx.shadowBlur=20;
-  ctx.textAlign='center';
   ctx.font='300 48px "Noto Sans Thai",sans-serif';
   ctx.fillStyle='#ffffff';
-  ctx.fillText('ระบบสุริยะ',cx,CH*0.822);
+  _ct('ระบบสุริยะ',CH*0.822);
   ctx.font='300 30px "Noto Sans Thai",sans-serif';
   ctx.fillStyle='rgba(255,255,255,0.68)';
-  ctx.fillText('ณ วันสำคัญของฉัน',cx,CH*0.822+46);
+  _ct('ณ วันสำคัญของฉัน',CH*0.822+46);
   ctx.restore();
 
   if(webbBirthday){
@@ -1683,17 +1685,15 @@ function addCardText(ctx,CW,CH){
     ctx.save();
     ctx.font='600 30px "Noto Sans Thai","Space Grotesk",sans-serif';
     ctx.fillStyle='#f3c97a';
-    ctx.textAlign='center';
     ctx.shadowColor='rgba(0,0,0,0.7)';ctx.shadowBlur=12;
-    ctx.fillText(dateStr,cx,CH*0.916);
+    _ct(dateStr,CH*0.916);
     ctx.restore();
     const hh=webbBirthday.getUTCHours(),mm=webbBirthday.getUTCMinutes();
     if(hh!==12||mm!==0){
       ctx.save();
       ctx.font='300 18px "Space Grotesk",sans-serif';
       ctx.fillStyle='rgba(255,255,255,0.38)';
-      ctx.textAlign='center';
-      ctx.fillText(hh.toString().padStart(2,'0')+':'+mm.toString().padStart(2,'0')+' UTC',cx,CH*0.916+28);
+      _ct(hh.toString().padStart(2,'0')+':'+mm.toString().padStart(2,'0')+' UTC',CH*0.916+28);
       ctx.restore();
     }
   }
@@ -1701,8 +1701,7 @@ function addCardText(ctx,CW,CH){
   ctx.save();
   ctx.font='400 13px "Space Grotesk",sans-serif';
   ctx.fillStyle='rgba(255,255,255,0.18)';
-  ctx.textAlign='center';
-  ctx.fillText('ห้วงดาว · between-stars.vercel.app',cx,CH-22);
+  _ct('ห้วงดาว · between-stars.vercel.app',CH-22);
   ctx.restore();
 }
 
