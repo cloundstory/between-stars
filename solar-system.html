@@ -1538,7 +1538,17 @@ MISSIONS.forEach(buildMission);
 const webb=new THREE.Group();
 webb.position.set(0,200,0);webb.rotation.x=-0.3;scene.add(webb);
 gltfLoader.load('model/chronos_lens.glb',gltf=>{
-  gltf.scene.traverse(o=>{if(o.isMesh){o.castShadow=false;o.receiveShadow=false;}});
+  gltf.scene.traverse(o=>{
+    if(o.isMesh){
+      o.castShadow=false;o.receiveShadow=false;
+      if(o.material){
+        o.material=o.material.clone();
+        o.material.emissive=new THREE.Color(0xf3c97a);
+        o.material.emissiveIntensity=0.12;
+        o._baseEmissive=0.12;
+      }
+    }
+  });
   fitGLB(gltf.scene,18);webb.add(gltf.scene);
   console.log('[GLB OK] JWST');
 },null,e=>{
@@ -1549,13 +1559,34 @@ gltfLoader.load('model/chronos_lens.glb',gltf=>{
 });
 const webbHit=new THREE.Mesh(new THREE.SphereGeometry(13,12,12),new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));
 webbHit.position.copy(webb.position);webbHit.userData={__telescope:true};scene.add(webbHit);clickable.push(webbHit);
-const webbLabel=document.createElement('div');webbLabel.textContent='✦ Project Chronos Lens · เก็บภาพ';
-webbLabel.style.cssText='position:fixed;z-index:5;pointer-events:none;font-family:var(--th);font-size:12px;color:#ffe6a8;background:rgba(8,11,20,.82);border:1px solid rgba(243,201,122,.4);padding:5px 11px;border-radius:20px;transform:translate(-50%,-170%);opacity:0;transition:opacity .25s;white-space:nowrap';
+
+// glow sprite — breathing pulse เบาๆ
+(function(){
+  const gc=document.createElement('canvas');gc.width=128;gc.height=128;
+  const gx=gc.getContext('2d');
+  const gr=gx.createRadialGradient(64,64,0,64,64,64);
+  gr.addColorStop(0,'rgba(243,201,122,0.35)');gr.addColorStop(0.35,'rgba(243,185,80,0.12)');
+  gr.addColorStop(0.7,'rgba(220,140,40,0.04)');gr.addColorStop(1,'rgba(0,0,0,0)');
+  gx.fillStyle=gr;gx.fillRect(0,0,128,128);
+  const glowTex=new THREE.CanvasTexture(gc);
+  webb._glow=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:0.4}));
+  webb._glow.scale.set(60,60,1);webb.add(webb._glow);
+})();
+
+const webbLabel=document.createElement('div');
+webbLabel.style.cssText='position:fixed;z-index:5;pointer-events:none;font-family:var(--eng);font-size:10px;letter-spacing:0.22em;color:rgba(243,201,122,0.9);background:rgba(5,8,18,.78);border:1px solid rgba(243,201,122,.28);padding:6px 14px;border-radius:20px;transform:translate(-50%,-180%);opacity:0;transition:opacity .3s;white-space:nowrap';
+webbLabel.textContent='✦  CHRONOS LENS';
 document.body.appendChild(webbLabel);
 const _wv=new THREE.Vector3();
 function updateWebb(dt){
   webb.rotation.y+=dt*0.06;
   webb.rotation.z=Math.sin(performance.now()*0.0003)*0.06;
+  const pulse=0.5+0.5*Math.sin(performance.now()*0.0009);
+  // glow เบาๆ
+  if(webb._glow){webb._glow.material.opacity=0.10+pulse*0.14;webb._glow.scale.setScalar(52+pulse*12);}
+  // emissive pulse บน mesh ทุกชิ้นในโมเดล
+  webb.traverse(o=>{if(o.isMesh&&o.material&&o._baseEmissive!==undefined)
+    o.material.emissiveIntensity=o._baseEmissive*(0.7+pulse*0.6);});
   webbHit.getWorldPosition(_wv);_wv.project(camera);
   if(_wv.z<1&&hovered===webbHit&&!intro){webbLabel.style.opacity=1;
     webbLabel.style.left=(_wv.x*.5+.5)*innerWidth+'px';webbLabel.style.top=(-_wv.y*.5+.5)*innerHeight+'px';}
