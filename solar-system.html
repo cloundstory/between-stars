@@ -1580,7 +1580,8 @@ chronosPreview.innerHTML=
  +'<button id="prevSave" style="padding:11px 22px;border:1px solid rgba(243,201,122,.4);border-radius:12px;color:#ffe6a8;background:rgba(243,201,122,.08);font-size:13px;font-family:var(--th);cursor:pointer">บันทึกลงเครื่อง</button>'
  +'<button id="prevClose" style="padding:11px 18px;background:none;border:none;color:var(--muted);font-size:12px;font-family:var(--th);cursor:pointer">ปิด</button>'
  +'</div>'
- +'<button id="prevLookOut" style="margin-top:10px;padding:0;background:none;border:none;cursor:pointer;font-family:var(--th);font-size:13px;color:rgba(180,215,255,0.65);letter-spacing:0.03em;transition:color .25s">'
+ +'<button id="prevTextToggle" style="padding:7px 16px;background:none;border:1px solid rgba(255,255,255,0.12);border-radius:20px;color:rgba(238,242,251,0.45);font-size:11px;font-family:var(--eng);cursor:pointer;letter-spacing:0.06em;transition:all .2s">Aa  ซ่อนข้อความ</button>'
+ +'<button id="prevLookOut" style="margin-top:2px;padding:0;background:none;border:none;cursor:pointer;font-family:var(--th);font-size:13px;color:rgba(180,215,255,0.65);letter-spacing:0.03em;transition:color .25s">'
  +'✦ แสงจากวันนั้น ยังเดินทางอยู่จนถึงทุกวันนี้ →</button>';
 document.body.appendChild(chronosPreview);
 
@@ -1596,43 +1597,17 @@ function shutterClick(){
   src.connect(g);g.connect(audioCtx.destination);src.start(t);
 }
 
-async function buildChronosCard(){
-  const CW=1080,CH=1350;
-  const card=document.createElement('canvas');
-  card.width=CW;card.height=CH;
-  const ctx=card.getContext('2d');
+let capturedBaseDataURL=null;
+let chronosTextVisible=true;
 
-  // background
-  ctx.fillStyle='#030508';ctx.fillRect(0,0,CW,CH);
-
-  // render โดยตรงเป็น portrait 1080×1350 — ไม่ crop, ไม่ตัดวงโคจร
-  const savedW=innerWidth,savedH=innerHeight,savedAspect=camera.aspect,savedPR=renderer.getPixelRatio();
-  renderer.setPixelRatio(1);renderer.setSize(CW,CH,false);
-  composer.setSize(CW,CH);
-  camera.aspect=CW/CH;camera.updateProjectionMatrix();
-  composer.render();
-  ctx.drawImage(renderer.domElement,0,0,CW,CH);
-  // คืนค่า renderer กลับ
-  renderer.setPixelRatio(savedPR);renderer.setSize(savedW,savedH,false);
-  composer.setSize(savedW*savedPR,savedH*savedPR);
-  camera.aspect=savedAspect;camera.updateProjectionMatrix();
-
-  // vignette รอบขอบ — ทำให้ดาวตรงกลางโดดเด่น
-  const vig=ctx.createRadialGradient(CW/2,CH*0.36,CW*0.22,CW/2,CH*0.36,CW*0.88);
-  vig.addColorStop(0,'rgba(0,0,0,0)');vig.addColorStop(1,'rgba(0,0,0,0.52)');
-  ctx.fillStyle=vig;ctx.fillRect(0,0,CW,CH);
-
-  // gradient เริ่มที่ 76% — เหลือพื้นที่วงโคจรครบ
+function addCardText(ctx,CW,CH){
+  const cx=CW/2;
   const grad=ctx.createLinearGradient(0,CH*0.76,0,CH);
   grad.addColorStop(0,'rgba(3,5,8,0)');
   grad.addColorStop(0.22,'rgba(3,5,8,0.92)');
   grad.addColorStop(1,'rgba(3,5,8,0.98)');
   ctx.fillStyle=grad;ctx.fillRect(0,0,CW,CH);
 
-  await document.fonts.ready;
-  const cx=CW/2;
-
-  // เส้นคั่น + จุดประดับ
   const sepY=Math.round(CH*0.732);
   ctx.save();
   ctx.strokeStyle='rgba(243,201,122,0.32)';ctx.lineWidth=1;
@@ -1641,7 +1616,6 @@ async function buildChronosCard(){
   [cx-122,cx+122].forEach(x=>{ctx.beginPath();ctx.arc(x,sepY,2,0,Math.PI*2);ctx.fill();});
   ctx.restore();
 
-  // PROJECT CHRONOS LENS
   ctx.save();
   ctx.font='500 11px "Space Grotesk",sans-serif';
   ctx.letterSpacing='0.28em';
@@ -1650,7 +1624,6 @@ async function buildChronosCard(){
   ctx.fillText('PROJECT CHRONOS LENS',cx,sepY+26);
   ctx.restore();
 
-  // หัวข้อหลัก
   ctx.save();
   ctx.shadowColor='rgba(0,0,0,0.9)';ctx.shadowBlur=20;
   ctx.textAlign='center';
@@ -1659,11 +1632,11 @@ async function buildChronosCard(){
   ctx.fillText('ระบบสุริยะ',cx,CH*0.822);
   ctx.font='300 30px "Noto Sans Thai",sans-serif';
   ctx.fillStyle='rgba(255,255,255,0.68)';
-  ctx.fillText('ณ วันที่ฉันเกิด',cx,CH*0.822+46);
+  ctx.fillText('ณ วันสำคัญของฉัน',cx,CH*0.822+46);
   ctx.restore();
 
   if(webbBirthday){
-    const dateStr=webbBirthday.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'});
+    const dateStr=webbBirthday.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
     ctx.save();
     ctx.font='600 30px "Space Grotesk",sans-serif';
     ctx.fillStyle='#f3c97a';
@@ -1682,13 +1655,58 @@ async function buildChronosCard(){
     }
   }
 
-  // branding
   ctx.save();
   ctx.font='400 13px "Space Grotesk",sans-serif';
   ctx.fillStyle='rgba(255,255,255,0.18)';
   ctx.textAlign='center';
   ctx.fillText('ห้วงดาว · between-stars.vercel.app',cx,CH-22);
   ctx.restore();
+}
+
+async function rebuildCard(showText){
+  chronosTextVisible=showText;
+  const btn=document.getElementById('prevTextToggle');
+  if(btn)btn.textContent=showText?'Aa  ซ่อนข้อความ':'Aa  แสดงข้อความ';
+  if(!capturedBaseDataURL)return;
+  if(!showText){capturedDataURL=capturedBaseDataURL;document.getElementById('chronosImg').src=capturedDataURL;return;}
+  const img=new Image();
+  await new Promise(res=>{img.onload=res;img.src=capturedBaseDataURL;});
+  const CW=1080,CH=1350,card=document.createElement('canvas');
+  card.width=CW;card.height=CH;
+  const ctx=card.getContext('2d');
+  ctx.drawImage(img,0,0);
+  await document.fonts.ready;
+  addCardText(ctx,CW,CH);
+  capturedDataURL=card.toDataURL('image/png');
+  document.getElementById('chronosImg').src=capturedDataURL;
+}
+
+async function buildChronosCard(){
+  const CW=1080,CH=1350;
+  const card=document.createElement('canvas');
+  card.width=CW;card.height=CH;
+  const ctx=card.getContext('2d');
+
+  ctx.fillStyle='#030508';ctx.fillRect(0,0,CW,CH);
+
+  const savedW=innerWidth,savedH=innerHeight,savedAspect=camera.aspect,savedPR=renderer.getPixelRatio();
+  renderer.setPixelRatio(1);renderer.setSize(CW,CH,false);
+  composer.setSize(CW,CH);
+  camera.aspect=CW/CH;camera.updateProjectionMatrix();
+  composer.render();
+  ctx.drawImage(renderer.domElement,0,0,CW,CH);
+  renderer.setPixelRatio(savedPR);renderer.setSize(savedW,savedH,false);
+  composer.setSize(savedW*savedPR,savedH*savedPR);
+  camera.aspect=savedAspect;camera.updateProjectionMatrix();
+
+  const vig=ctx.createRadialGradient(CW/2,CH*0.36,CW*0.22,CW/2,CH*0.36,CW*0.88);
+  vig.addColorStop(0,'rgba(0,0,0,0)');vig.addColorStop(1,'rgba(0,0,0,0.52)');
+  ctx.fillStyle=vig;ctx.fillRect(0,0,CW,CH);
+
+  capturedBaseDataURL=card.toDataURL('image/png');
+
+  await document.fonts.ready;
+  addCardText(ctx,CW,CH);
 
   return card.toDataURL('image/png');
 }
@@ -1741,7 +1759,8 @@ async function shareCapture(){
 }
 document.getElementById('prevShare').onclick=shareCapture;
 document.getElementById('prevSave').onclick=()=>{const a=document.createElement('a');a.download='between-stars.png';a.href=capturedDataURL;a.click();};
-document.getElementById('prevClose').onclick=()=>{chronosPreview.style.display='none';};
+document.getElementById('prevClose').onclick=()=>{chronosPreview.style.display='none';chronosTextVisible=true;};
+document.getElementById('prevTextToggle').onclick=()=>rebuildCard(!chronosTextVisible);
 document.getElementById('prevLookOut').onclick=()=>{
   const d=webbBirthday?webbBirthday.toISOString().slice(0,10):'';
   zoomOutAndGo('light-echo.html'+(d?'?d='+d:''));
