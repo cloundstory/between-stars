@@ -2023,19 +2023,38 @@ function setActiveNav(data){navItems.forEach(it=>it._row.classList.toggle('activ
 
 // ============ INTERACTION ============
 const ray=new THREE.Raycaster(),mouse=new THREE.Vector2();let hovered=null,selected=null,selectedObj=null;
-function setPointer(e){const r=renderer.domElement.getBoundingClientRect();mouse.x=((e.clientX-r.left)/r.width)*2-1;mouse.y=-((e.clientY-r.top)/r.height)*2+1;}
-renderer.domElement.addEventListener('pointermove',e=>{if(intro)return;setPointer(e);ray.setFromCamera(mouse,camera);
-  const hit=ray.intersectObjects(clickable,false)[0];hovered=hit?hit.object:null;renderer.domElement.style.cursor=hovered?'pointer':'grab';});
+// touch-friendly pick: raycast ก่อน → ถ้าพลาด หาดาวที่ใกล้จุดแตะสุดในรัศมีพิกเซล (จับเป้าเล็กบนมือถือ)
+const TAP_R=isMobile?26:14;const _pp=new THREE.Vector3();
+function _shown(o){for(let n=o;n;n=n.parent){if(n.visible===false)return false;}return true;}
+function pickClickable(e){
+  const r=renderer.domElement.getBoundingClientRect();
+  mouse.x=((e.clientX-r.left)/r.width)*2-1;mouse.y=-((e.clientY-r.top)/r.height)*2+1;
+  ray.setFromCamera(mouse,camera);
+  const hit=ray.intersectObjects(clickable,false)[0];
+  if(hit)return hit.object;
+  let best=null,bestD=TAP_R;
+  for(const o of clickable){
+    if(!_shown(o))continue;
+    o.getWorldPosition(_pp);_pp.project(camera);
+    if(_pp.z>1)continue;
+    const sx=r.left+(_pp.x*.5+.5)*r.width,sy=r.top+(-_pp.y*.5+.5)*r.height;
+    const d=Math.hypot(e.clientX-sx,e.clientY-sy);
+    if(d<bestD){bestD=d;best=o;}
+  }
+  return best;
+}
+renderer.domElement.addEventListener('pointermove',e=>{if(intro)return;
+  hovered=pickClickable(e);renderer.domElement.style.cursor=hovered?'pointer':'grab';});
 let downXY=null;
 renderer.domElement.addEventListener('pointerdown',e=>{if(intro){skipIntro();return;}downXY=[e.clientX,e.clientY];});
-renderer.domElement.addEventListener('pointerup',e=>{if(!downXY)return;const moved=Math.hypot(e.clientX-downXY[0],e.clientY-downXY[1])>6;downXY=null;if(moved)return;
-  setPointer(e);ray.setFromCamera(mouse,camera);const hit=ray.intersectObjects(clickable,false)[0];if(!hit)return;
-  const ud=hit.object.userData;
+renderer.domElement.addEventListener('pointerup',e=>{if(!downXY)return;const moved=Math.hypot(e.clientX-downXY[0],e.clientY-downXY[1])>(isMobile?12:6);downXY=null;if(moved)return;
+  const obj=pickClickable(e);if(!obj)return;
+  const ud=obj.userData;
   if(ud.__msg){if(philo)showMsg(ud.__msg);return;}
   if(ud.__blackhole){if(blackHoleGroup.visible)openBlackHolePanel();return;}
   if(ud.__mission){openMissionInfo(ud.__mission);return;}
   if(ud.__telescope){openWebbPanel();return;}
-  selectBody(ud,hit.object);});
+  selectBody(ud,obj);});
 
 // ============ FOCUS (follows moving body) ============
 let focusObj=null,focusDist=0,following=false;
