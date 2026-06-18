@@ -16,8 +16,6 @@
   "redirects": [
     { "source": "/space-history.html", "destination": "/", "permanent": false },
     { "source": "/space-history", "destination": "/", "permanent": false },
-    { "source": "/light-echo.html", "destination": "/", "permanent": false },
-    { "source": "/light-echo", "destination": "/", "permanent": false },
     { "source": "/starmap.html", "destination": "/", "permanent": false },
     { "source": "/starmap", "destination": "/", "permanent": false },
     { "source": "/og.html", "destination": "/", "permanent": false }
