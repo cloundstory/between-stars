@@ -1786,15 +1786,26 @@ function zoomOutAndGo(url){
 
 const webbModal=document.createElement('div');
 webbModal.style.cssText='position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;background:rgba(3,5,12,.74)';
-webbModal.innerHTML='<div style="width:344px;max-width:90vw;background:rgba(10,13,24,.98);border:1px solid rgba(243,201,122,.25);border-radius:18px;padding:26px 24px;text-align:center;font-family:var(--th)">'
- +'<div style="font-family:var(--eng);font-size:10px;letter-spacing:.28em;color:#f3c97a;margin-bottom:13px">PROJECT CHRONOS LENS · CAPTURE</div>'
- +'<div style="font-size:18px;color:#fff;font-weight:300;margin-bottom:7px">ระบบสุริยะ ณ วันสำคัญของคุณ</div>'
- +'<div style="font-size:12.5px;color:rgba(238,242,251,.55);line-height:1.7;margin-bottom:18px">ใส่วันสำคัญ แล้วดูดาวเคราะห์เคลื่อนไปตำแหน่งจริงของวันนั้น แล้วให้ Chronos Lens ถ่ายภาพ</div>'
- +'<input id="webbDate" type="date" style="width:100%;padding:11px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:11px;color:var(--ink);font-size:15px;font-family:var(--eng);color-scheme:dark;outline:none;box-sizing:border-box">'
- +'<input id="webbTime" type="time" placeholder="เวลาเกิด (ถ้าจำได้)" style="width:100%;margin-top:9px;padding:11px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:11px;color:var(--ink);font-size:15px;font-family:var(--eng);color-scheme:dark;outline:none;box-sizing:border-box">'
- +'<button id="webbGo" style="width:100%;margin-top:14px;padding:12px;border:none;border-radius:12px;color:#1a1408;font-weight:600;font-size:14px;font-family:var(--th);cursor:pointer;background:linear-gradient(135deg,#f3c97a,#e0a94e)">✦ พาไปวันนั้น</button>'
- +'<button id="webbShot" style="width:100%;margin-top:9px;padding:11px;border:1px solid rgba(243,201,122,.4);border-radius:12px;color:#ffe6a8;background:rgba(243,201,122,.08);font-size:13px;font-family:var(--th);cursor:pointer">◉ บันทึก ✦ แชร์</button>'
+const _inp='width:100%;padding:11px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:11px;color:var(--ink);font-size:15px;font-family:var(--eng);color-scheme:dark;outline:none;box-sizing:border-box';
+webbModal.innerHTML='<div style="width:344px;max-width:90vw;background:rgba(10,13,24,.98);border:1px solid rgba(243,201,122,.25);border-radius:18px;padding:26px 24px;text-align:center;font-family:var(--th);transition:all .3s">'
+ +'<div style="font-family:var(--eng);font-size:10px;letter-spacing:.28em;color:#f3c97a;margin-bottom:16px">PROJECT CHRONOS LENS</div>'
+ // ── Step 1: กรอกวัน ──
+ +'<div id="webbStep1">'
+ +'<div style="font-size:17px;color:#fff;font-weight:300;margin-bottom:6px">ระบบสุริยะ ณ วันสำคัญของคุณ</div>'
+ +'<div style="font-size:12px;color:rgba(238,242,251,.45);line-height:1.7;margin-bottom:18px">เลือกวันสำคัญ แล้วดูดาวเคราะห์เคลื่อนไปตำแหน่งจริงของวันนั้น</div>'
+ +'<input id="webbDate" type="date" style="'+_inp+'">'
+ +'<input id="webbTime" type="time" placeholder="เวลา (ถ้าจำได้)" style="'+_inp+';margin-top:9px">'
+ +'<button id="webbGo" style="width:100%;margin-top:14px;padding:13px;border:none;border-radius:12px;color:#1a1408;font-weight:600;font-size:14px;font-family:var(--th);cursor:pointer;background:linear-gradient(135deg,#f3c97a,#e0a94e)">✦ พาไปวันนั้น</button>'
  +'<button id="webbClose" style="margin-top:12px;background:none;border:none;color:var(--muted);font-size:12px;font-family:var(--th);cursor:pointer">ปิด</button>'
+ +'</div>'
+ // ── Step 2: เลือก action ──
+ +'<div id="webbStep2" style="display:none">'
+ +'<div style="font-size:11px;color:rgba(243,201,122,.65);letter-spacing:.12em;margin-bottom:5px">ระบบสุริยะ ณ</div>'
+ +'<div id="webbDateLabel" style="font-size:20px;color:#fff;font-weight:300;margin-bottom:22px"></div>'
+ +'<button id="webbShot" style="width:100%;padding:13px;border:none;border-radius:12px;color:#1a1408;font-weight:600;font-size:14px;font-family:var(--th);cursor:pointer;background:linear-gradient(135deg,#f3c97a,#e0a94e)">◉ บันทึกภาพ ✦ แชร์</button>'
+ +'<button id="webbLightEcho" style="width:100%;margin-top:10px;padding:12px;background:none;border:none;color:rgba(180,215,255,0.65);font-size:13px;font-family:var(--th);cursor:pointer;letter-spacing:0.02em">✦ แสงจากวันนั้น ยังเดินทางอยู่จนถึงทุกวันนี้ →</button>'
+ +'<button id="webbBack" style="margin-top:8px;background:none;border:none;color:var(--muted);font-size:12px;font-family:var(--th);cursor:pointer">← เปลี่ยนวัน</button>'
+ +'</div>'
  +'</div>';
 document.body.appendChild(webbModal);
 
@@ -1812,6 +1823,10 @@ document.body.appendChild(vf);
 const showVF=()=>vf.style.opacity='1';
 const hideVF=()=>vf.style.opacity='0';
 
+function webbShowStep(n){
+  document.getElementById('webbStep1').style.display=n===1?'block':'none';
+  document.getElementById('webbStep2').style.display=n===2?'block':'none';
+}
 function openWebbPanel(){
   const di=document.getElementById('webbDate'),ti=document.getElementById('webbTime');
   if(webbBirthday){
@@ -1819,6 +1834,11 @@ function openWebbPanel(){
     const hh=webbBirthday.getUTCHours().toString().padStart(2,'0');
     const mm=webbBirthday.getUTCMinutes().toString().padStart(2,'0');
     if(hh!=='12'||mm!=='00')ti.value=hh+':'+mm;
+    // ถ้ามีวันอยู่แล้ว เปิด step 2 ทันที
+    document.getElementById('webbDateLabel').textContent=webbBirthday.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'});
+    webbShowStep(2);
+  }else{
+    webbShowStep(1);
   }
   di.max=new Date().toISOString().slice(0,10);webbModal.style.display='flex';showVF();
 }
@@ -1829,10 +1849,19 @@ document.getElementById('webbGo').onclick=()=>{
   const t=document.getElementById('webbTime').value||'12:00';
   const target=new Date(v+'T'+t+':00Z');if(isNaN(target))return;
   webbBirthday=target;exitLive();running=false;play.innerHTML=ICON_PLAY;
-  webbModal.style.display='none';hideVF();
   dateTween={from:simDate.getTime(),to:target.getTime(),t0:performance.now(),dur:2400,onDone:null};
+  // ไม่ปิด modal — ไปต่อ step 2
+  document.getElementById('webbDateLabel').textContent=target.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
+  webbShowStep(2);
 };
+document.getElementById('webbBack').onclick=()=>webbShowStep(1);
 document.getElementById('webbShot').onclick=()=>{webbModal.style.display='none';hideVF();setTimeout(doCapture,80);};
+document.getElementById('webbLightEcho').onclick=()=>{
+  const v=document.getElementById('webbDate').value;
+  webbModal.style.display='none';hideVF();
+  const url='light-echo.html'+(v?'?d='+v:'');
+  zoomOutAndGo(url);
+};
 
 function updateMissionVisual(date){for(const m of MISSIONS){
   const st=craftState(m,date),show=!!st;
@@ -3255,6 +3284,25 @@ window.__scene={scene,camera,PLANETS,SUN,Astronomy,openInfo,selectBody,planetMes
   renderer,composer,THREE,sky,
   get intro(){return intro;},get simDate(){return simDate;},updateBodies,EARTH,
   MISSIONS,missionGroup,openMissionInfo,updateMissionVisual,currentAU,auToScene};
+
+// auto-open Chronos Lens เมื่อมาจาก light-echo link (?chronos=1&d=DATE)
+(function(){
+  const p=new URLSearchParams(location.search);
+  if(p.get('chronos')!=='1')return;
+  const d=p.get('d')||'';
+  if(d&&/^\d{4}-\d{2}-\d{2}$/.test(d)){
+    const target=new Date(d+'T12:00:00Z');
+    if(!isNaN(target)&&target<=new Date()){
+      webbBirthday=target;
+      exitLive();running=false;play.innerHTML=ICON_PLAY;
+      dateTween={from:simDate.getTime(),to:target.getTime(),t0:performance.now(),dur:2400,onDone:null};
+    }
+  }
+  // รอ intro จบแล้วค่อยเปิด modal
+  const wait=setInterval(()=>{
+    if(!intro){clearInterval(wait);setTimeout(openWebbPanel,600);}
+  },200);
+})();
 </script>
 </body>
 </html>
