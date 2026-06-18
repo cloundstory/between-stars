@@ -50,8 +50,8 @@
   /* result */
   .result{margin-top:34px;opacity:0;transform:translateY(14px);transition:opacity 1s ease,transform 1s cubic-bezier(.2,.7,.2,1);pointer-events:none}
   .result.on{opacity:1;transform:none;pointer-events:auto}
-  .rcanvas-wrap{position:relative;width:100%;aspect-ratio:16/10;border-radius:16px;overflow:hidden;
-    border:1px solid var(--line);background:radial-gradient(120% 90% at 50% 50%,#0a0e1f,#05070f)}
+  .rcanvas-wrap{position:relative;width:100%;aspect-ratio:4/3;border-radius:20px;overflow:hidden;
+    border:1px solid rgba(243,201,122,0.14);background:radial-gradient(140% 100% at 50% 60%,#070b1a,#03040c)}
   #echo{width:100%;height:100%;display:block}
   .rtext{text-align:center;margin-top:26px}
   .rdist{font-family:var(--eng);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
@@ -184,42 +184,141 @@ function reveal(d){
   setTimeout(()=>document.getElementById('result').scrollIntoView({behavior:'smooth',block:'start'}),120);
 }
 
-// ภาพ: คลื่นแสงขยายจากโลก ไปถึงดาวเป้าหมาย
 let echoRAF=null;
 function animateEcho(star,ly){
   const c=document.getElementById('echo'),x=c.getContext('2d');
   function size(){const r=c.getBoundingClientRect();c.width=r.width*devicePixelRatio;c.height=r.height*devicePixelRatio;x.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);}
   size();
   const W=c.getBoundingClientRect().width,H=c.getBoundingClientRect().height;
-  const ex=W*0.16,ey=H*0.78; // ตำแหน่งโลก
-  const sx=W*0.82,sy=H*0.26;  // ตำแหน่งดาวเป้าหมาย
+  const ex=W*0.15,ey=H*0.82;
+  const sx=W*0.78,sy=H*0.18;
   const maxR=Math.hypot(sx-ex,sy-ey);
-  // background stars (คงที่)
-  const bg=[];for(let i=0;i<90;i++)bg.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.1+.2,a:Math.random()*.5+.12});
+  const pathAngle=Math.atan2(sy-ey,sx-ex);
+
+  // ดาวพื้นหลัง — หลายชั้น (ลึก/ใกล้)
+  const bgStars=[];
+  for(let i=0;i<280;i++)bgStars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.4+0.2,a:Math.random()*0.55+0.08,p:Math.random()*6.28,sp:0.4+Math.random()*1.8});
+
+  // ดาวที่แสงเดินทางผ่านมาแล้ว
+  const passedPos=STARS.filter(s=>s.ly<ly&&s.ly>=STARS[0].ly).slice(-4).map(s=>{
+    const t=s.ly/Math.max(ly,0.001);
+    return {x:ex+(sx-ex)*t,y:ey+(sy-ey)*t,s,t};
+  });
+
+  // particles ไหลตามเส้นทาง
+  const parts=[];
+  for(let i=0;i<80;i++)parts.push({t:Math.random(),sp:0.00015+Math.random()*0.0005,sz:Math.random()*1.8+0.4,a:Math.random()*0.55+0.15,off:(Math.random()-0.5)*18});
+
   const t0=performance.now();
   if(echoRAF)cancelAnimationFrame(echoRAF);
+
   function frame(now){
-    const e=Math.min(1,(now-t0)/2600),k=1-Math.pow(1-e,3);
+    const elapsed=now-t0;
+    const e=Math.min(1,elapsed/3800);
+    const k=1-Math.pow(1-e,3);
     x.clearRect(0,0,W,H);
-    for(const s of bg){x.beginPath();x.arc(s.x,s.y,s.r,0,6.28);x.fillStyle='rgba(220,228,255,'+s.a+')';x.fill();}
-    // เส้นทางแสง
-    x.strokeStyle='rgba(243,201,122,.18)';x.lineWidth=1;x.setLineDash([2,5]);
-    x.beginPath();x.moveTo(ex,ey);x.lineTo(ex+(sx-ex)*k,ey+(sy-ey)*k);x.stroke();x.setLineDash([]);
-    // คลื่นแสงขยาย
+
+    // nebula glow พื้นหลัง
+    const neb=x.createRadialGradient(W*0.48,H*0.42,0,W*0.48,H*0.42,W*0.65);
+    neb.addColorStop(0,'rgba(30,45,100,0.22)');neb.addColorStop(0.5,'rgba(15,22,60,0.10)');neb.addColorStop(1,'rgba(0,0,0,0)');
+    x.fillStyle=neb;x.fillRect(0,0,W,H);
+
+    // second nebula — สีฟ้าเขียวอีกชั้น
+    const neb2=x.createRadialGradient(W*0.25,H*0.65,0,W*0.25,H*0.65,W*0.45);
+    neb2.addColorStop(0,'rgba(20,60,80,0.14)');neb2.addColorStop(1,'rgba(0,0,0,0)');
+    x.fillStyle=neb2;x.fillRect(0,0,W,H);
+
+    // ดาวพื้นหลังกระพริบ
+    for(const s of bgStars){
+      const tw=s.a*(0.5+0.5*Math.sin(now*0.001*s.sp+s.p));
+      x.beginPath();x.arc(s.x,s.y,s.r,0,6.28);x.fillStyle=`rgba(215,225,255,${tw})`;x.fill();
+    }
+
+    // เส้นทางแสง dashed
+    x.save();x.strokeStyle=`rgba(243,201,122,${0.08+0.12*k})`;x.lineWidth=0.9;x.setLineDash([2,7]);
+    x.beginPath();x.moveTo(ex,ey);x.lineTo(ex+(sx-ex)*k,ey+(sy-ey)*k);x.stroke();x.setLineDash([]);x.restore();
+
+    // ดาวที่ผ่านมาแล้ว
+    for(const p of passedPos){
+      const lit=Math.max(0,Math.min(1,(k-p.t+0.06)/0.12));
+      if(lit<=0)continue;
+      const pg=x.createRadialGradient(p.x,p.y,0,p.x,p.y,14);
+      pg.addColorStop(0,`rgba(255,240,190,${0.7*lit})`);pg.addColorStop(1,'rgba(255,220,150,0)');
+      x.fillStyle=pg;x.beginPath();x.arc(p.x,p.y,14,0,6.28);x.fill();
+      x.fillStyle=`rgba(255,252,230,${0.4+0.6*lit})`;x.beginPath();x.arc(p.x,p.y,1.6,0,6.28);x.fill();
+    }
+
+    // particles ไหลตามเส้นทาง
+    for(const p of parts){
+      const pos=(p.t+elapsed*p.sp)%1;
+      if(pos>k)continue;
+      const px=ex+(sx-ex)*pos,py=ey+(sy-ey)*pos;
+      const ox=Math.cos(pathAngle+Math.PI/2)*p.off,oy=Math.sin(pathAngle+Math.PI/2)*p.off;
+      const fade=Math.sin(pos*Math.PI)*p.a;
+      x.beginPath();x.arc(px+ox,py+oy,p.sz,0,6.28);x.fillStyle=`rgba(255,210,100,${fade})`;x.fill();
+    }
+
+    // คลื่นแสง — หลายวง
     const wr=maxR*k;
-    x.strokeStyle='rgba(243,201,122,'+(0.5*(1-e)+0.1)+')';x.lineWidth=1.4;
-    x.beginPath();x.arc(ex,ey,wr,0,6.28);x.stroke();
-    // โลก
-    x.beginPath();x.arc(ex,ey,4,0,6.28);x.fillStyle='#6ab8ff';x.fill();
-    x.fillStyle='rgba(180,210,255,.7)';x.font='10px "Space Grotesk",sans-serif';x.fillText('โลก · '+(new Date().getFullYear()+543),ex-6,ey+18);
-    // ดาวเป้าหมาย — ค่อย ๆ สว่างเมื่อคลื่นไปถึง
-    const reach=Math.max(0,Math.min(1,(k-0.82)/0.18));
-    const tw=0.3+0.7*reach*(0.7+0.3*Math.sin(now*0.006));
-    const g=x.createRadialGradient(sx,sy,0,sx,sy,16);g.addColorStop(0,'rgba(255,236,190,'+tw+')');g.addColorStop(1,'rgba(255,236,190,0)');
-    x.fillStyle=g;x.beginPath();x.arc(sx,sy,16,0,6.28);x.fill();
-    x.fillStyle='rgba(255,245,220,'+(0.4+0.6*reach)+')';x.beginPath();x.arc(sx,sy,2.4,0,6.28);x.fill();
-    if(reach>0.05){x.fillStyle='rgba(255,236,190,'+reach+')';x.font='600 12px "Space Grotesk",sans-serif';x.fillText('★ '+star.en,sx-10,sy-16);}
-    if(e<1||reach<1)echoRAF=requestAnimationFrame(frame);
+    for(let ring=0;ring<4;ring++){
+      const rr=wr-ring*9;if(rr<0)continue;
+      const ra=(0.48-ring*0.11)*(1-e*0.65);
+      x.strokeStyle=`rgba(255,210,90,${ra})`;x.lineWidth=Math.max(0.3,1.8-ring*0.4);
+      x.beginPath();x.arc(ex,ey,rr,0,6.28);x.stroke();
+    }
+    // inner glow ที่หน้าคลื่น
+    if(wr>8){
+      const wg=x.createRadialGradient(ex,ey,wr-14,ex,ey,wr+8);
+      wg.addColorStop(0,'rgba(255,200,80,0)');wg.addColorStop(0.5,`rgba(255,215,100,${0.07*(1-e*0.75)})`);wg.addColorStop(1,'rgba(255,200,80,0)');
+      x.fillStyle=wg;x.fillRect(0,0,W,H);
+    }
+
+    // โลก — glow หลายชั้น
+    const eG1=x.createRadialGradient(ex,ey,0,ex,ey,36);
+    eG1.addColorStop(0,'rgba(80,180,255,0.85)');eG1.addColorStop(0.2,'rgba(60,150,255,0.30)');
+    eG1.addColorStop(0.6,'rgba(40,110,220,0.08)');eG1.addColorStop(1,'rgba(30,80,200,0)');
+    x.fillStyle=eG1;x.beginPath();x.arc(ex,ey,36,0,6.28);x.fill();
+    x.fillStyle='#7ac5ff';x.beginPath();x.arc(ex,ey,5.5,0,6.28);x.fill();
+    x.strokeStyle='rgba(200,235,255,0.5)';x.lineWidth=0.8;x.beginPath();x.arc(ex,ey,5.5,0,6.28);x.stroke();
+    x.fillStyle='rgba(180,220,255,0.78)';x.font='10.5px "Space Grotesk",sans-serif';x.textAlign='left';
+    x.fillText('โลก · '+(new Date().getFullYear()+543),ex+13,ey+4);
+
+    // ดาวปลายทาง
+    const reach=Math.max(0,Math.min(1,(k-0.78)/0.22));
+    const pulse=0.72+0.28*Math.sin(now*0.0038);
+    if(reach>0){
+      // halo ใหญ่
+      const sG1=x.createRadialGradient(sx,sy,0,sx,sy,72*reach);
+      sG1.addColorStop(0,`rgba(255,225,120,${0.55*reach*pulse})`);
+      sG1.addColorStop(0.35,`rgba(255,195,80,${0.18*reach})`);
+      sG1.addColorStop(1,'rgba(255,160,40,0)');
+      x.fillStyle=sG1;x.beginPath();x.arc(sx,sy,72*reach,0,6.28);x.fill();
+      // glow กลาง
+      const sG2=x.createRadialGradient(sx,sy,0,sx,sy,22);
+      sG2.addColorStop(0,`rgba(255,248,225,${reach})`);
+      sG2.addColorStop(0.5,`rgba(255,220,120,${0.45*reach})`);
+      sG2.addColorStop(1,'rgba(255,170,60,0)');
+      x.fillStyle=sG2;x.beginPath();x.arc(sx,sy,22,0,6.28);x.fill();
+      // core
+      x.fillStyle=`rgba(255,253,245,${0.65+0.35*reach})`;x.beginPath();x.arc(sx,sy,2.8+reach*2.2,0,6.28);x.fill();
+      // cross spikes
+      if(reach>0.25){
+        const spLen=30*reach*pulse;
+        x.strokeStyle=`rgba(255,245,200,${0.45*reach})`;x.lineWidth=0.7;
+        [[0,-1],[0,1],[-1,0],[1,0]].forEach(([dx,dy])=>{
+          x.beginPath();x.moveTo(sx,sy);x.lineTo(sx+dx*spLen,sy+dy*spLen);x.stroke();
+        });
+      }
+      if(reach>0.15){
+        x.fillStyle=`rgba(255,238,180,${reach})`;x.font=`500 ${11+reach*2}px "Space Grotesk",sans-serif`;x.textAlign='left';
+        x.fillText('★ '+star.en,sx+14,sy-10);
+        x.fillStyle=`rgba(243,215,140,${reach*0.72})`;x.font='300 10px "Space Grotesk",sans-serif';
+        x.fillText(fmt(star.ly)+' ly',sx+14,sy+6);
+      }
+    }else{
+      x.fillStyle='rgba(255,245,220,0.22)';x.beginPath();x.arc(sx,sy,2,0,6.28);x.fill();
+    }
+    echoRAF=requestAnimationFrame(frame);
   }
   echoRAF=requestAnimationFrame(frame);
 }
@@ -257,47 +356,117 @@ function wrapThai(x,text,maxW){const lines=[];let line='';
   if(line)lines.push(line);return lines;}
 function buildLightCard(r){
   const W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
-  // พื้นหลังอวกาศ
-  const bg=x.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#070b16');bg.addColorStop(.5,'#04060d');bg.addColorStop(1,'#03040a');
-  x.fillStyle=bg;x.fillRect(0,0,W,H);
-  const gl=x.createRadialGradient(W/2,H*0.33,0,W/2,H*0.33,W*0.72);
-  gl.addColorStop(0,'rgba(70,92,150,0.20)');gl.addColorStop(1,'rgba(0,0,0,0)');
-  x.fillStyle=gl;x.fillRect(0,0,W,H);
-  for(let i=0;i<300;i++){const sx=Math.random()*W,sy=Math.random()*H,sr=Math.random()*1.7+0.3,a=Math.random()*0.6+0.12;
-    x.beginPath();x.arc(sx,sy,sr,0,6.2832);x.fillStyle='rgba(220,228,255,'+a+')';x.fill();}
-  // ดาวปลายทาง — แสงฟุ้ง
-  const fx=W/2,fy=H*0.315,reached=r.ly>=STARS[0].ly;
-  const halo=x.createRadialGradient(fx,fy,0,fx,fy,200);
-  halo.addColorStop(0,'rgba(255,243,210,0.95)');halo.addColorStop(.1,'rgba(255,224,150,0.55)');
-  halo.addColorStop(.45,'rgba(243,201,122,0.14)');halo.addColorStop(1,'rgba(243,201,122,0)');
-  x.fillStyle=halo;x.beginPath();x.arc(fx,fy,200,0,6.2832);x.fill();
-  x.fillStyle='#fff';x.beginPath();x.arc(fx,fy,reached?7:4,0,6.2832);x.fill();
-  // กรอบบาง ๆ
-  x.strokeStyle='rgba(255,255,255,0.08)';x.lineWidth=2;x.strokeRect(40,40,W-80,H-80);
+  const reached=r.ly>=STARS[0].ly;
+
+  // พื้นหลัง — gradient เข้มจากบนลงล่าง
+  x.fillStyle='#04060e';x.fillRect(0,0,W,H);
+  const bgG=x.createLinearGradient(0,0,0,H);
+  bgG.addColorStop(0,'#080c1a');bgG.addColorStop(0.5,'#04060d');bgG.addColorStop(1,'#02030a');
+  x.fillStyle=bgG;x.fillRect(0,0,W,H);
+
+  // nebula — สองจุด
+  const neb1=x.createRadialGradient(W*0.55,H*0.22,0,W*0.55,H*0.22,W*0.7);
+  neb1.addColorStop(0,'rgba(50,70,160,0.28)');neb1.addColorStop(0.5,'rgba(25,40,100,0.10)');neb1.addColorStop(1,'rgba(0,0,0,0)');
+  x.fillStyle=neb1;x.fillRect(0,0,W,H);
+  const neb2=x.createRadialGradient(W*0.2,H*0.75,0,W*0.2,H*0.75,W*0.5);
+  neb2.addColorStop(0,'rgba(20,55,90,0.18)');neb2.addColorStop(1,'rgba(0,0,0,0)');
+  x.fillStyle=neb2;x.fillRect(0,0,W,H);
+
+  // ดาวพื้นหลัง — random seed คงที่ด้วย simple LCG
+  let seed=42;const rng=()=>{seed=(seed*1664525+1013904223)&0xffffffff;return(seed>>>0)/4294967296;};
+  for(let i=0;i<420;i++){
+    const sx=rng()*W,sy=rng()*H,sr=rng()*1.8+0.2,sa=rng()*0.55+0.1;
+    x.beginPath();x.arc(sx,sy,sr,0,6.28);x.fillStyle=`rgba(215,225,255,${sa})`;x.fill();
+  }
+  // ดาวสว่างสุ่ม 8 ดวง
+  for(let i=0;i<8;i++){
+    const sx=rng()*W,sy=rng()*H,sr=rng()*1.2+1.0;
+    x.beginPath();x.arc(sx,sy,sr,0,6.28);x.fillStyle='rgba(255,252,235,0.9)';x.fill();
+  }
+
+  // เส้นทางแสง — จากโลก (ล่างซ้าย) ไปดาว (กลาง บน)
+  const ex=W*0.14,ey=H*0.76,fx=W*0.58,fy=H*0.24;
+  x.save();x.strokeStyle='rgba(243,201,122,0.15)';x.lineWidth=1.5;x.setLineDash([3,9]);
+  x.beginPath();x.moveTo(ex,ey);x.lineTo(fx,fy);x.stroke();x.setLineDash([]);x.restore();
+
+  // โลก — small glowing blue dot
+  const eH=x.createRadialGradient(ex,ey,0,ex,ey,40);
+  eH.addColorStop(0,'rgba(80,175,255,0.85)');eH.addColorStop(0.3,'rgba(55,140,255,0.25)');eH.addColorStop(1,'rgba(30,80,220,0)');
+  x.fillStyle=eH;x.beginPath();x.arc(ex,ey,40,0,6.28);x.fill();
+  x.fillStyle='#7ac5ff';x.beginPath();x.arc(ex,ey,7,0,6.28);x.fill();
+  x.fillStyle='rgba(180,220,255,0.65)';x.font='500 22px "Space Grotesk",sans-serif';x.textAlign='left';
+  x.fillText('โลก',ex+16,ey+6);
+
+  // ดาวปลายทาง — focal point ของภาพ
+  const halo3=x.createRadialGradient(fx,fy,0,fx,fy,reached?280:120);
+  if(reached){
+    halo3.addColorStop(0,'rgba(255,248,220,1)');halo3.addColorStop(0.04,'rgba(255,228,140,0.75)');
+    halo3.addColorStop(0.18,'rgba(243,201,80,0.30)');halo3.addColorStop(0.5,'rgba(243,170,40,0.08)');
+    halo3.addColorStop(1,'rgba(200,130,20,0)');
+  }else{
+    halo3.addColorStop(0,'rgba(200,220,255,0.8)');halo3.addColorStop(0.15,'rgba(160,190,255,0.20)');
+    halo3.addColorStop(1,'rgba(100,140,255,0)');
+  }
+  x.fillStyle=halo3;x.beginPath();x.arc(fx,fy,reached?280:120,0,6.28);x.fill();
+  // star core
+  x.fillStyle=reached?'#fff':'rgba(200,215,255,0.9)';x.beginPath();x.arc(fx,fy,reached?9:5,0,6.28);x.fill();
+  // cross spikes สำหรับดาวที่ถึงแล้ว
+  if(reached){
+    [[0,-55],[0,55],[-55,0],[55,0],[-38,-38],[38,-38],[-38,38],[38,38]].forEach(([dx,dy],i)=>{
+      const len=i<4?55:38,a=i<4?0.55:0.25;
+      x.strokeStyle=`rgba(255,248,210,${a})`;x.lineWidth=i<4?1.2:0.7;
+      x.beginPath();x.moveTo(fx,fy);x.lineTo(fx+dx,fy+dy);x.stroke();
+    });
+  }
+
+  // gradient ข้อความด้านล่าง
+  const textFade=x.createLinearGradient(0,H*0.52,0,H*0.62);
+  textFade.addColorStop(0,'rgba(4,6,14,0)');textFade.addColorStop(1,'rgba(4,6,14,0.95)');
+  x.fillStyle=textFade;x.fillRect(0,H*0.52,W,H*0.15);
+  x.fillStyle='rgba(4,6,14,0.95)';x.fillRect(0,H*0.62,W,H*0.38);
+
   x.textAlign='center';
+
   // แบรนด์บน
-  x.fillStyle='rgba(243,201,122,0.88)';x.font='600 24px "Space Grotesk",sans-serif';
-  x.fillText('✦   ห้วงดาว · BETWEEN STARS', W/2, 110);
+  x.fillStyle='rgba(243,201,122,0.72)';x.font='600 20px "Space Grotesk",sans-serif';x.letterSpacing='0.25em';
+  x.fillText('✦  BETWEEN STARS  ·  ห้วงดาว',W/2,78);x.letterSpacing='0';
+
+  // separator บาง
+  x.strokeStyle='rgba(243,201,122,0.20)';x.lineWidth=1;
+  x.beginPath();x.moveTo(W/2-80,100);x.lineTo(W/2+80,100);x.stroke();
+
   // วันที่
-  x.fillStyle='rgba(238,242,251,0.62)';x.font='400 32px "Noto Sans Thai",sans-serif';
-  x.fillText('แสงจากวันที่ '+r.dateStr+' ของคุณ', W/2, H*0.55);
-  // ชื่อดาว (ใหญ่)
-  x.fillStyle='#ffffff';x.font='300 78px "Noto Sans Thai",sans-serif';
-  x.fillText(reached?r.star.th:'ยังอยู่ระหว่างทาง', W/2, H*0.55+98);
-  // อังกฤษ + ระยะ
-  x.fillStyle='rgba(243,201,122,0.92)';x.font='500 27px "Space Grotesk",sans-serif';
-  x.fillText(reached?(r.star.en.toUpperCase()+'   ·   '+fmt(r.star.ly)+' LIGHT-YEARS'):'แสงของคุณยังไม่ถึงดาวดวงใด', W/2, H*0.55+152);
-  // คำบรรยาย (ตัดบรรทัดภาษาไทย)
-  x.fillStyle='rgba(238,242,251,0.70)';x.font='300 30px "Noto Sans Thai",sans-serif';
-  const desc=reached?('คืนนี้แสงของคุณกำลังส่องถึงดาวดวงนี้พอดี — '+r.star.d)
-    :('แสงจากวันนั้นยังเดินทางอยู่ในความมืดอันกว้างใหญ่ระหว่างดวงดาว ยังไม่ถึงดาวดวงใด แต่ไม่เคยหยุด');
-  wrapThai(x,desc,W-200).forEach((ln,i)=>x.fillText(ln,W/2,H*0.55+212+i*44));
-  // ระยะทาง
-  x.fillStyle='rgba(238,242,251,0.40)';x.font='400 24px "Noto Sans Thai",sans-serif';
-  x.fillText('เดินทางมาแล้ว ≈ '+fmt(r.ly*9.461)+' ล้านล้านกิโลเมตร', W/2, H-150);
-  // ลิงก์กลับเว็บ
-  x.fillStyle='rgba(243,201,122,0.65)';x.font='500 22px "Space Grotesk",sans-serif';
-  x.fillText('ค้นหาปลายทางแสงของวันคุณ · '+SHARE_SITE, W/2, H-100);
+  x.fillStyle='rgba(238,242,251,0.48)';x.font='300 28px "Noto Sans Thai",sans-serif';
+  x.fillText('แสงจาก '+r.dateStr,W/2,H*0.635);
+
+  // ชื่อดาว — ใหญ่
+  x.fillStyle='#ffffff';x.font='300 72px "Noto Sans Thai",sans-serif';
+  x.shadowColor='rgba(243,201,122,0.3)';x.shadowBlur=40;
+  x.fillText(reached?r.star.th:'ยังอยู่ระหว่างทาง',W/2,H*0.635+90);
+  x.shadowBlur=0;
+
+  // en name + ระยะ
+  x.fillStyle='rgba(243,201,122,0.88)';x.font='500 24px "Space Grotesk",sans-serif';x.letterSpacing='0.12em';
+  x.fillText(reached?(r.star.en.toUpperCase()+' · '+fmt(r.star.ly)+' LY'):'STILL TRAVELING',W/2,H*0.635+148);x.letterSpacing='0';
+
+  // เส้นคั่น
+  x.strokeStyle='rgba(243,201,122,0.22)';x.lineWidth=1;
+  x.beginPath();x.moveTo(W/2-120,H*0.635+178);x.lineTo(W/2+120,H*0.635+178);x.stroke();
+
+  // คำบรรยาย
+  x.fillStyle='rgba(238,242,251,0.65)';x.font='300 27px "Noto Sans Thai",sans-serif';
+  const desc=reached?('คืนนี้แสงของคุณกำลังส่องถึง'+r.star.th+'พอดี — '+r.star.d)
+    :'แสงจากวันนั้นยังเดินทางอยู่ในความมืดอันกว้างใหญ่ ไม่เคยหยุด';
+  wrapThai(x,desc,W-220).forEach((ln,i)=>x.fillText(ln,W/2,H*0.635+224+i*42));
+
+  // ระยะกิโลเมตร
+  x.fillStyle='rgba(238,242,251,0.30)';x.font='300 20px "Space Grotesk",sans-serif';
+  x.fillText('≈ '+fmt(r.ly*9.461)+' trillion km',W/2,H-148);
+
+  // ลิงก์
+  x.fillStyle='rgba(243,201,122,0.58)';x.font='500 19px "Space Grotesk",sans-serif';x.letterSpacing='0.06em';
+  x.fillText(SHARE_SITE,W/2,H-100);x.letterSpacing='0';
+
   return c;
 }
 document.getElementById('share').onclick=async()=>{
