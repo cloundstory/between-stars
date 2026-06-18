@@ -948,8 +948,8 @@ function fitGLB(root,targetSize){
   const c=new THREE.Vector3();box2.getCenter(c);root.position.sub(c);
 }
 const MISSION_MODELS={
-  voyager1:encodeURI('model/Voyager Probe (B).glb'),
-  voyager2:encodeURI('model/Voyager Probe (B).glb'),
+  voyager1:'model/voyager.glb',
+  voyager2:'model/voyager.glb',
   newhorizons:encodeURI('model/New_Horizons.glb'),
 };
 
@@ -1537,7 +1537,7 @@ MISSIONS.forEach(buildMission);
 // ============ Project Chronos Lens — ลอยเหนือดวงอาทิตย์ · คลิกเพื่อเก็บภาพ/แชร์มุมนี้ ============
 const webb=new THREE.Group();
 webb.position.set(0,200,0);webb.rotation.x=-0.3;scene.add(webb);
-gltfLoader.load(encodeURI('model/James Webb Space Telescope (A).glb'),gltf=>{
+gltfLoader.load('model/chronos_lens.glb',gltf=>{
   gltf.scene.traverse(o=>{if(o.isMesh){o.castShadow=false;o.receiveShadow=false;}});
   fitGLB(gltf.scene,18);webb.add(gltf.scene);
   console.log('[GLB OK] JWST');
