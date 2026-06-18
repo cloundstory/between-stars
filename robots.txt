@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# หน้าที่ยังซ่อนไว้ในเวอร์ชันทดลอง (ถูก redirect อยู่)
+Disallow: /space-history.html
+Disallow: /light-echo.html
+Disallow: /starmap.html
+Disallow: /og.html
+
+Sitemap: https://between-stars.vercel.app/sitemap.xml

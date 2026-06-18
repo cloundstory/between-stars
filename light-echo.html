@@ -10,13 +10,13 @@
 <meta property="og:site_name" content="ห้วงดาว · Between Stars">
 <meta property="og:title" content="แสงจากวันของคุณ · Light Echo">
 <meta property="og:description" content="แสงจากวันสำคัญของคุณ เดินทางไปไกลแค่ไหนแล้ว และกำลังส่องถึงดาวดวงใด">
-<meta property="og:url" content="https://between-stars.pages.dev/light-echo.html">
-<meta property="og:image" content="https://between-stars.pages.dev/og-image.png">
+<meta property="og:url" content="https://between-stars.vercel.app/light-echo.html">
+<meta property="og:image" content="https://between-stars.vercel.app/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="th_TH">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://between-stars.pages.dev/og-image.png">
+<meta name="twitter:image" content="https://between-stars.vercel.app/og-image.png">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -249,13 +249,79 @@ function run(){
 document.getElementById('go').onclick=run;
 dInput.addEventListener('keydown',e=>{if(e.key==='Enter')run();});
 document.getElementById('again').onclick=()=>{document.getElementById('result').classList.remove('on');document.querySelector('.ask').scrollIntoView({behavior:'smooth'});dInput.focus();};
+// ===== การ์ดแสงของคุณ — render รูปภาพสวย ๆ สำหรับแชร์ (พกแบรนด์+ลิงก์กลับมาเสมอ) =====
+const SHARE_SITE='between-stars.vercel.app';
+function wrapThai(x,text,maxW){const lines=[];let line='';
+  for(const ch of text){const t=line+ch;
+    if(x.measureText(t).width>maxW&&line){lines.push(line);line=ch;}else line=t;}
+  if(line)lines.push(line);return lines;}
+function buildLightCard(r){
+  const W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+  // พื้นหลังอวกาศ
+  const bg=x.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#070b16');bg.addColorStop(.5,'#04060d');bg.addColorStop(1,'#03040a');
+  x.fillStyle=bg;x.fillRect(0,0,W,H);
+  const gl=x.createRadialGradient(W/2,H*0.33,0,W/2,H*0.33,W*0.72);
+  gl.addColorStop(0,'rgba(70,92,150,0.20)');gl.addColorStop(1,'rgba(0,0,0,0)');
+  x.fillStyle=gl;x.fillRect(0,0,W,H);
+  for(let i=0;i<300;i++){const sx=Math.random()*W,sy=Math.random()*H,sr=Math.random()*1.7+0.3,a=Math.random()*0.6+0.12;
+    x.beginPath();x.arc(sx,sy,sr,0,6.2832);x.fillStyle='rgba(220,228,255,'+a+')';x.fill();}
+  // ดาวปลายทาง — แสงฟุ้ง
+  const fx=W/2,fy=H*0.315,reached=r.ly>=STARS[0].ly;
+  const halo=x.createRadialGradient(fx,fy,0,fx,fy,200);
+  halo.addColorStop(0,'rgba(255,243,210,0.95)');halo.addColorStop(.1,'rgba(255,224,150,0.55)');
+  halo.addColorStop(.45,'rgba(243,201,122,0.14)');halo.addColorStop(1,'rgba(243,201,122,0)');
+  x.fillStyle=halo;x.beginPath();x.arc(fx,fy,200,0,6.2832);x.fill();
+  x.fillStyle='#fff';x.beginPath();x.arc(fx,fy,reached?7:4,0,6.2832);x.fill();
+  // กรอบบาง ๆ
+  x.strokeStyle='rgba(255,255,255,0.08)';x.lineWidth=2;x.strokeRect(40,40,W-80,H-80);
+  x.textAlign='center';
+  // แบรนด์บน
+  x.fillStyle='rgba(243,201,122,0.88)';x.font='600 24px "Space Grotesk",sans-serif';
+  x.fillText('✦   ห้วงดาว · BETWEEN STARS', W/2, 110);
+  // วันที่
+  x.fillStyle='rgba(238,242,251,0.62)';x.font='400 32px "Noto Sans Thai",sans-serif';
+  x.fillText('แสงจากวันที่ '+r.dateStr+' ของคุณ', W/2, H*0.55);
+  // ชื่อดาว (ใหญ่)
+  x.fillStyle='#ffffff';x.font='300 78px "Noto Sans Thai",sans-serif';
+  x.fillText(reached?r.star.th:'ยังอยู่ระหว่างทาง', W/2, H*0.55+98);
+  // อังกฤษ + ระยะ
+  x.fillStyle='rgba(243,201,122,0.92)';x.font='500 27px "Space Grotesk",sans-serif';
+  x.fillText(reached?(r.star.en.toUpperCase()+'   ·   '+fmt(r.star.ly)+' LIGHT-YEARS'):'แสงของคุณยังไม่ถึงดาวดวงใด', W/2, H*0.55+152);
+  // คำบรรยาย (ตัดบรรทัดภาษาไทย)
+  x.fillStyle='rgba(238,242,251,0.70)';x.font='300 30px "Noto Sans Thai",sans-serif';
+  const desc=reached?('คืนนี้แสงของคุณกำลังส่องถึงดาวดวงนี้พอดี — '+r.star.d)
+    :('แสงจากวันนั้นยังเดินทางอยู่ในความมืดอันกว้างใหญ่ระหว่างดวงดาว ยังไม่ถึงดาวดวงใด แต่ไม่เคยหยุด');
+  wrapThai(x,desc,W-200).forEach((ln,i)=>x.fillText(ln,W/2,H*0.55+212+i*44));
+  // ระยะทาง
+  x.fillStyle='rgba(238,242,251,0.40)';x.font='400 24px "Noto Sans Thai",sans-serif';
+  x.fillText('เดินทางมาแล้ว ≈ '+fmt(r.ly*9.461)+' ล้านล้านกิโลเมตร', W/2, H-150);
+  // ลิงก์กลับเว็บ
+  x.fillStyle='rgba(243,201,122,0.65)';x.font='500 22px "Space Grotesk",sans-serif';
+  x.fillText('ค้นหาปลายทางแสงของวันคุณ · '+SHARE_SITE, W/2, H-100);
+  return c;
+}
 document.getElementById('share').onclick=async()=>{
   if(!lastResult)return;
-  const txt='✦ แสงจากวันที่ '+lastResult.dateStr+' เดินทางมาแล้ว '+fmt(lastResult.ly)+' ปีแสง\nคืนนี้มันกำลังส่องถึงดาว '+lastResult.star.th+' ('+lastResult.star.en+')\n— ลองหาปลายทางแสงของคุณที่ ห้วงดาว';
+  const b=document.getElementById('share'),orig=b.textContent;
+  const txt='✦ แสงจากวันที่ '+lastResult.dateStr+' เดินทางมาแล้ว '+fmt(lastResult.ly)+' ปีแสง\n'+
+    (lastResult.ly>=STARS[0].ly?('คืนนี้มันกำลังส่องถึงดาว '+lastResult.star.th+' ('+lastResult.star.en+')\n'):'แสงของคุณยังเดินทางอยู่ในความมืดระหว่างดวงดาว\n')+
+    '— ลองหาปลายทางแสงของคุณที่ ห้วงดาว';
   try{
-    if(navigator.share){await navigator.share({title:'แสงจากวันของคุณ',text:txt,url:location.href});}
-    else{await navigator.clipboard.writeText(txt+'\n'+location.href);const b=document.getElementById('share');const o=b.textContent;b.textContent='✓ คัดลอกแล้ว';setTimeout(()=>b.textContent=o,1800);}
-  }catch(e){}
+    b.textContent='✦ กำลังสร้างการ์ด...';
+    try{await document.fonts.ready;}catch(e){}        // รอฟอนต์โหลดก่อนวาด ไม่งั้นได้ฟอนต์ fallback
+    const canvas=buildLightCard(lastResult);
+    const blob=await new Promise(res=>canvas.toBlob(res,'image/png'));
+    const file=new File([blob],'light-echo.png',{type:'image/png'});
+    b.textContent=orig;
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      await navigator.share({files:[file],title:'แสงจากวันของคุณ · ห้วงดาว',text:txt});
+    }else{ // เดสก์ท็อป/เบราว์เซอร์ที่แชร์ไฟล์ไม่ได้ → ดาวน์โหลดรูป + คัดลอกข้อความ
+      const a=document.createElement('a');a.download='light-echo.png';a.href=URL.createObjectURL(blob);a.click();
+      setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+      try{await navigator.clipboard.writeText(txt+'\n'+location.href);}catch(e){}
+      b.textContent='✓ บันทึกรูปแล้ว';setTimeout(()=>b.textContent=orig,2200);
+    }
+  }catch(e){b.textContent=orig;}
 };
 // เปิดจากลิงก์ที่มี ?d=
 (function(){const m=new URLSearchParams(location.search).get('d');
