@@ -640,17 +640,29 @@
       radial-gradient(1px 1px at 78% 88%,rgba(255,255,255,.4),transparent);
     animation:moodTwinkle 5.5s ease-in-out infinite}
   @keyframes moodTwinkle{0%,100%{opacity:.38}50%{opacity:.66}}
-  .mood-card>*{position:relative;z-index:1}
+  .mood-card>*{position:relative;z-index:1;flex-shrink:0}/* กัน flexbox บีบ note/ปฏิทินตอนเดือน 6 แถว */
   .mood-x{position:absolute;top:14px;right:16px;background:none;border:none;color:rgba(255,255,255,.32);font-size:20px;cursor:pointer;padding:4px;line-height:1;transition:.2s;z-index:3}
   .mood-x:hover{color:rgba(255,255,255,.75)}
   .mood-pre{font-family:var(--eng);font-size:8.5px;letter-spacing:.32em;text-transform:uppercase;color:rgba(243,201,122,.66);display:flex;align-items:center;gap:9px}
   .mood-pre::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(243,201,122,.4),transparent)}
   .mood-date{font-family:var(--th);font-size:12px;color:rgba(238,228,210,.5);letter-spacing:.04em;margin-top:-7px}
   .mood-lab{font-family:var(--eng);font-size:8.5px;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.4)}
-  .mood-chips{display:flex;flex-wrap:wrap;gap:4px;justify-content:space-between}
-  .mood-chip{flex:1 1 0;min-width:58px;display:flex;flex-direction:column;align-items:center;gap:8px;
-    background:none;border:none;border-radius:14px;padding:8px 2px 6px;cursor:pointer;
-    font-family:var(--th);font-size:11.5px;color:rgba(220,218,235,.58);transition:.25s}
+  /* HERO orb — เรืองสีตามอารมณ์ที่เลือก (เชื่อมกับ "ดาวของคุณ") */
+  .mood-hero{display:flex;flex-direction:column;align-items:center;gap:9px;padding:6px 0 2px}
+  .mood-hero-orb{width:74px;height:74px;border-radius:50%;position:relative;transition:.45s cubic-bezier(.2,.7,.16,1);
+    background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--hc) 92%,#fff),var(--hc) 60%,color-mix(in srgb,var(--hc) 52%,#000));
+    box-shadow:0 0 34px color-mix(in srgb,var(--hc) 60%,transparent),0 0 70px color-mix(in srgb,var(--hc) 26%,transparent),0 0 0 1px rgba(255,255,255,.14) inset}
+  .mood-hero-orb::after{content:'';position:absolute;inset:-8px;border-radius:50%;border:1px solid color-mix(in srgb,var(--hc) 50%,transparent);animation:moodHeroPulse 2.8s ease-in-out infinite}
+  @keyframes moodHeroPulse{0%,100%{transform:scale(1);opacity:.75}50%{transform:scale(1.09);opacity:.32}}
+  .mood-hero.empty .mood-hero-orb{background:radial-gradient(circle at 38% 32%,rgba(255,255,255,.08),rgba(255,255,255,.02));box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+  .mood-hero.empty .mood-hero-orb::after{border-color:rgba(255,255,255,.14);animation:none}
+  .mood-hero-lab{font-family:var(--th);font-size:15px;color:#fff;font-weight:300}
+  .mood-hero.empty .mood-hero-lab{color:rgba(255,255,255,.5);font-size:13.5px}
+  /* CHIP grid — 6 บนเดสก์ท็อป / 3×2 บนมือถือ (กันห่อบรรทัดเบี้ยว) */
+  .mood-chips{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}
+  .mood-chip{display:flex;flex-direction:column;align-items:center;gap:7px;
+    background:none;border:none;border-radius:13px;padding:7px 2px 5px;cursor:pointer;
+    font-family:var(--th);font-size:10.5px;color:rgba(220,218,235,.55);transition:.25s}
   .mood-chip .dot{width:27px;height:27px;border-radius:50%;flex:none;position:relative;transition:.25s;
     background:radial-gradient(circle at 34% 30%,color-mix(in srgb,var(--mc) 88%,#fff),var(--mc) 60%,color-mix(in srgb,var(--mc) 58%,#000));
     box-shadow:0 0 10px color-mix(in srgb,var(--mc) 50%,transparent),0 0 0 1px rgba(255,255,255,.08) inset}
@@ -701,7 +713,8 @@
   #moodDayView{font-family:var(--th);font-size:13px;line-height:1.8;color:rgba(222,218,240,.82);min-height:18px;text-align:center;padding:2px}
   #moodDayView .mdv-mood{color:var(--mc);font-style:italic}
   #moodDayView .mdv-note{color:rgba(238,233,250,.92);margin-top:3px}
-  @media(max-width:520px){.mood-card{padding:26px 18px 20px;max-height:90vh}}
+  @media(max-width:520px){.mood-card{padding:26px 18px 20px;max-height:90vh}
+    .mood-chips{grid-template-columns:repeat(3,1fr);gap:6px}.mood-chip{font-size:11.5px}}
 
   @media(max-width:860px){.nav,.events,.missions{display:none}.brand{top:16px;left:16px}
     .dock{gap:9px;padding:8px 12px;bottom:60px}.dock .lab,.dock .grp{display:none}.views{bottom:118px}
@@ -1039,7 +1052,7 @@
     <button class="mood-x" id="moodClose">×</button>
     <div class="mood-pre">ห้วงใจ · INNER SPACE</div>
     <div class="mood-date" id="moodDate"></div>
-    <div class="mood-lab">วันนี้ใจคุณเป็นแบบไหน</div>
+    <div class="mood-hero empty" id="moodHero"><div class="mood-hero-orb"></div><div class="mood-hero-lab" id="moodHeroLab">วันนี้ใจคุณเป็นแบบไหน?</div></div>
     <div class="mood-chips" id="moodChips"></div>
     <div class="mood-qwrap empty" id="moodQWrap">
       <div class="mood-q" id="moodQ"></div>
@@ -1783,7 +1796,7 @@ function updateWebb(dt){
   else webbLabel.style.opacity=0;
 }
 // ===== กรอกวันเกิด + เวลา → พาระบบสุริยะไปวันนั้นจริงๆ แล้วถ่ายภาพสวยๆ =====
-let dateTween=null,webbBirthday=null,capturedDataURL=null;
+let dateTween=null,webbBirthday=null,capturedDataURL=null,webbOccasion='';
 
 // flash overlay
 const chronosFlash=document.createElement('div');
@@ -1862,7 +1875,7 @@ function addCardText(ctx,CW,CH){
   _ct('ระบบสุริยะ',CH*0.822);
   ctx.font='300 30px "Noto Sans Thai",sans-serif';
   ctx.fillStyle='rgba(255,255,255,0.68)';
-  _ct('ณ วันสำคัญของฉัน',CH*0.822+46);
+  _ct('ณ '+(webbOccasion||'วันสำคัญของฉัน'),CH*0.822+46);
   ctx.restore();
 
   if(webbBirthday){
@@ -1974,23 +1987,22 @@ async function doCapture(){
 function shareCapture(){
   if(!capturedDataURL)return;
   const bd=webbBirthday?webbBirthday.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'}):'';
-  const text='ระบบสุริยะวันสำคัญของฉัน'+(bd?' · '+bd:'')+' · ห้วงดาว · between-stars.vercel.app';
+  const text='ระบบสุริยะ ณ '+(webbOccasion||'วันสำคัญของฉัน')+(bd?' · '+bd:'')+' · ห้วงดาว · between-stars.vercel.app';
   if(capturedFile&&navigator.canShare&&navigator.canShare({files:[capturedFile]})){
     navigator.share({files:[capturedFile],title:'ห้วงดาว · Between Stars',text}).catch(()=>{});
     return;
   }
   saveCapture();
 }
-// บันทึก: เดสก์ท็อปดาวน์โหลดตรง ๆ; มือถือ (iOS ไม่รองรับ download attr) เปิดรูปในแท็บใหม่ให้กดค้างเซฟ
+// บันทึก = ดาวน์โหลดไฟล์ลงเครื่องโดยตรงเสมอ (ไม่เปิด share sheet) — blob URL + download attr
+// (iOS Safari 13+ รองรับ download บน blob: → เซฟลง Files; Android/เดสก์ท็อปดาวน์โหลดปกติ)
 function saveCapture(){
   if(!capturedDataURL)return;
-  if(isMobile){
-    if(capturedFile&&navigator.canShare&&navigator.canShare({files:[capturedFile]})){
-      navigator.share({files:[capturedFile],title:'ห้วงดาว · Between Stars'}).catch(()=>{});return;}
-    const url=capturedBlob?URL.createObjectURL(capturedBlob):capturedDataURL;
-    window.open(url,'_blank');return;
-  }
-  const a=document.createElement('a');a.download='between-stars.png';a.href=capturedDataURL;a.click();
+  const url=capturedBlob?URL.createObjectURL(capturedBlob):capturedDataURL;
+  const a=document.createElement('a');
+  a.href=url;a.download='between-stars.png';a.rel='noopener';
+  document.body.appendChild(a);a.click();a.remove();
+  if(capturedBlob)setTimeout(()=>URL.revokeObjectURL(url),5000);
 }
 document.getElementById('prevShare').onclick=shareCapture;
 document.getElementById('prevSave').onclick=saveCapture;
@@ -2047,7 +2059,11 @@ webbModal.innerHTML='<div id="webbInner" style="width:344px;max-width:90vw;backg
  +'<div id="webbStep1">'
  +'<div style="font-size:17px;color:#fff;font-weight:300;margin-bottom:6px">ระบบสุริยะ ณ วันสำคัญของคุณ</div>'
  +'<div style="font-size:12px;color:rgba(238,242,251,.45);line-height:1.7;margin-bottom:18px">เลือกวันสำคัญ แล้วดูดาวเคราะห์เคลื่อนไปตำแหน่งจริงของวันนั้น</div>'
- +'<input id="webbDate" type="date" style="'+_inp+'">'
+ +'<input id="webbOccasion" type="text" maxlength="40" placeholder="วันนี้คือวันอะไร? เช่น วันเกิด (ไม่ใส่ก็ได้)" style="'+_inp+'">'
+ +'<div id="webbChips" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px;margin-bottom:4px">'
+ +['วันเกิดของฉัน','วันครบรอบของเรา','วันแต่งงาน','วันรับปริญญา'].map(o=>'<button type="button" class="wbchip" style="font-family:var(--th);font-size:12px;color:rgba(243,201,122,.85);background:rgba(243,201,122,.08);border:1px solid rgba(243,201,122,.25);border-radius:14px;padding:5px 12px;cursor:pointer">'+o+'</button>').join('')
+ +'</div>'
+ +'<input id="webbDate" type="date" style="'+_inp+';margin-top:10px">'
  +'<input id="webbTime" type="time" placeholder="เวลา (ถ้าจำได้)" style="'+_inp+';margin-top:9px">'
  +'<button id="webbGo" style="width:100%;margin-top:14px;padding:13px;border:none;border-radius:12px;color:#1a1408;font-weight:600;font-size:14px;font-family:var(--th);cursor:pointer;background:linear-gradient(135deg,#f3c97a,#e0a94e)">✦ พาไปวันนั้น</button>'
  +'<button id="webbClose" style="margin-top:12px;background:none;border:none;color:var(--muted);font-size:12px;font-family:var(--th);cursor:pointer">ปิด</button>'
@@ -2062,6 +2078,8 @@ webbModal.innerHTML='<div id="webbInner" style="width:344px;max-width:90vw;backg
  +'</div>'
  +'</div>';
 document.body.appendChild(webbModal);
+// chip ลัดเติมโอกาสลงช่องข้อความ
+webbModal.querySelectorAll('.wbchip').forEach(b=>b.onclick=()=>{const i=document.getElementById('webbOccasion');i.value=b.textContent;i.focus();});
 
 // viewfinder overlay — กรอบทองเบาๆ เหมือนมองผ่านเลนส์
 const vf=document.createElement('div');
@@ -2083,6 +2101,7 @@ function webbShowStep(n){
 }
 function openWebbPanel(){
   const di=document.getElementById('webbDate'),ti=document.getElementById('webbTime');
+  document.getElementById('webbOccasion').value=webbOccasion||'';
   if(webbBirthday){
     di.value=webbBirthday.toISOString().slice(0,10);
     const hh=webbBirthday.getUTCHours().toString().padStart(2,'0');
@@ -2102,6 +2121,7 @@ document.getElementById('webbGo').onclick=()=>{
   const v=document.getElementById('webbDate').value;if(!v)return;
   const t=document.getElementById('webbTime').value||'12:00';
   const target=new Date(v+'T'+t+':00Z');if(isNaN(target))return;
+  webbOccasion=(document.getElementById('webbOccasion').value||'').trim().slice(0,40);
   webbBirthday=target;exitLive();running=false;play.innerHTML=ICON_PLAY;
   dateTween={from:simDate.getTime(),to:target.getTime(),t0:performance.now(),dur:2400,onDone:null};
   // ไม่ปิด modal — ไปต่อ step 2
@@ -3689,9 +3709,14 @@ function renderMoodChips(){
     const el=document.createElement('div');el.className='mood-chip'+(_moodSel===m.k?' sel':'');
     el.style.setProperty('--mc',m.c);
     el.innerHTML='<span class="dot"></span>'+m.label;
-    el.onclick=()=>{_moodSel=m.k;_moodQText=pickMoodQ(m.k);renderMoodChips();renderMoodQ();$p('moodSave').disabled=false;};
+    el.onclick=()=>{_moodSel=m.k;_moodQText=pickMoodQ(m.k);renderMoodChips();renderMoodHero();renderMoodQ();$p('moodSave').disabled=false;};
     wrap.appendChild(el);
   });
+}
+function renderMoodHero(){
+  const hero=$p('moodHero'),lab=$p('moodHeroLab');
+  if(_moodSel){const m=MOODS.find(x=>x.k===_moodSel);hero.classList.remove('empty');hero.style.setProperty('--hc',m.c);lab.textContent=m.label;}
+  else{hero.classList.add('empty');lab.textContent='วันนี้ใจคุณเป็นแบบไหน?';}
 }
 function renderMoodQ(){
   const wrap=$p('moodQWrap');
@@ -3734,7 +3759,7 @@ function openMoodPanel(){
   $p('moodNote').value=e?(e.note||''):'';
   $p('moodSave').disabled=!_moodSel;
   $p('moodSave').textContent=e?'อัปเดตห้วงใจ':'บันทึกห้วงใจ';
-  renderMoodChips();renderMoodQ();renderMoodLegend();
+  renderMoodChips();renderMoodHero();renderMoodQ();renderMoodLegend();
   _moodCalRef=new Date();_moodDaySel=null;$p('moodDayView').textContent='';
   renderMoodCal();
   $p('moodModal').classList.add('on');

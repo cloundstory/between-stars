@@ -184,11 +184,12 @@ function reveal(d){
   setTimeout(()=>document.getElementById('result').scrollIntoView({behavior:'smooth',block:'start'}),120);
 }
 
-let echoRAF=null,echoRO=null;
+let echoRAF=null,echoRO=null,echoIO=null;
 function animateEcho(star,ly){
   const c=document.getElementById('echo'),x=c.getContext('2d');
   if(echoRAF)cancelAnimationFrame(echoRAF);
   if(echoRO){echoRO.disconnect();echoRO=null;}
+  if(echoIO){echoIO.disconnect();echoIO=null;}
   let W=0,H=0,ex,ey,sx,sy,maxR,pathAngle,ready=false;
   // ดาวพื้นหลัง + particles สร้างครั้งเดียว (คงที่แม้ resize)
   const bgStars=[];for(let i=0;i<280;i++)bgStars.push({rx:Math.random(),ry:Math.random(),r:Math.random()*1.4+0.2,a:Math.random()*0.55+0.08,p:Math.random()*6.28,sp:0.4+Math.random()*1.8});
@@ -208,13 +209,18 @@ function animateEcho(star,ly){
   }
   setup();
   if(window.ResizeObserver){echoRO=new ResizeObserver(()=>setup());echoRO.observe(c);}
-  const t0=performance.now();
+  // เริ่มจับเวลา reveal เมื่อ canvas โผล่ในจอจริง (กันอนิเมชั่นเล่นจบตอนผู้ใช้ยังเลื่อนไม่ถึง = ไม่เห็น)
+  let t0=null,visible=true;
+  if(window.IntersectionObserver){visible=false;
+    echoIO=new IntersectionObserver(es=>{visible=es.some(en=>en.isIntersecting);},{threshold:0.25});
+    echoIO.observe(c);}
 
   function frame(now){
     if(!ready){setup();if(!ready){echoRAF=requestAnimationFrame(frame);return;}}
-    const elapsed=now-t0;
-    const e=Math.min(1,elapsed/3800);
-    const k=1-Math.pow(1-e,3);
+    if(t0===null&&visible)t0=now;
+    const started=t0!==null;
+    const elapsed=started?now-t0:0;
+    const k=started?1-Math.pow(1-Math.min(1,elapsed/2400),3):0; // reveal เส้นทาง/ดาวปลายทาง (ครั้งเดียว)
     x.clearRect(0,0,W,H);
 
     // nebula glow พื้นหลัง
@@ -257,19 +263,23 @@ function animateEcho(star,ly){
       x.beginPath();x.arc(px+ox,py+oy,p.sz,0,6.28);x.fillStyle=`rgba(255,210,100,${fade})`;x.fill();
     }
 
-    // คลื่นแสง — หลายวง
-    const wr=maxR*k;
-    for(let ring=0;ring<4;ring++){
-      const rr=wr-ring*9;if(rr<0)continue;
-      const ra=(0.48-ring*0.11)*(1-e*0.65);
-      x.strokeStyle=`rgba(255,210,90,${ra})`;x.lineWidth=Math.max(0.3,1.8-ring*0.4);
-      x.beginPath();x.arc(ex,ey,rr,0,6.28);x.stroke();
-    }
-    // inner glow ที่หน้าคลื่น
-    if(wr>8){
-      const wg=x.createRadialGradient(ex,ey,wr-14,ex,ey,wr+8);
-      wg.addColorStop(0,'rgba(255,200,80,0)');wg.addColorStop(0.5,`rgba(255,215,100,${0.07*(1-e*0.75)})`);wg.addColorStop(1,'rgba(255,200,80,0)');
-      x.fillStyle=wg;x.fillRect(0,0,W,H);
+    // คลื่นแสง — ระลอกออกจากโลกต่อเนื่อง (loop) ให้เห็นการเดินทางตลอด ไม่ใช่ครั้งเดียวแล้วนิ่ง
+    if(started){
+      for(let wv=0;wv<2;wv++){
+        const ph=((elapsed/3400)+wv*0.5)%1;        // 2 ระลอกสลับเฟส
+        const wr=maxR*ph;
+        const wfade=Math.sin(ph*Math.PI);           // จาง→เข้ม→จาง ตามระยะเดินทาง
+        for(let ring=0;ring<3;ring++){
+          const rr=wr-ring*8;if(rr<3)continue;
+          x.strokeStyle=`rgba(255,210,90,${(0.42-ring*0.1)*wfade})`;x.lineWidth=Math.max(0.3,1.7-ring*0.45);
+          x.beginPath();x.arc(ex,ey,rr,0,6.28);x.stroke();
+        }
+        if(wr>8){
+          const wg=x.createRadialGradient(ex,ey,Math.max(0,wr-14),ex,ey,wr+8);
+          wg.addColorStop(0,'rgba(255,200,80,0)');wg.addColorStop(0.5,`rgba(255,215,100,${0.06*wfade})`);wg.addColorStop(1,'rgba(255,200,80,0)');
+          x.fillStyle=wg;x.fillRect(0,0,W,H);
+        }
+      }
     }
 
     // โลก — glow หลายชั้น
