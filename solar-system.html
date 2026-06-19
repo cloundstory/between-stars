@@ -463,6 +463,9 @@
   .stab-panel{display:none}
   .stab-panel.on{display:block}
   /* identity tab */
+  .sig-founder{display:inline-block;font-family:var(--eng);font-size:9px;letter-spacing:.26em;text-transform:uppercase;font-weight:600;
+    color:#1a1408;background:linear-gradient(180deg,#f7d98f,#e0a94e);border-radius:20px;padding:6px 16px;margin-bottom:16px;
+    box-shadow:0 0 22px rgba(243,201,122,.45),0 2px 8px rgba(0,0,0,.3)}
   #sigIdentityInner .sig-date{font-family:var(--eng);font-size:10px;letter-spacing:.14em;color:var(--faint);margin-bottom:32px}
   .sig-stats-row{display:flex;gap:40px;flex-wrap:wrap;margin-bottom:36px}
   .sig-stat{display:flex;flex-direction:column;gap:5px}
@@ -3225,8 +3228,21 @@ $p('resSubmit').onclick=()=>{
   renderResonances(resCurrentPlanet.en,resCurrentPlanet.color);
 };
 // ===== SIGNAL IDENTITY =====
+// Signal ผู้ก่อตั้ง — ล็อกกับอีเมลผู้สร้าง คนอื่นสุ่มไม่ได้ (รูปแบบสุ่มคือ "ดาว · HR ####" เสมอ)
+const CREATOR_EMAIL='cloundstory@gmail.com';
+const CREATOR_SIGNAL='Sol · PRIME';
+function isCreatorSig(){return localStorage.getItem(SIGKEY)===CREATOR_SIGNAL||(window.BSync&&window.BSync.email&&window.BSync.email()===CREATOR_EMAIL);}
+function applyCreatorSignal(){
+  if(window.BSync&&window.BSync.email&&window.BSync.email()===CREATOR_EMAIL){
+    if(localStorage.getItem(SIGKEY)!==CREATOR_SIGNAL){
+      localStorage.setItem(SIGKEY,CREATOR_SIGNAL);
+      if(!localStorage.getItem('sigCreated'))localStorage.setItem('sigCreated',String(Date.now()));
+      if(window.BSync.push)window.BSync.push();
+    }
+  }
+}
 function sigHue(s){let h=0;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))%360;return h;}
-function sigColor(sig){return'hsl('+sigHue(sig)+',70%,72%)';}
+function sigColor(sig){if(sig===CREATOR_SIGNAL)return'#f3c97a';return'hsl('+sigHue(sig)+',70%,72%)';}
 
 function getSignalFull(){
   let s=localStorage.getItem(SIGKEY);
@@ -3263,7 +3279,9 @@ function renderSigIdentity(){
   const email=localStorage.getItem('sigEmail')||'';
   const linked=!!email;
   const cfg=!!(window.BSync&&window.BSync.configured);
+  const creator=isCreatorSig();
   $p('sigIdentityInner').innerHTML=`
+    ${creator?'<div class="sig-founder">✦ ผู้ก่อตั้ง · FOUNDER</div>':''}
     <div class="sig-date">เริ่มส่งสัญญาณ · ${created.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div>
     <div class="sig-stats-row">
       <div class="sig-stat"><b>${pub}</b><span>คำฝาก</span></div>
@@ -3306,11 +3324,15 @@ window.sigUnlink=function(){
 };
 // ซิงก์: re-render หน้า/ดาว/ปฏิทิน เมื่อดึงข้อมูลจาก cloud มา merge เสร็จ + เมื่อสถานะ login เปลี่ยน
 window.addEventListener('bsync:pulled',()=>{try{
+  applyCreatorSignal();
   refreshMyStar();updateMoodBtn();
   if($p('moodModal').classList.contains('on'))renderMoodCal();
   if($p('sigModal').classList.contains('on'))renderSigIdentity();
 }catch(e){}});
-window.addEventListener('bsync:auth',()=>{try{if($p('sigModal').classList.contains('on'))renderSigIdentity();}catch(e){}});
+window.addEventListener('bsync:auth',()=>{try{
+  applyCreatorSignal();refreshMyStar();
+  if($p('sigModal').classList.contains('on'))renderSigIdentity();
+}catch(e){}});
 
 function renderSigResonance(){
   const sig=getSignal(),board=readBoard();
