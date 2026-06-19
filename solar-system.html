@@ -3262,6 +3262,7 @@ function renderSigIdentity(){
   Object.keys(board).forEach(en=>{const n=(board[en]||[]).filter(r=>r.sig===sig).length;if(n){totalRes+=n;resPlanets++;}});
   const email=localStorage.getItem('sigEmail')||'';
   const linked=!!email;
+  const cfg=!!(window.BSync&&window.BSync.configured);
   $p('sigIdentityInner').innerHTML=`
     <div class="sig-date">เริ่มส่งสัญญาณ · ${created.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div>
     <div class="sig-stats-row">
@@ -3272,8 +3273,8 @@ function renderSigIdentity(){
     </div>
     <div class="sig-login-head">เชื่อมต่อ SIGNAL กับ EMAIL</div>
     <div class="sig-login-desc">${linked
-      ?'เชื่อมต่อแล้วกับ <b style="color:var(--gold)">'+escapeHtml(email)+'</b><br>Signal ของคุณจะซิงก์ข้ามเครื่องเมื่อ backend พร้อม'
-      :'ป้อน email เพื่อรับ magic link — ยืนยันแล้ว Signal นี้จะผูกกับ account ของคุณ<br>สามารถกู้คืนและใช้ข้ามเครื่องได้'}</div>
+      ?'เข้าสู่ระบบแล้ว · <b style="color:var(--gold)">'+escapeHtml(email)+'</b><br>'+(cfg?'บันทึกของคุณ (อารมณ์ · ดาว · Golden Record) ซิงก์อัตโนมัติทุกเครื่อง':'Signal จะซิงก์ข้ามเครื่องเมื่อ backend พร้อม')
+      :(cfg?'ป้อน email เพื่อรับลิงก์เข้าระบบ — บันทึกของคุณจะถูกเก็บบนคลาวด์ ซิงก์ทุกเครื่อง ไม่หายเมื่อเปลี่ยนเครื่อง':'ป้อน email เพื่อรับ magic link — ยืนยันแล้ว Signal นี้จะผูกกับ account ของคุณ<br>สามารถกู้คืนและใช้ข้ามเครื่องได้')}</div>
     ${linked
       ?`<div style="display:flex;align-items:center;gap:12px"><span style="font-family:var(--eng);font-size:10px;letter-spacing:.12em;color:var(--gold)">● LINKED</span><button onclick="sigUnlink()" style="background:none;border:1px solid var(--line);color:var(--faint);font-family:var(--eng);font-size:9px;letter-spacing:.14em;padding:6px 12px;border-radius:6px;cursor:pointer">ยกเลิก</button></div>`
       :`<div class="sig-email-row">
@@ -3282,16 +3283,34 @@ function renderSigIdentity(){
       </div>
       <div id="sigLoginMsg"></div>`}`;
   if(!linked){
-    $p('sigEmailSend').onclick=()=>{
+    $p('sigEmailSend').onclick=async()=>{
       const v=($p('sigEmailInput').value||'').trim();
       if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){$p('sigLoginMsg').textContent='รูปแบบ email ไม่ถูกต้อง';return;}
+      if(cfg){
+        $p('sigLoginMsg').textContent='กำลังส่งลิงก์…';
+        try{const{error}=await window.BSync.sendLink(v);
+          if(error){$p('sigLoginMsg').textContent='ส่งไม่สำเร็จ: '+error.message;return;}
+          $p('sigLoginMsg').innerHTML='ส่งลิงก์เข้าระบบไปที่ <b>'+escapeHtml(v)+'</b> แล้ว<br><span style="opacity:.6;font-size:11px">เปิดเมล แล้วคลิกลิงก์เพื่อเข้าสู่ระบบ</span>';
+        }catch(e){$p('sigLoginMsg').textContent='ส่งไม่สำเร็จ ลองใหม่อีกครั้ง';}
+        return;
+      }
       localStorage.setItem('sigEmail',v);
       $p('sigLoginMsg').innerHTML='ส่งลิงก์ไปที่ <b>'+escapeHtml(v)+'</b> แล้ว — กรุณาตรวจ inbox<br><span style="opacity:.5;font-size:11px">(backend ยังไม่ active — บันทึก email ไว้ก่อน)</span>';
       setTimeout(()=>renderSigIdentity(),1800);
     };
   }
 }
-window.sigUnlink=function(){localStorage.removeItem('sigEmail');renderSigIdentity();};
+window.sigUnlink=function(){
+  if(window.BSync&&window.BSync.configured){window.BSync.logout().then(()=>renderSigIdentity());}
+  else{localStorage.removeItem('sigEmail');renderSigIdentity();}
+};
+// ซิงก์: re-render หน้า/ดาว/ปฏิทิน เมื่อดึงข้อมูลจาก cloud มา merge เสร็จ + เมื่อสถานะ login เปลี่ยน
+window.addEventListener('bsync:pulled',()=>{try{
+  refreshMyStar();updateMoodBtn();
+  if($p('moodModal').classList.contains('on'))renderMoodCal();
+  if($p('sigModal').classList.contains('on'))renderSigIdentity();
+}catch(e){}});
+window.addEventListener('bsync:auth',()=>{try{if($p('sigModal').classList.contains('on'))renderSigIdentity();}catch(e){}});
 
 function renderSigResonance(){
   const sig=getSignal(),board=readBoard();
@@ -3525,6 +3544,7 @@ document.getElementById('grSubmit').onclick=()=>{
   if(pool.length>200)pool.splice(0,pool.length-200);
   writeGRPool(pool);
   markGRWritten(new Date().toISOString(),ownId,ownText);
+  if(window.BSync&&window.BSync.push)window.BSync.push();
   // show confirmation then close
   document.getElementById('grForm').style.display='none';
   document.getElementById('grAlready').style.display='';
@@ -3771,6 +3791,7 @@ function saveMood(){
   const today=moodLocalStr(),j=readMood();
   j[today]={m:_moodSel,note:($p('moodNote').value||'').trim().slice(0,200),q:_moodQText,t:Date.now()};
   writeMood(j);updateMoodBtn();renderMoodCal();refreshMyStar();
+  if(window.BSync&&window.BSync.push)window.BSync.push();
   const afterStage=myStarSummary().stageIdx;
   const btn=$p('moodSave');btn.textContent='บันทึกแล้ว ✦';btn.disabled=true;
   setTimeout(()=>{btn.textContent='อัปเดตห้วงใจ';btn.disabled=false;},1500);
@@ -3880,5 +3901,6 @@ window.__scene={scene,camera,PLANETS,SUN,Astronomy,openInfo,selectBody,planetMes
   },200);
 })();
 </script>
+<script type="module" src="sync.js"></script>
 </body>
 </html>
