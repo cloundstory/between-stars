@@ -22,7 +22,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://between-stars.vercel.app/og-image.png">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="apple-touch-icon" href="favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -284,6 +284,46 @@
   #bhPanel .bh-stat{font-family:var(--eng);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28)}
   @media(max-width:520px){#bhPanel{top:auto;bottom:0;transform:translate(0,110%);width:100vw;border-radius:16px 16px 0 0;border-left:1px solid rgba(150,130,210,.16);border-bottom:none}
     #bhPanel.on{transform:translate(0,0)}}
+  /* ===== ดาวของเรา · MY STAR ===== */
+  #myStarLabel{position:fixed;z-index:7;pointer-events:none;font-family:var(--th);font-size:12px;letter-spacing:.02em;
+    color:rgba(247,225,180,.78);text-shadow:0 1px 8px rgba(0,0,0,.9);transform:translate(-50%,0);white-space:nowrap;
+    opacity:0;transition:opacity .5s;display:none}
+  #myStarLabel.on{opacity:1}
+  #myStarPanel{position:fixed;right:0;top:50%;transform:translate(110%,-50%);z-index:16;width:min(360px,92vw);
+    background:radial-gradient(120% 100% at 100% 0%,rgba(38,30,20,.97),rgba(10,8,6,.98));border:1px solid rgba(243,201,122,.2);
+    border-right:none;border-radius:16px 0 0 16px;padding:26px 24px 22px;display:flex;flex-direction:column;gap:14px;
+    backdrop-filter:blur(14px);transition:transform .55s cubic-bezier(.2,.7,.16,1);box-shadow:-30px 0 80px rgba(0,0,0,.5)}
+  #myStarPanel.on{transform:translate(0,-50%)}
+  #msClose{position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,.3);font-size:20px;cursor:pointer;transition:.2s}
+  #msClose:hover{color:rgba(255,255,255,.7)}
+  #myStarPanel .ms-pre{font-family:var(--eng);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:rgba(243,201,122,.6)}
+  #myStarPanel .ms-title{font-family:var(--th);font-weight:300;font-size:28px;letter-spacing:.02em;color:#fbeccf}
+  #myStarPanel .ms-poem{font-family:var(--th);font-size:13px;line-height:1.85;color:rgba(235,225,205,.62);font-style:italic;
+    border-left:2px solid rgba(243,201,122,.3);padding-left:12px}
+  #myStarPanel .ms-poem span{color:rgba(247,213,150,.85)}
+  .ms-meter{display:flex;flex-direction:column;gap:7px}
+  .ms-meter-top{display:flex;align-items:center;justify-content:space-between;font-family:var(--eng);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:rgba(247,225,180,.6)}
+  #msScoreVal{font-size:13px;color:var(--gold);letter-spacing:.04em}
+  .ms-bar{height:6px;border-radius:6px;background:rgba(255,255,255,.07);overflow:hidden}
+  .ms-bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,rgba(243,201,122,.5),var(--gold));box-shadow:0 0 12px rgba(243,201,122,.5);transition:width .8s cubic-bezier(.2,.7,.16,1)}
+  .ms-dom{font-family:var(--th);font-size:13.5px;color:rgba(245,235,215,.9)}
+  .ms-desc{font-family:var(--th);font-size:13px;line-height:1.8;color:rgba(228,220,205,.72)}
+  .ms-meta{font-family:var(--eng);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.3)}
+  #msAddBtn{align-self:flex-start;background:var(--gold-dim);border:1px solid rgba(243,201,122,.4);color:var(--gold);font-family:var(--th);
+    font-size:13px;padding:9px 20px;border-radius:22px;cursor:pointer;transition:.25s;white-space:nowrap}
+  #msAddBtn:hover{background:rgba(243,201,122,.2);border-color:var(--gold);box-shadow:0 0 20px rgba(243,201,122,.25)}
+  @media(max-width:520px){#myStarPanel{top:auto;bottom:0;transform:translate(0,110%);width:100vw;border-radius:16px 16px 0 0;border-right:1px solid rgba(243,201,122,.2);border-bottom:none}
+    #myStarPanel.on{transform:translate(0,0)}}
+  /* โมเมนต์เลื่อนระดับดาว */
+  #starLevelUp{position:fixed;left:50%;top:34%;transform:translate(-50%,-50%) scale(.92);z-index:30;pointer-events:none;
+    display:flex;flex-direction:column;align-items:center;gap:9px;text-align:center;opacity:0;transition:opacity .7s,transform .7s cubic-bezier(.2,.7,.16,1)}
+  #starLevelUp.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  #starLevelUp .slu-glyph{font-size:30px;color:var(--gold);text-shadow:0 0 26px rgba(243,201,122,.8);animation:sluTwinkle 2.2s ease-in-out infinite}
+  @keyframes sluTwinkle{0%,100%{opacity:.7;transform:scale(.92)}50%{opacity:1;transform:scale(1.12)}}
+  #starLevelUp .slu-pre{font-family:var(--eng);font-size:9px;letter-spacing:.36em;text-transform:uppercase;color:rgba(243,201,122,.72)}
+  #starLevelUp .slu-name{font-family:var(--th);font-weight:300;font-size:34px;color:#fbeccf;text-shadow:0 0 34px rgba(243,201,122,.6)}
+  #starLevelUp .slu-sub{font-family:var(--th);font-size:13px;color:rgba(228,220,205,.78);max-width:300px;line-height:1.7}
+  @media(max-width:520px){#starLevelUp .slu-name{font-size:28px}}
   @media(max-width:860px){#sigBtn{top:14px;right:14px;padding:6px 12px 6px 10px}}
   #philoTint{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity 1.4s;
     background:radial-gradient(1200px 800px at 50% 120%,rgba(243,201,122,.10),transparent 60%),radial-gradient(900px 700px at 50% -10%,rgba(120,90,180,.10),transparent 60%)}
@@ -572,6 +612,97 @@
   .cd-share:hover{background:rgba(200,180,255,.22);border-color:rgba(200,180,255,.55)}
   /* ===== END GR ===== */
 
+  /* ===== ห้วงใจ · MOOD JOURNAL ===== */
+  #moodBtn{position:relative}
+  #moodBtn.undone::after{content:'';position:absolute;top:-3px;right:-3px;width:7px;height:7px;border-radius:50%;
+    background:var(--gold);box-shadow:0 0 8px var(--gold);animation:moodDot 2.2s ease-in-out infinite}
+  @keyframes moodDot{0%,100%{opacity:.45;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
+  #moodModal{position:fixed;inset:0;z-index:27;background:radial-gradient(120% 90% at 50% 28%,rgba(22,14,42,.5),rgba(2,3,9,.8));backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:24px}
+  #moodModal.on{display:flex}
+  .mood-card{position:relative;width:100%;max-width:452px;max-height:92vh;overflow-y:auto;overflow-x:hidden;
+    background:
+      radial-gradient(140% 55% at 50% -8%,rgba(243,201,122,.11),transparent 55%),
+      radial-gradient(120% 80% at 10% 2%,rgba(126,92,205,.20),transparent 52%),
+      radial-gradient(130% 95% at 102% 118%,rgba(60,96,190,.18),transparent 55%),
+      linear-gradient(180deg,rgba(22,18,36,.97),rgba(7,8,16,.985));
+    border:1px solid rgba(243,201,122,.18);border-radius:22px;padding:30px 30px 26px;
+    display:flex;flex-direction:column;gap:15px;
+    box-shadow:0 40px 110px rgba(0,0,0,.7),0 1px 0 rgba(255,255,255,.05) inset}
+  .mood-card::before{content:'';position:absolute;inset:0;border-radius:22px;pointer-events:none;opacity:.55;z-index:0;
+    background-image:
+      radial-gradient(1.6px 1.6px at 16% 10%,rgba(255,255,255,.85),transparent),
+      radial-gradient(1px 1px at 62% 7%,rgba(255,255,255,.6),transparent),
+      radial-gradient(1.3px 1.3px at 86% 19%,rgba(255,255,255,.55),transparent),
+      radial-gradient(1px 1px at 33% 26%,rgba(255,255,255,.45),transparent),
+      radial-gradient(1.5px 1.5px at 7% 54%,rgba(255,255,255,.5),transparent),
+      radial-gradient(1px 1px at 94% 64%,rgba(255,255,255,.45),transparent),
+      radial-gradient(1.2px 1.2px at 48% 92%,rgba(255,255,255,.4),transparent),
+      radial-gradient(1px 1px at 78% 88%,rgba(255,255,255,.4),transparent);
+    animation:moodTwinkle 5.5s ease-in-out infinite}
+  @keyframes moodTwinkle{0%,100%{opacity:.38}50%{opacity:.66}}
+  .mood-card>*{position:relative;z-index:1}
+  .mood-x{position:absolute;top:14px;right:16px;background:none;border:none;color:rgba(255,255,255,.32);font-size:20px;cursor:pointer;padding:4px;line-height:1;transition:.2s;z-index:3}
+  .mood-x:hover{color:rgba(255,255,255,.75)}
+  .mood-pre{font-family:var(--eng);font-size:8.5px;letter-spacing:.32em;text-transform:uppercase;color:rgba(243,201,122,.66);display:flex;align-items:center;gap:9px}
+  .mood-pre::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(243,201,122,.4),transparent)}
+  .mood-date{font-family:var(--th);font-size:12px;color:rgba(238,228,210,.5);letter-spacing:.04em;margin-top:-7px}
+  .mood-lab{font-family:var(--eng);font-size:8.5px;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.4)}
+  .mood-chips{display:flex;flex-wrap:wrap;gap:4px;justify-content:space-between}
+  .mood-chip{flex:1 1 0;min-width:58px;display:flex;flex-direction:column;align-items:center;gap:8px;
+    background:none;border:none;border-radius:14px;padding:8px 2px 6px;cursor:pointer;
+    font-family:var(--th);font-size:11.5px;color:rgba(220,218,235,.58);transition:.25s}
+  .mood-chip .dot{width:27px;height:27px;border-radius:50%;flex:none;position:relative;transition:.25s;
+    background:radial-gradient(circle at 34% 30%,color-mix(in srgb,var(--mc) 88%,#fff),var(--mc) 60%,color-mix(in srgb,var(--mc) 58%,#000));
+    box-shadow:0 0 10px color-mix(in srgb,var(--mc) 50%,transparent),0 0 0 1px rgba(255,255,255,.08) inset}
+  .mood-chip:hover{color:rgba(255,255,255,.92)}
+  .mood-chip:hover .dot{transform:scale(1.08)}
+  .mood-chip.sel{color:#fff}
+  .mood-chip.sel .dot{transform:scale(1.14);box-shadow:0 0 18px color-mix(in srgb,var(--mc) 75%,transparent),0 0 36px color-mix(in srgb,var(--mc) 38%,transparent),0 0 0 1px rgba(255,255,255,.22) inset}
+  .mood-chip.sel .dot::after{content:'';position:absolute;inset:-6px;border-radius:50%;border:1px solid color-mix(in srgb,var(--mc) 55%,transparent);animation:moodRing 2.4s ease-out infinite}
+  @keyframes moodRing{0%{transform:scale(.8);opacity:.9}100%{transform:scale(1.5);opacity:0}}
+  .mood-qwrap{display:flex;flex-direction:column;gap:9px;background:rgba(255,255,255,.022);
+    border:1px solid rgba(243,201,122,.13);border-left:2px solid rgba(243,201,122,.5);border-radius:0 13px 13px 0;padding:13px 16px}
+  .mood-q{font-family:var(--th);font-size:15.5px;line-height:1.82;color:rgba(238,232,250,.9);font-style:italic}
+  .mood-qwrap.empty{border-left-color:rgba(255,255,255,.14)}
+  .mood-qwrap.empty .mood-q{font-style:normal;color:rgba(255,255,255,.32);font-size:13px}
+  .mood-reroll{align-self:flex-start;background:none;border:none;color:rgba(243,201,122,.62);font-family:var(--eng);font-size:9px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;padding:0;transition:.2s}
+  .mood-reroll:hover{color:var(--gold)}
+  .mood-qwrap.empty .mood-reroll{display:none}
+  #moodNote{width:100%;height:62px;resize:none;background:rgba(0,0,0,.3);border:1px solid rgba(243,201,122,.15);border-radius:12px;
+    color:var(--ink);font-family:var(--th);font-size:13.5px;padding:11px 12px;outline:none;line-height:1.6;box-sizing:border-box;transition:.2s}
+  #moodNote:focus{border-color:rgba(243,201,122,.46)}
+  #moodNote::placeholder{color:rgba(255,255,255,.22)}
+  .mood-foot{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  #moodStreak{font-family:var(--eng);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(243,201,122,.5)}
+  #moodSave{background:linear-gradient(180deg,rgba(243,201,122,.24),rgba(243,201,122,.09));border:1px solid rgba(243,201,122,.5);color:#ffeacb;font-family:var(--th);
+    font-size:13px;padding:9px 24px;border-radius:22px;cursor:pointer;transition:.25s;white-space:nowrap;box-shadow:0 0 18px rgba(243,201,122,.13)}
+  #moodSave:hover{background:linear-gradient(180deg,rgba(243,201,122,.34),rgba(243,201,122,.14));box-shadow:0 0 26px rgba(243,201,122,.28)}
+  #moodSave:disabled{opacity:.4;cursor:default;box-shadow:none;background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12);color:rgba(255,255,255,.4)}
+  .mood-div{height:1px;background:linear-gradient(90deg,transparent,rgba(243,201,122,.32),transparent);margin:5px 0}
+  .mcal-head{display:flex;align-items:center;justify-content:space-between}
+  .mcal-head button{background:none;border:none;color:rgba(255,255,255,.45);font-size:18px;cursor:pointer;padding:2px 10px;transition:.2s}
+  .mcal-head button:hover{color:#fff}
+  .mcal-title{font-family:var(--th);font-size:13px;color:rgba(238,233,250,.88);letter-spacing:.05em}
+  .mcal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;padding:12px 11px;
+    background:radial-gradient(130% 100% at 50% -10%,rgba(46,36,70,.4),rgba(9,9,18,.25));border:1px solid rgba(255,255,255,.05);border-radius:15px}
+  .mcal-dow{font-family:var(--eng);font-size:8px;text-align:center;color:rgba(255,255,255,.26);padding-bottom:3px}
+  .mcal-cell{aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-family:var(--eng);font-size:9.5px;color:rgba(255,255,255,.28);position:relative;background:rgba(255,255,255,.018)}
+  .mcal-cell.empty{background:none}
+  .mcal-cell.has{cursor:pointer;color:#0b0b13;font-weight:600;
+    background:radial-gradient(circle at 37% 31%,color-mix(in srgb,var(--mc) 95%,#fff),var(--mc) 68%);
+    box-shadow:0 0 9px color-mix(in srgb,var(--mc) 60%,transparent),0 0 20px color-mix(in srgb,var(--mc) 28%,transparent)}
+  .mcal-cell.has::before{content:'';position:absolute;inset:-3px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--mc) 22%,transparent),transparent 70%);z-index:-1}
+  .mcal-cell.today{outline:1px solid rgba(243,201,122,.6);outline-offset:2px}
+  .mcal-cell.sel{outline:2px solid rgba(255,255,255,.85);outline-offset:2px}
+  .mcal-legend{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+  .mcal-legend span{display:flex;align-items:center;gap:5px;font-family:var(--th);font-size:10px;color:rgba(255,255,255,.42)}
+  .mcal-legend i{width:8px;height:8px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,var(--mc));box-shadow:0 0 5px color-mix(in srgb,var(--mc) 55%,transparent);display:inline-block}
+  #moodDayView{font-family:var(--th);font-size:13px;line-height:1.8;color:rgba(222,218,240,.82);min-height:18px;text-align:center;padding:2px}
+  #moodDayView .mdv-mood{color:var(--mc);font-style:italic}
+  #moodDayView .mdv-note{color:rgba(238,233,250,.92);margin-top:3px}
+  @media(max-width:520px){.mood-card{padding:26px 18px 20px;max-height:90vh}}
+
   @media(max-width:860px){.nav,.events,.missions{display:none}.brand{top:16px;left:16px}
     .dock{gap:9px;padding:8px 12px;bottom:60px}.dock .lab,.dock .grp{display:none}.views{bottom:118px}
     .timeline{bottom:10px;width:94vw}.tl-tlabel{display:none}}
@@ -713,6 +844,7 @@
 <div id="philoBar">
   <div id="quoteLine"></div>
   <div class="prow">
+    <button id="moodBtn">◐ ห้วงใจ</button>
     <button id="writeBtn">✦ คำฝาก</button>
     <button id="philoReset">⊙ รีเซ็ตมุมมอง</button>
   </div>
@@ -743,6 +875,26 @@
   <textarea id="bhInput" maxlength="200" placeholder="มีอะไรที่อยากปล่อยให้หายไป…"></textarea>
   <div class="bh-row"><span id="bhWarn"></span><button id="bhRelease">ปล่อยลงสู่ห้วงมืด</button></div>
   <div class="bh-stat" id="bhStat"></div>
+</div>
+
+<div id="myStarLabel">ดาวของคุณ</div>
+<div id="myStarPanel">
+  <button id="msClose">×</button>
+  <div class="ms-pre">YOUR STAR</div>
+  <div class="ms-title" id="msName">ดาวของคุณ</div>
+  <div class="ms-poem">ดาวที่ลอยอิสระ ไม่โคจรรอบใคร หมุนอยู่รอบใจของคุณเอง<br><span>สีและแสงของมัน เกิดจากห้วงใจที่คุณบันทึกไว้</span></div>
+  <div class="ms-meter"><div class="ms-meter-top"><span>ระดับการเติบโต</span><span id="msScoreVal">—</span></div><div class="ms-bar"><div class="ms-bar-fill" id="msBarFill"></div></div></div>
+  <div class="ms-dom" id="msDom"></div>
+  <div class="ms-desc" id="msDesc"></div>
+  <div class="ms-meta" id="msMeta"></div>
+  <button id="msAddBtn">✦ บันทึกห้วงใจวันนี้</button>
+</div>
+
+<div id="starLevelUp">
+  <div class="slu-glyph">✦</div>
+  <div class="slu-pre">STAGE UP · เลื่อนระดับ</div>
+  <div class="slu-name" id="sluName"></div>
+  <div class="slu-sub" id="sluSub"></div>
 </div>
 
 <div id="resonanceModal">
@@ -878,6 +1030,35 @@
       <span class="cd-real">อิงตำแหน่งดาวจริง ณ วันนี้ · มองจากโลก</span>
       <button class="cd-share" id="cdShare">✦ แชร์ดวงวันนี้</button>
     </div>
+  </div>
+</div>
+
+<!-- ห้วงใจ · Mood journal -->
+<div id="moodModal">
+  <div class="mood-card">
+    <button class="mood-x" id="moodClose">×</button>
+    <div class="mood-pre">ห้วงใจ · INNER SPACE</div>
+    <div class="mood-date" id="moodDate"></div>
+    <div class="mood-lab">วันนี้ใจคุณเป็นแบบไหน</div>
+    <div class="mood-chips" id="moodChips"></div>
+    <div class="mood-qwrap empty" id="moodQWrap">
+      <div class="mood-q" id="moodQ"></div>
+      <button class="mood-reroll" id="moodReroll">↻ คำถามอื่น</button>
+    </div>
+    <textarea id="moodNote" maxlength="200" placeholder="บันทึกสั้น ๆ ถึงตัวเอง (ถ้าอยาก)…"></textarea>
+    <div class="mood-foot">
+      <span id="moodStreak"></span>
+      <button id="moodSave">บันทึกห้วงใจ</button>
+    </div>
+    <div class="mood-div"></div>
+    <div class="mcal-head">
+      <button id="moodPrev">‹</button>
+      <span class="mcal-title" id="moodCalTitle"></span>
+      <button id="moodNext">›</button>
+    </div>
+    <div class="mcal-grid" id="moodCal"></div>
+    <div class="mcal-legend" id="moodLegend"></div>
+    <div id="moodDayView"></div>
   </div>
 </div>
 
@@ -1638,7 +1819,11 @@ function shutterClick(){
 }
 
 let capturedBaseDataURL=null;
+let capturedBlob=null,capturedFile=null;
 let chronosTextVisible=true;
+function dataURLtoBlob(durl){const c=durl.split(','),mime=c[0].match(/:(.*?);/)[1],bin=atob(c[1]),u8=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);return new Blob([u8],{type:mime});}
+function setCaptured(durl){capturedDataURL=durl;document.getElementById('chronosImg').src=durl;
+  try{capturedBlob=dataURLtoBlob(durl);capturedFile=new File([capturedBlob],'between-stars.png',{type:'image/png'});}catch(e){capturedBlob=null;capturedFile=null;}}
 
 function addCardText(ctx,CW,CH){
   const cx=CW/2;
@@ -1710,7 +1895,7 @@ async function rebuildCard(showText){
   const btn=document.getElementById('prevTextToggle');
   if(btn)btn.textContent=showText?'Aa  ซ่อนข้อความ':'Aa  แสดงข้อความ';
   if(!capturedBaseDataURL)return;
-  if(!showText){capturedDataURL=capturedBaseDataURL;document.getElementById('chronosImg').src=capturedDataURL;return;}
+  if(!showText){setCaptured(capturedBaseDataURL);return;}
   const img=new Image();
   await new Promise(res=>{img.onload=res;img.src=capturedBaseDataURL;});
   const CW=1080,CH=1350,card=document.createElement('canvas');
@@ -1719,8 +1904,7 @@ async function rebuildCard(showText){
   ctx.drawImage(img,0,0);
   await document.fonts.ready;
   addCardText(ctx,CW,CH);
-  capturedDataURL=card.toDataURL('image/png');
-  document.getElementById('chronosImg').src=capturedDataURL;
+  setCaptured(card.toDataURL('image/png'));
 }
 
 async function buildChronosCard(){
@@ -1772,7 +1956,7 @@ async function doCapture(){
   camera.position.set(0,300,55);
   controls.target.set(0,0,0);controls.update();
 
-  capturedDataURL=await buildChronosCard();
+  setCaptured(await buildChronosCard());
 
   camera.position.copy(savedPos);controls.target.copy(savedTgt);controls.update();
   webb.visible=true;webbHit.visible=true;bokeh.enabled=savedBokeh;bloom.strength=savedBloom;
@@ -1783,24 +1967,33 @@ async function doCapture(){
   chronosFlash.style.transition='opacity 0.55s ease-out';
   chronosFlash.style.opacity='0';
 
-  document.getElementById('chronosImg').src=capturedDataURL;
   chronosPreview.style.display='flex';
 }
 
-async function shareCapture(){
+// แชร์ต้องเรียก navigator.share *แบบ sync* ในจังหวะ gesture (iOS ตัดสิทธิ์ถ้ามี await คั่นก่อน) — เตรียม File ไว้ตั้งแต่ตอน capture แล้ว
+function shareCapture(){
   if(!capturedDataURL)return;
-  try{
-    const blob=await (await fetch(capturedDataURL)).blob();
-    const file=new File([blob],'between-stars.png',{type:'image/png'});
-    const bd=webbBirthday?webbBirthday.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'}):'';
-    const text='ระบบสุริยะวันสำคัญของฉัน'+(bd?' · '+bd:'')+' · ห้วงดาว · between-stars.vercel.app';
-    if(navigator.canShare&&navigator.canShare({files:[file]}))
-      await navigator.share({files:[file],title:'ห้วงดาว · Between Stars',text});
-    else{const a=document.createElement('a');a.download='between-stars.png';a.href=capturedDataURL;a.click();}
-  }catch(e){}
+  const bd=webbBirthday?webbBirthday.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'}):'';
+  const text='ระบบสุริยะวันสำคัญของฉัน'+(bd?' · '+bd:'')+' · ห้วงดาว · between-stars.vercel.app';
+  if(capturedFile&&navigator.canShare&&navigator.canShare({files:[capturedFile]})){
+    navigator.share({files:[capturedFile],title:'ห้วงดาว · Between Stars',text}).catch(()=>{});
+    return;
+  }
+  saveCapture();
+}
+// บันทึก: เดสก์ท็อปดาวน์โหลดตรง ๆ; มือถือ (iOS ไม่รองรับ download attr) เปิดรูปในแท็บใหม่ให้กดค้างเซฟ
+function saveCapture(){
+  if(!capturedDataURL)return;
+  if(isMobile){
+    if(capturedFile&&navigator.canShare&&navigator.canShare({files:[capturedFile]})){
+      navigator.share({files:[capturedFile],title:'ห้วงดาว · Between Stars'}).catch(()=>{});return;}
+    const url=capturedBlob?URL.createObjectURL(capturedBlob):capturedDataURL;
+    window.open(url,'_blank');return;
+  }
+  const a=document.createElement('a');a.download='between-stars.png';a.href=capturedDataURL;a.click();
 }
 document.getElementById('prevShare').onclick=shareCapture;
-document.getElementById('prevSave').onclick=()=>{const a=document.createElement('a');a.download='between-stars.png';a.href=capturedDataURL;a.click();};
+document.getElementById('prevSave').onclick=saveCapture;
 document.getElementById('prevClose').onclick=()=>{chronosPreview.style.display='none';chronosTextVisible=true;};
 document.getElementById('prevTextToggle').onclick=()=>rebuildCard(!chronosTextVisible);
 document.getElementById('prevLookOut').onclick=()=>{
@@ -2052,6 +2245,7 @@ renderer.domElement.addEventListener('pointerup',e=>{if(!downXY)return;const mov
   const ud=obj.userData;
   if(ud.__msg){if(philo)showMsg(ud.__msg);return;}
   if(ud.__blackhole){if(blackHoleGroup.visible)openBlackHolePanel();return;}
+  if(ud.__mystar){if(myStarGroup.visible)openMyStarPanel();return;}
   if(ud.__mission){openMissionInfo(ud.__mission);return;}
   if(ud.__telescope){openWebbPanel();return;}
   selectBody(ud,obj);});
@@ -2372,9 +2566,9 @@ const $p=id=>document.getElementById(id);
 
 // ============ BLACK HOLE — ที่สถิตของการ "ปล่อยวาง" (โหมดใคร่ครวญ) ============
 const blackHoleGroup=new THREE.Group();
-blackHoleGroup.position.set(-104,42,-66);blackHoleGroup.visible=false;blackHoleGroup.scale.setScalar(0.001);
+blackHoleGroup.position.set(-560,70,92);blackHoleGroup.visible=false;blackHoleGroup.scale.setScalar(0.001); // ไกลพ้นพลูโต (304) ฝั่ง −X — ดันออกไปไกลรับขนาด supermassive
 scene.add(blackHoleGroup);
-const BH_R=11;
+const BH_R=40; // supermassive — จานพอกพูน/glow ใหญ่มหึมา (ดันตำแหน่งออกไกลกัน disk ล้ำเข้าระบบชั้นใน)
 // event horizon — ความมืดสนิทที่บังทุกสิ่งด้านหลัง
 const bhHorizon=new THREE.Mesh(new THREE.SphereGeometry(BH_R,48,48),new THREE.MeshBasicMaterial({color:0x000000}));
 bhHorizon.userData.size=BH_R*1.5;bhHorizon.userData.__blackhole=true;blackHoleGroup.add(bhHorizon);clickable.push(bhHorizon);
@@ -2410,6 +2604,135 @@ function updateBlackHole(dt){
       lbl.style.top=((-_bhLabelV.y*0.5+0.5)*innerHeight+34)+'px';lbl.classList.add('on');
     }else{lbl.classList.remove('on');}
   }
+}
+
+// ============ ดาวของตัวเรา · MY STAR (avatar ลอยอิสระในโหมดใคร่ครวญ) ============
+// ปรัชญา: "การเติบโต" (ขนาด/วงแหวน) มาจากความสม่ำเสมอของการบันทึก (effort) + โบนัสอารมณ์ดีเล็กน้อย
+//          "สี" มาจากอารมณ์ล่าสุด (สภาพใจ). ดาวไม่มีวันหด — หยุดบันทึก = หยุดโต ไม่ใช่ถอยหลัง
+const MOOD_SCORE={radiant:1.0,hopeful:0.82,calm:0.66,faded:0.42,turbulent:0.48,heavy:0.26};
+// ระยะวิวัฒนาการตามแต้มสะสม (xp): size=ตัวคูณขนาด, glow=ความสว่างพื้นฐาน, rings=วงแหวน, sat=ความอิ่มสี (0=ขาวจาง)
+const STAR_STAGES=[
+  {key:'protostar', name:'ดาวก่อตัว',    min:0,  size:0.5,  glow:0.32, rings:0, sat:0.0},
+  {key:'dwarf',     name:'ดาวแคระ',      min:1,  size:0.7,  glow:0.55, rings:0, sat:0.55},
+  {key:'main',      name:'ดาวฤกษ์',      min:6,  size:0.92, glow:0.85, rings:1, sat:1.0},
+  {key:'giant',     name:'ดาวยักษ์',     min:16, size:1.18, glow:1.1,  rings:2, sat:1.0},
+  {key:'supergiant',name:'ดาวมหายักษ์',  min:34, size:1.5,  glow:1.4,  rings:3, sat:1.0},
+];
+const myStarGroup=new THREE.Group();
+myStarGroup.position.set(360,28,-56);myStarGroup.visible=false;myStarGroup.scale.setScalar(0.001); // พ้นวงโคจรพลูโต (304) ฝั่ง +X ตรงข้ามหลุมดำ
+scene.add(myStarGroup);
+const msBody=new THREE.Group();myStarGroup.add(msBody); // body แยกไว้สเกลตามระยะ (group นอก = toggle เข้า/ออก)
+const MS_R=8.5;
+const msCoreMat=new THREE.MeshStandardMaterial({color:0x0d0c12,emissive:0xfdfcf6,emissiveIntensity:0.5,roughness:.55,metalness:0});
+const msCore=new THREE.Mesh(new THREE.SphereGeometry(MS_R,48,48),msCoreMat);
+msCore.userData.size=MS_R*1.7;msCore.userData.__mystar=true;msBody.add(msCore);clickable.push(msCore);
+const msAtmo=atmosphere(MS_R*1.07,0xfdfcf6);msBody.add(msAtmo);
+const msGlow=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex,color:0xfdfcf6,transparent:true,opacity:.4,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false}));
+msGlow.scale.set(MS_R*7,MS_R*7,1);msBody.add(msGlow);
+const msRings=new THREE.Group();msRings.rotation.x=Math.PI/2-0.42;msRings.rotation.z=0.18;msBody.add(msRings);
+// ละอองดาวประกาย — โผล่เฉพาะระยะสูงสุด (ดาวมหายักษ์)
+const MS_DUST_N=48,_dustGeo=new THREE.BufferGeometry(),_dustPos=new Float32Array(MS_DUST_N*3);
+for(let i=0;i<MS_DUST_N;i++){const u=Math.random(),v=Math.random(),th=2*Math.PI*u,ph=Math.acos(2*v-1),rad=MS_R*(2.1+Math.random()*1.5);
+  _dustPos[i*3]=rad*Math.sin(ph)*Math.cos(th);_dustPos[i*3+1]=rad*Math.cos(ph)*0.7;_dustPos[i*3+2]=rad*Math.sin(ph)*Math.sin(th);}
+_dustGeo.setAttribute('position',new THREE.BufferAttribute(_dustPos,3));
+const msDust=new THREE.Points(_dustGeo,new THREE.PointsMaterial({color:0xfff2cf,size:1.7,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false,sizeAttenuation:true}));
+msBody.add(msDust);
+let _msScale=0.001,_msTarget=0,_msScore=0.5,_msSize=0.5,_msSizeTarget=0.5,_msGlowBase=0.32,_msStageIdx=0,_msFlare=0;
+const _msColor=new THREE.Color(0xfdfcf6),_msColorTarget=new THREE.Color(0xfdfcf6),_msLabelV=new THREE.Vector3(),_msTmp=new THREE.Color(),_msWhite=new THREE.Color(0xfdfcf6);
+function moodRecent(n){const j=readMood();return Object.keys(j).sort().slice(-n).map(k=>j[k]);}
+function moodLongestStreak(keys){ // keys = วันที่เรียง asc; นับช่วงต่อเนื่องยาวสุด (monotonic — โตอย่างเดียว)
+  let best=0,run=0,prev=null;
+  keys.forEach(k=>{const t=new Date(k+'T00:00:00').getTime();
+    if(prev!=null&&Math.round((t-prev)/864e5)===1)run++;else run=1;
+    if(run>best)best=run;prev=t;});
+  return best;
+}
+function myStarSummary(){
+  const j=readMood(),keys=Object.keys(j).sort(),count=keys.length;
+  let xp=0;const freq={};
+  keys.forEach(k=>{const m=j[k].m,sc=MOOD_SCORE[m]!=null?MOOD_SCORE[m]:0.5;xp+=1+sc*0.5;freq[m]=(freq[m]||0)+1;}); // ทุกวัน +1 (ความสม่ำเสมอ) + อารมณ์ดีโบนัสนิดหน่อย
+  const longest=moodLongestStreak(keys);xp+=longest*0.8; // streak ยาวสุด = โบนัสถาวร (ไม่ลด)
+  const recent=keys.slice(-14);let sSum=0;recent.forEach(k=>{const sc=MOOD_SCORE[j[k].m];sSum+=(sc!=null?sc:0.5);});
+  const score=recent.length?sSum/recent.length:0.5; // อารมณ์ล่าสุด → สี/ความวูบสว่าง
+  let dom=null,mx=0;for(const k in freq){if(freq[k]>mx){mx=freq[k];dom=k;}}
+  let si=0;for(let i=0;i<STAR_STAGES.length;i++){if(xp>=STAR_STAGES[i].min)si=i;}
+  const stage=STAR_STAGES[si],next=STAR_STAGES[si+1]||null;
+  const prog=next?Math.min(1,(xp-stage.min)/(next.min-stage.min)):1;
+  return{xp,count,longest,score,dom,stageIdx:si,stage,next,prog,rings:stage.rings};
+}
+function refreshMyStar(){
+  const sum=myStarSummary();_msScore=sum.score;_msSizeTarget=sum.stage.size;_msGlowBase=sum.stage.glow;_msStageIdx=sum.stageIdx;
+  const recent=moodRecent(14);let r=0,g=0,b=0,w=0;recent.forEach((e,i)=>{const wi=1+i*0.15;_msTmp.set(moodColor(e.m));r+=_msTmp.r*wi;g+=_msTmp.g*wi;b+=_msTmp.b*wi;w+=wi;});
+  if(w)_msColorTarget.setRGB(r/w,g/w,b/w);else _msColorTarget.copy(_msWhite);
+  _msColorTarget.lerp(_msWhite,1-sum.stage.sat); // ระยะต้น = ขาวจาง (ดาวธรรมดา) ค่อย ๆ อิ่มสีเมื่อโต
+  while(msRings.children.length){const c=msRings.children.pop();c.geometry.dispose();c.material.dispose();msRings.remove(c);}
+  for(let i=0;i<sum.stage.rings;i++){
+    const inner=MS_R*(1.7+i*0.52),outer=inner+MS_R*0.24,rg=new THREE.RingGeometry(inner,outer,120);
+    const rm=new THREE.MeshBasicMaterial({color:_msColorTarget.clone().lerp(_msWhite,0.28),transparent:true,opacity:0.52-i*0.12,side:THREE.DoubleSide,blending:THREE.AdditiveBlending,depthWrite:false,toneMapped:false});
+    msRings.add(new THREE.Mesh(rg,rm));
+  }
+  const lbl=document.getElementById('myStarLabel');
+  if(lbl){const sig=(getSignal()||'').split('·')[0].trim();lbl.textContent='ดาวของคุณ'+(sig?' · '+sig:'')+(sum.stageIdx>=4?' ✦':'');}
+}
+function updateMyStar(dt){
+  _msScale+=(_msTarget-_msScale)*0.06;
+  myStarGroup.visible=_msScale>0.01;
+  const lbl=document.getElementById('myStarLabel');
+  if(!myStarGroup.visible){if(lbl){lbl.classList.remove('on');lbl.style.display='none';}return;}
+  myStarGroup.scale.setScalar(Math.max(0.001,_msScale));
+  if(_msFlare>0.002)_msFlare*=0.95;else _msFlare=0; // แสงวาบตอนเลื่อนระดับ ค่อย ๆ จาง
+  _msSize+=(_msSizeTarget-_msSize)*0.05;msBody.scale.setScalar(_msSize*(1+_msFlare*0.13));
+  _msColor.lerp(_msColorTarget,0.05);
+  const pulse=0.85+0.15*Math.sin(performance.now()*0.0013);
+  msCoreMat.emissive.copy(_msColor);msCoreMat.emissiveIntensity=_msGlowBase*pulse+_msScore*0.35+_msFlare*1.4; // อารมณ์ดี = วูบสว่างขึ้น
+  msAtmo.material.uniforms.glowColor.value.copy(_msColor);
+  msGlow.material.color.copy(_msColor);
+  msGlow.material.opacity=(_msGlowBase*0.45+0.06)*Math.min(1,_msScale)*pulse+_msFlare*0.5;
+  // ละอองดาวประกาย — เด่นเฉพาะดาวมหายักษ์
+  msDust.rotation.y+=dt*0.09;
+  const dustTarget=(_msStageIdx>=4?0.8:0)*(0.55+0.45*Math.sin(performance.now()*0.0042));
+  msDust.material.opacity+=(dustTarget-msDust.material.opacity)*0.06;
+  msDust.material.color.copy(_msColor).lerp(_msWhite,0.4);
+  msCore.rotation.y+=dt*0.25;msRings.rotation.z+=dt*0.05;
+  myStarGroup.position.y=28+Math.sin(performance.now()*0.0006)*2.4;
+  if(lbl){
+    const panelOpen=document.getElementById('myStarPanel').classList.contains('on');
+    msCore.getWorldPosition(_msLabelV);_msLabelV.project(camera);
+    if(_msScale>0.55&&!panelOpen&&_msLabelV.z<1){
+      lbl.style.display='block';lbl.style.left=((_msLabelV.x*0.5+0.5)*innerWidth)+'px';
+      lbl.style.top=((-_msLabelV.y*0.5+0.5)*innerHeight+30)+'px';lbl.classList.add('on');
+    }else{lbl.classList.remove('on');}
+  }
+}
+const MS_MOOD_TH={radiant:'สว่าง',calm:'สงบ',hopeful:'เปี่ยมหวัง',faded:'เลือนราง',heavy:'หม่น',turbulent:'คุกรุ่น'};
+const MS_STAGE_DESC={
+  protostar:'ดาวของคุณยังเป็นเพียงผงแสงจาง ๆ ที่เพิ่งก่อตัว — ทุกครั้งที่คุณกลับมาบันทึกห้วงใจ มันจะค่อย ๆ เติบโตและมีสีเป็นของตัวเอง',
+  dwarf:'ดาวเริ่มก่อตัวเป็นรูปเป็นร่าง มีสีจาง ๆ ตามใจของคุณ — บันทึกต่อไปเรื่อย ๆ แล้วมันจะสว่างและใหญ่ขึ้น',
+  main:'ดาวของคุณเป็นดาวฤกษ์ที่ส่องแสงด้วยตัวเองแล้ว และมีวงแหวนวงแรก เกิดจากความสม่ำเสมอในการดูแลใจตัวเอง',
+  giant:'ดาวเติบโตเป็นดาวยักษ์ — แสงและวงแหวนที่เห็นคือผลของการกลับมาอยู่กับใจตัวเองอย่างต่อเนื่อง',
+  supergiant:'ดาวมหายักษ์ที่เปล่งประกายเต็มที่ — นี่คือผลของการเดินทางอยู่กับใจตัวเองมายาวนาน',
+};
+function openMyStarPanel(){
+  const s=myStarSummary();
+  document.getElementById('msScoreVal').textContent=s.stage.name;
+  document.getElementById('msBarFill').style.width=Math.round(s.prog*100)+'%';
+  const sig=(getSignal()||'').split('·')[0].trim();
+  document.getElementById('msName').textContent=sig||'ดาวของคุณ';
+  document.getElementById('msDesc').textContent=MS_STAGE_DESC[s.stage.key];
+  document.getElementById('msDom').textContent=s.dom?('สีของดาวสะท้อนห้วงใจล่าสุด — ช่วงนี้มัก “'+MS_MOOD_TH[s.dom]+'”'):'ยังไม่มีบันทึก สีจะปรากฏเมื่อคุณเริ่มบันทึก';
+  const nextTxt=s.next?(' · ระยะต่อไป: '+s.next.name):' · เติบโตเต็มที่แล้ว';
+  document.getElementById('msMeta').textContent='บันทึก '+s.count+' วัน · ต่อเนื่องสูงสุด '+s.longest+' วัน · วงแหวน '+s.rings+'/3'+nextTxt;
+  document.getElementById('myStarPanel').classList.add('on');
+}
+function closeMyStarPanel(){document.getElementById('myStarPanel').classList.remove('on');}
+let _sluTimer=null;
+function celebrateStageUp(stage){
+  closeMoodPanel(); // เผยฉากให้เห็นดาวเติบโต
+  document.getElementById('sluName').textContent=stage.name;
+  document.getElementById('sluSub').textContent='ดาวของคุณเติบโตขึ้นอีกขั้น จากการกลับมาดูแลใจตัวเองอย่างต่อเนื่อง';
+  const el=document.getElementById('starLevelUp');el.classList.remove('on');void el.offsetWidth;el.classList.add('on');
+  _msFlare=1;
+  clearTimeout(_sluTimer);_sluTimer=setTimeout(()=>el.classList.remove('on'),4200);
 }
 
 // ----- จดหมายในอวกาศ (Hybrid: localStorage ตอนนี้ + วางโครงเผื่อ backend ภายหลัง) -----
@@ -2609,13 +2932,14 @@ function setMode(p){philo=p;document.body.classList.toggle('philo',p);
   brandSub.innerHTML=p?'<i>—</i> ห้วงว่างระหว่างดวงดาว และระหว่างเรา':SUB0;
   msgGroup.visible=p;
   _bhTarget=p?1:0; // หลุมดำปรากฏ/เลือนหายตามโหมด
+  _msTarget=p?1:0; // ดาวของเราปรากฏ/เลือนหายตามโหมด
   if(p){
     webb.visible=false;webbHit.visible=false; // ซ่อน Chronos Lens ในโหมดใคร่ครวญ
     liveMode=true;tLive.classList.add('on');running=true;play.innerHTML=ICON_PAUSE;simDate=new Date();updateBodies(simDate);updateClock();updatePhysics(simDate);// บังคับ LIVE (อยู่กับปัจจุบัน)
     orbitRings.forEach(r=>r.visible=false);tO.classList.remove('on');tO.classList.add('disabled');// วงโคจรปิด + ปุ่มไม่ไฮไลต์
     prevSound=soundOn;prevVol=vol;soundOn=true;vol=0.3;volSlider.value=Math.round(vol/MAXVOL*100);refreshSoundIcon();tryStartAudio();// ambient อัตโนมัติ
     viewsPop.classList.remove('open');layersBtn.classList.remove('on');// ปิดแผงเลเยอร์ (ซ่อนปุ่มในโหมดนี้)
-    startQuotes();startComets();updateLetterStat();obCometTip();
+    startQuotes();startComets();updateLetterStat();updateMoodBtn();refreshMyStar();obCometTip();updateMoodBtn();
   }else{
     webb.visible=true;webbHit.visible=true; // คืน Chronos Lens
     exitLive();updateClock();
@@ -2623,7 +2947,7 @@ function setMode(p){philo=p;document.body.classList.toggle('philo',p);
     soundOn=prevSound;vol=prevVol;volSlider.value=Math.round(vol/MAXVOL*100);refreshSoundIcon();fadeAudio(soundOn?vol:0);// คืนค่าเสียงเดิม
     stopQuotes();stopComets();msgPanel.classList.remove('open');msgRead.classList.remove('on');$p('sigModal').classList.remove('on');
     if(focusObj===bhHorizon){focusObj=null;following=false;}
-    $p('bhPanel').classList.remove('on');
+    $p('bhPanel').classList.remove('on');$p('moodModal').classList.remove('on');$p('myStarPanel').classList.remove('on');
   }
 }
 modeBtn.onclick=()=>setMode(!philo);
@@ -2732,7 +3056,7 @@ function animate(){if(document.hidden)return;requestAnimationFrame(animate);cons
   kuiper.rotation.y+=dt*0.004*(running?Math.max(daysPerSec()*0.02,1):0.2);
   {const tt=performance.now()*0.001;for(const p of prominences){const f=Math.max(0,Math.sin(tt*p.userData.speed+p.userData.phase));
     p.material.opacity=0.15+0.55*f;const s=p.userData.base*(0.8+0.35*f);p.scale.set(s,s,1);}}
-  updateComet(simDate);updateMeteors(dt);updateDrifters(dt);updateBlackHole(dt);
+  updateComet(simDate);updateMeteors(dt);updateDrifters(dt);updateBlackHole(dt);updateMyStar(dt);
   {const au=Math.max(0,0.24+0.2*Math.sin(performance.now()*0.002));auroras.forEach((r,i)=>r.material.opacity=au*(0.78+0.22*Math.sin(performance.now()*0.0031+i*2.1)));}
   for(const m of planetMeshes)if(m.material.emissive)m.material.emissive.setRGB(0,0,0);
   if(hovered&&hovered!==sunMesh&&hovered.material.emissive)hovered.material.emissive.setRGB(.12,.16,.24);
@@ -3290,6 +3614,153 @@ function maybeShowCosmicDaily(){
   localStorage.setItem(CD_SEEN_KEY,todayStr());
   setTimeout(openCosmicDaily,1400);
 }
+
+// ============ ห้วงใจ · MOOD JOURNAL ============
+const MOOD_KEY='moodJournal';
+const MOODS=[
+  {k:'radiant',  label:'สว่าง',     c:'#f3c97a'},
+  {k:'calm',     label:'สงบ',       c:'#8fb8e8'},
+  {k:'hopeful',  label:'เปี่ยมหวัง', c:'#7fd6b8'},
+  {k:'faded',    label:'เลือนราง',   c:'#b3a4e6'},
+  {k:'heavy',    label:'หม่น',       c:'#7d8aa3'},
+  {k:'turbulent',label:'คุกรุ่น',    c:'#e0895a'},
+];
+const moodColor=k=>{const m=MOODS.find(x=>x.k===k);return m?m.c:'#888';};
+const moodLabel=k=>{const m=MOODS.find(x=>x.k===k);return m?m.label:'';};
+const MOOD_QBANK={
+  radiant:[
+    'วันนี้อะไรที่ทำให้ใจคุณสว่างขึ้น?',
+    'ช่วงเวลาที่ดีที่สุดของวันนี้คือตอนไหน?',
+    'ถ้าจะเก็บความรู้สึกนี้ไว้ คุณอยากจดจำอะไรไว้มากที่สุด?',
+    'มีใคร หรืออะไร ที่คุณอยากขอบคุณในวันนี้?',
+    'แสงในตัวคุณวันนี้ อยากส่งต่อให้ใคร?',
+  ],
+  calm:[
+    'ความสงบของวันนี้มาจากไหน?',
+    'อะไรที่ช่วยให้ใจคุณนิ่งลงได้?',
+    'ในความเงียบนี้ คุณได้ยินอะไรในใจตัวเอง?',
+    'ถ้าจะรักษาความสงบนี้ไว้ คุณต้องวางอะไรลง?',
+    'ตอนนี้ร่างกายและใจคุณได้พักผ่อนพอแล้วหรือยัง?',
+  ],
+  hopeful:[
+    'ความหวังของคุณวันนี้ มีหน้าตาเป็นอย่างไร?',
+    'พรุ่งนี้คุณอยากให้เป็นแบบไหน?',
+    'ตอนนี้คุณกำลังเฝ้ารอคอยอะไรอยู่?',
+    'ก้าวเล็ก ๆ อะไร ที่จะพาคุณเข้าใกล้สิ่งที่ฝันไว้?',
+    'ถ้าได้บอกตัวเองในอนาคต คุณจะให้กำลังใจว่าอย่างไร?',
+  ],
+  faded:[
+    'ความเหงานี้ กำลังบอกอะไรกับคุณ?',
+    'มีใครที่คุณอยากให้อยู่ตรงนี้ด้วยไหม?',
+    'ถ้าได้พูดกับใครสักคนตอนนี้ คุณอยากบอกอะไร?',
+    'วันนี้คุณใจดีกับตัวเองมากพอแล้วหรือยัง?',
+    'อะไรเล็ก ๆ ที่ยังพอเป็นที่ยึดเหนี่ยวใจคุณได้?',
+  ],
+  heavy:[
+    'สิ่งที่หนักที่สุดในใจตอนนี้ คืออะไร?',
+    'ถ้าได้วางมันลงสักครู่ คุณจะรู้สึกอย่างไร?',
+    'มีความคิดไหนวนเวียนทั้งวัน — มันจริงแค่ไหน?',
+    'ตอนนี้คุณต้องการอะไรมากที่สุด?',
+    'วันนี้คุณได้หยุดหายใจลึก ๆ ให้ตัวเองบ้างไหม?',
+  ],
+  turbulent:[
+    'อะไรกำลังปั่นป่วนอยู่ในใจคุณ?',
+    'ความรู้สึกนี้ อยากบอกอะไรกับคุณ?',
+    'ถ้าพายุนี้เป็นสภาพอากาศ เมื่อไหร่มันจะผ่านไป?',
+    'อะไรที่อยู่นอกเหนือการควบคุมของคุณ และพอจะปล่อยมันได้ไหม?',
+    'ตอนนี้สิ่งใด ที่จะช่วยให้คลื่นในใจสงบลง?',
+  ],
+};
+function moodLocalStr(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function pickMoodQ(k){const a=MOOD_QBANK[k]||[];if(!a.length)return '';
+  if(a.length<2||!_moodQText)return a[Math.floor(Math.random()*a.length)];
+  let q;do{q=a[Math.floor(Math.random()*a.length)];}while(q===_moodQText);return q;}
+function readMood(){try{return JSON.parse(localStorage.getItem(MOOD_KEY)||'{}');}catch(e){return{};}}
+function writeMood(o){try{localStorage.setItem(MOOD_KEY,JSON.stringify(o));}catch(e){}}
+function moodStreak(){const j=readMood();let n=0,d=new Date();while(j[moodLocalStr(d)]){n++;d.setDate(d.getDate()-1);}return n;}
+
+let _moodSel=null,_moodQText='',_moodCalRef=new Date(),_moodDaySel=null;
+
+function updateMoodBtn(){const b=$p('moodBtn');if(!b)return;b.classList.toggle('undone',!readMood()[moodLocalStr()]);}
+
+function renderMoodChips(){
+  const wrap=$p('moodChips');wrap.innerHTML='';
+  MOODS.forEach(m=>{
+    const el=document.createElement('div');el.className='mood-chip'+(_moodSel===m.k?' sel':'');
+    el.style.setProperty('--mc',m.c);
+    el.innerHTML='<span class="dot"></span>'+m.label;
+    el.onclick=()=>{_moodSel=m.k;_moodQText=pickMoodQ(m.k);renderMoodChips();renderMoodQ();$p('moodSave').disabled=false;};
+    wrap.appendChild(el);
+  });
+}
+function renderMoodQ(){
+  const wrap=$p('moodQWrap');
+  if(!_moodSel){wrap.classList.add('empty');$p('moodQ').textContent='เลือกอารมณ์ด้านบน เพื่อรับคำถามชวนใคร่ครวญ';return;}
+  wrap.classList.remove('empty');$p('moodQ').textContent=_moodQText;
+}
+function renderMoodLegend(){
+  const l=$p('moodLegend');l.innerHTML='';
+  MOODS.forEach(m=>{const s=document.createElement('span');s.style.setProperty('--mc',m.c);s.innerHTML='<i></i>'+m.label;l.appendChild(s);});
+}
+function showMoodDay(ds){
+  const e=readMood()[ds];const v=$p('moodDayView');if(!e){v.textContent='';return;}
+  const dlabel=new Date(ds+'T00:00:00').toLocaleDateString('th-TH',{day:'numeric',month:'long'});
+  v.style.setProperty('--mc',moodColor(e.m));
+  v.innerHTML=dlabel+' — <span class="mdv-mood">'+moodLabel(e.m)+'</span>'+(e.note?'<div class="mdv-note">"'+escapeHtml(e.note)+'"</div>':'');
+}
+function renderMoodCal(){
+  const y=_moodCalRef.getFullYear(),mo=_moodCalRef.getMonth();
+  $p('moodCalTitle').textContent=new Date(y,mo,1).toLocaleDateString('th-TH',{month:'long',year:'numeric'});
+  const grid=$p('moodCal');grid.innerHTML='';
+  ['อา','จ','อ','พ','พฤ','ศ','ส'].forEach(d=>{const h=document.createElement('div');h.className='mcal-dow';h.textContent=d;grid.appendChild(h);});
+  const first=new Date(y,mo,1).getDay(),days=new Date(y,mo+1,0).getDate();
+  const j=readMood(),todayS=moodLocalStr();
+  for(let i=0;i<first;i++){const c=document.createElement('div');c.className='mcal-cell empty';grid.appendChild(c);}
+  for(let d=1;d<=days;d++){
+    const ds=y+'-'+String(mo+1).padStart(2,'0')+'-'+String(d).padStart(2,'0'),e=j[ds];
+    const c=document.createElement('div');c.className='mcal-cell';c.textContent=d;
+    if(e){c.classList.add('has');c.style.setProperty('--mc',moodColor(e.m));c.onclick=()=>{_moodDaySel=ds;renderMoodCal();showMoodDay(ds);};}
+    if(ds===todayS)c.classList.add('today');
+    if(ds===_moodDaySel)c.classList.add('sel');
+    grid.appendChild(c);
+  }
+  $p('moodStreak').textContent='บันทึกต่อเนื่อง '+moodStreak()+' วัน';
+}
+function openMoodPanel(){
+  const today=moodLocalStr(),e=readMood()[today];
+  _moodSel=e?e.m:null;
+  _moodQText=e?(e.q||''):'';
+  $p('moodDate').textContent=new Date().toLocaleDateString('th-TH',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  $p('moodNote').value=e?(e.note||''):'';
+  $p('moodSave').disabled=!_moodSel;
+  $p('moodSave').textContent=e?'อัปเดตห้วงใจ':'บันทึกห้วงใจ';
+  renderMoodChips();renderMoodQ();renderMoodLegend();
+  _moodCalRef=new Date();_moodDaySel=null;$p('moodDayView').textContent='';
+  renderMoodCal();
+  $p('moodModal').classList.add('on');
+}
+function closeMoodPanel(){$p('moodModal').classList.remove('on');}
+function saveMood(){
+  if(!_moodSel)return;
+  const beforeStage=myStarSummary().stageIdx; // ระยะดาวก่อนบันทึก
+  const today=moodLocalStr(),j=readMood();
+  j[today]={m:_moodSel,note:($p('moodNote').value||'').trim().slice(0,200),q:_moodQText,t:Date.now()};
+  writeMood(j);updateMoodBtn();renderMoodCal();refreshMyStar();
+  const afterStage=myStarSummary().stageIdx;
+  const btn=$p('moodSave');btn.textContent='บันทึกแล้ว ✦';btn.disabled=true;
+  setTimeout(()=>{btn.textContent='อัปเดตห้วงใจ';btn.disabled=false;},1500);
+  if(afterStage>beforeStage)setTimeout(()=>celebrateStageUp(STAR_STAGES[afterStage]),650); // เลื่อนระดับ → ฉลอง
+}
+$p('moodReroll').onclick=()=>{if(!_moodSel)return;_moodQText=pickMoodQ(_moodSel);renderMoodQ();};
+$p('moodBtn').onclick=openMoodPanel;
+$p('moodClose').onclick=closeMoodPanel;
+$p('moodSave').onclick=saveMood;
+$p('moodPrev').onclick=()=>{_moodCalRef.setMonth(_moodCalRef.getMonth()-1);_moodDaySel=null;$p('moodDayView').textContent='';renderMoodCal();};
+$p('moodNext').onclick=()=>{_moodCalRef.setMonth(_moodCalRef.getMonth()+1);_moodDaySel=null;$p('moodDayView').textContent='';renderMoodCal();};
+$p('moodModal').addEventListener('click',e=>{if(e.target.id==='moodModal')closeMoodPanel();});
+updateMoodBtn();
+$p('msClose').onclick=closeMyStarPanel;
+$p('msAddBtn').onclick=()=>{closeMyStarPanel();openMoodPanel();};
 
 // ============ PALE BLUE DOT ============
 let _pbdOpen=false,_pbdTimers=[],_pbdMissionVis=false;

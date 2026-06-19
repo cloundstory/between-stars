@@ -18,7 +18,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://between-stars.vercel.app/og-image.png">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="apple-touch-icon" href="favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -184,35 +184,34 @@ function reveal(d){
   setTimeout(()=>document.getElementById('result').scrollIntoView({behavior:'smooth',block:'start'}),120);
 }
 
-let echoRAF=null;
+let echoRAF=null,echoRO=null;
 function animateEcho(star,ly){
   const c=document.getElementById('echo'),x=c.getContext('2d');
-  function size(){const r=c.getBoundingClientRect();c.width=r.width*devicePixelRatio;c.height=r.height*devicePixelRatio;x.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);}
-  size();
-  const W=c.getBoundingClientRect().width,H=c.getBoundingClientRect().height;
-  const ex=W*0.15,ey=H*0.82;
-  const sx=W*0.78,sy=H*0.18;
-  const maxR=Math.hypot(sx-ex,sy-ey);
-  const pathAngle=Math.atan2(sy-ey,sx-ex);
-
-  // ดาวพื้นหลัง — หลายชั้น (ลึก/ใกล้)
-  const bgStars=[];
-  for(let i=0;i<280;i++)bgStars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.4+0.2,a:Math.random()*0.55+0.08,p:Math.random()*6.28,sp:0.4+Math.random()*1.8});
-
-  // ดาวที่แสงเดินทางผ่านมาแล้ว
-  const passedPos=STARS.filter(s=>s.ly<ly&&s.ly>=STARS[0].ly).slice(-4).map(s=>{
-    const t=s.ly/Math.max(ly,0.001);
-    return {x:ex+(sx-ex)*t,y:ey+(sy-ey)*t,s,t};
-  });
-
-  // particles ไหลตามเส้นทาง
-  const parts=[];
-  for(let i=0;i<80;i++)parts.push({t:Math.random(),sp:0.00015+Math.random()*0.0005,sz:Math.random()*1.8+0.4,a:Math.random()*0.55+0.15,off:(Math.random()-0.5)*18});
-
-  const t0=performance.now();
   if(echoRAF)cancelAnimationFrame(echoRAF);
+  if(echoRO){echoRO.disconnect();echoRO=null;}
+  let W=0,H=0,ex,ey,sx,sy,maxR,pathAngle,ready=false;
+  // ดาวพื้นหลัง + particles สร้างครั้งเดียว (คงที่แม้ resize)
+  const bgStars=[];for(let i=0;i<280;i++)bgStars.push({rx:Math.random(),ry:Math.random(),r:Math.random()*1.4+0.2,a:Math.random()*0.55+0.08,p:Math.random()*6.28,sp:0.4+Math.random()*1.8});
+  const parts=[];for(let i=0;i<80;i++)parts.push({t:Math.random(),sp:0.00015+Math.random()*0.0005,sz:Math.random()*1.8+0.4,a:Math.random()*0.55+0.15,off:(Math.random()-0.5)*18});
+  let passedPos=[];
+  // คำนวณขนาด/ตำแหน่งจาก rect จริง — รอจน canvas มีขนาด (กัน layout ยังไม่นิ่ง = วาดที่มุม เห็นแค่จุดส้ม)
+  function setup(){
+    const r=c.getBoundingClientRect();
+    if(r.width<2||r.height<2){ready=false;return;}
+    W=r.width;H=r.height;
+    c.width=W*devicePixelRatio;c.height=H*devicePixelRatio;x.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    ex=W*0.15;ey=H*0.82;sx=W*0.78;sy=H*0.18;
+    maxR=Math.hypot(sx-ex,sy-ey);pathAngle=Math.atan2(sy-ey,sx-ex);
+    passedPos=STARS.filter(s=>s.ly<ly&&s.ly>=STARS[0].ly).slice(-4).map(s=>{
+      const t=s.ly/Math.max(ly,0.001);return {x:ex+(sx-ex)*t,y:ey+(sy-ey)*t,s,t};});
+    ready=true;
+  }
+  setup();
+  if(window.ResizeObserver){echoRO=new ResizeObserver(()=>setup());echoRO.observe(c);}
+  const t0=performance.now();
 
   function frame(now){
+    if(!ready){setup();if(!ready){echoRAF=requestAnimationFrame(frame);return;}}
     const elapsed=now-t0;
     const e=Math.min(1,elapsed/3800);
     const k=1-Math.pow(1-e,3);
@@ -231,7 +230,7 @@ function animateEcho(star,ly){
     // ดาวพื้นหลังกระพริบ
     for(const s of bgStars){
       const tw=s.a*(0.5+0.5*Math.sin(now*0.001*s.sp+s.p));
-      x.beginPath();x.arc(s.x,s.y,s.r,0,6.28);x.fillStyle=`rgba(215,225,255,${tw})`;x.fill();
+      x.beginPath();x.arc(s.rx*W,s.ry*H,s.r,0,6.28);x.fillStyle=`rgba(215,225,255,${tw})`;x.fill();
     }
 
     // เส้นทางแสง dashed
