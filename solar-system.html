@@ -3219,7 +3219,8 @@ function animate(){if(document.hidden)return;requestAnimationFrame(animate);cons
     physAcc+=dt;if(physAcc>0.18){physAcc=0;updatePhysics(simDate);updateMissionVisual(simDate);}
     dashAcc+=dt;if(dashAcc>1){dashAcc=0;updateMissionDash(simDate);}
   }
-  const sp=running?daysPerSec():0.04;
+  // live = เวลาจริง → ดาวหมุนนิ่ง ๆ เหมือนตอนหยุดเวลา (ไม่ใช้จังหวะเร่งของ fast-forward)
+  const sp=(running&&!liveMode)?daysPerSec():0.04;
   for(const p of PLANETS)p._mesh.rotation.y+=p.spin*dt*(0.25+sp*0.05);
   // สเกลสมจริง: ค่อย ๆ ขยับรัศมีดาว + ย่อ/ขยายวงแหวน/แถบ + ถอยกล้อง
   for(let i=0;i<PLANETS.length;i++){const p=PLANETS[i];
