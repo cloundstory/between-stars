@@ -1799,12 +1799,43 @@ function updateWebb(dt){
   else webbLabel.style.opacity=0;
 }
 // ===== กรอกวันเกิด + เวลา → พาระบบสุริยะไปวันนั้นจริงๆ แล้วถ่ายภาพสวยๆ =====
-let dateTween=null,webbBirthday=null,capturedDataURL=null,webbOccasion='';
+let dateTween=null,webbBirthday=null,capturedDataURL=null,webbOccasion='',chronosShotMode='orbit';
 
 // flash overlay
 const chronosFlash=document.createElement('div');
 chronosFlash.style.cssText='position:fixed;inset:0;z-index:200;background:#fff;opacity:0;pointer-events:none';
 document.body.appendChild(chronosFlash);
+
+// time-travel overlay
+const chronosTravelStyle=document.createElement('style');
+chronosTravelStyle.textContent='@keyframes ctSpin{to{transform:rotate(360deg)}}@keyframes ctDust{0%{transform:translate3d(0,0,0) scale(.6);opacity:0}18%{opacity:.85}100%{transform:translate3d(var(--dx),var(--dy),0) scale(1.4);opacity:0}}#chronosTravel{position:fixed;inset:0;z-index:28;pointer-events:none;opacity:0;transition:opacity .45s ease;overflow:hidden}#chronosTravel.on{opacity:1}#chronosTravel .ct-rings{position:absolute;inset:-18%;background:repeating-radial-gradient(circle at center,rgba(243,201,122,.18) 0 1px,transparent 1px 56px),conic-gradient(from 0deg,transparent,rgba(140,180,255,.18),transparent,rgba(243,201,122,.16),transparent);filter:blur(.2px);opacity:.34;animation:ctSpin 2.6s linear infinite}#chronosTravel .ct-dust i{position:absolute;left:50%;top:50%;width:2px;height:2px;border-radius:50%;background:rgba(246,220,170,.9);box-shadow:0 0 12px rgba(243,201,122,.9);animation:ctDust 2.4s cubic-bezier(.18,.62,.16,1) forwards;animation-delay:var(--delay)}#chronosTravel .ct-msg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:var(--th);font-weight:300;font-size:clamp(22px,4vw,42px);color:#fff;text-align:center;text-shadow:0 0 34px rgba(243,201,122,.55),0 2px 18px #000;opacity:0;transition:opacity .8s ease,transform .8s ease;letter-spacing:.02em}#chronosTravel.arrived .ct-msg{opacity:1;transform:translate(-50%,-50%) scale(1.02)}';
+document.head.appendChild(chronosTravelStyle);
+const chronosTravel=document.createElement('div');
+chronosTravel.id='chronosTravel';
+chronosTravel.innerHTML='<div class="ct-rings"></div><div class="ct-dust"></div><div class="ct-msg">ระบบสุริยะ ณ วันนั้น</div>';
+document.body.appendChild(chronosTravel);
+function startChronosTravelFX(){
+  const dust=chronosTravel.querySelector('.ct-dust');dust.innerHTML='';
+  for(let i=0;i<32;i++){const p=document.createElement('i'),a=Math.random()*Math.PI*2,d=180+Math.random()*520;
+    p.style.setProperty('--dx',Math.cos(a)*d+'px');p.style.setProperty('--dy',Math.sin(a)*d+'px');
+    p.style.setProperty('--delay',(Math.random()*0.55)+'s');dust.appendChild(p);}
+  chronosTravel.classList.remove('arrived');chronosTravel.classList.add('on');
+}
+function finishChronosTravelFX(){
+  chronosTravel.classList.add('arrived');
+  setTimeout(()=>chronosTravel.classList.remove('on','arrived'),1600);
+}
+function chronosWarpSound(){
+  try{
+    if(!audioCtx){audioCtx=new (window.AudioContext||window.webkitAudioContext)();ambient=buildAmbient(audioCtx);}
+    if(audioCtx.state==='suspended')audioCtx.resume();
+    const t=audioCtx.currentTime,o=audioCtx.createOscillator(),g=audioCtx.createGain(),f=audioCtx.createBiquadFilter();
+    o.type='sine';o.frequency.setValueAtTime(180,t);o.frequency.exponentialRampToValueAtTime(760,t+1.15);
+    f.type='lowpass';f.frequency.setValueAtTime(900,t);f.frequency.exponentialRampToValueAtTime(2600,t+1.15);
+    g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.11,t+0.08);g.gain.exponentialRampToValueAtTime(0.0001,t+1.35);
+    o.connect(f).connect(g).connect(audioCtx.destination);o.start(t);o.stop(t+1.45);
+  }catch(e){}
+}
 
 // preview overlay
 const chronosPreview=document.createElement('div');
@@ -1849,10 +1880,10 @@ function addCardText(ctx,CW,CH){
   // bypass textAlign='center' browser quirks — manually center via measureText
   const _ct=(t,y)=>{ctx.fillText(t,Math.round(cx-ctx.measureText(t).width*.5),y);};
 
-  const grad=ctx.createLinearGradient(0,CH*0.76,0,CH);
+  const grad=ctx.createLinearGradient(0,CH*0.78,0,CH);
   grad.addColorStop(0,'rgba(3,5,8,0)');
-  grad.addColorStop(0.22,'rgba(3,5,8,0.92)');
-  grad.addColorStop(1,'rgba(3,5,8,0.98)');
+  grad.addColorStop(0.32,'rgba(3,5,8,0.38)');
+  grad.addColorStop(1,'rgba(3,5,8,0.64)');
   ctx.fillStyle=grad;ctx.fillRect(0,0,CW,CH);
 
   const sepY=Math.round(CH*0.732);
@@ -1944,7 +1975,6 @@ async function buildChronosCard(){
   const vig=ctx.createRadialGradient(CW/2,CH*0.36,CW*0.22,CW/2,CH*0.36,CW*0.88);
   vig.addColorStop(0,'rgba(0,0,0,0)');vig.addColorStop(1,'rgba(0,0,0,0.52)');
   ctx.fillStyle=vig;ctx.fillRect(0,0,CW,CH);
-
   capturedBaseDataURL=card.toDataURL('image/png');
 
   await document.fonts.ready;
@@ -1967,9 +1997,14 @@ async function doCapture(){
   // ย่อโคโรนาพระอาทิตย์ ไม่ให้กลบดาวดวงอื่น
   const savedCorona=corona.scale.x;corona.scale.set(SUN.size*1.8,SUN.size*1.8,1);
   prominences.forEach(p=>{p._savedOp=p.material.opacity;p.material.opacity=0;});
+  const savedPlanetScales=PLANETS.map(p=>p._mesh.scale.clone());
+  PLANETS.forEach((p,i)=>p._mesh.scale.multiplyScalar(i>5?3.2:i>3?2.4:1.75));
+  moonMesh.scale.multiplyScalar(1.8);
 
-  // ถอยสูงขึ้นให้เห็นวงโคจรครบในกรอบ portrait — buildChronosCard render เองแล้ว
-  camera.position.set(0,300,55);
+  const shotPos=chronosShotMode==='portrait'?new THREE.Vector3(360,520,620)
+    :chronosShotMode==='inner'?new THREE.Vector3(80,165,185)
+    :new THREE.Vector3(0,900,120);
+  camera.position.copy(shotPos);
   controls.target.set(0,0,0);controls.update();
 
   setCaptured(await buildChronosCard());
@@ -1979,6 +2014,8 @@ async function doCapture(){
   renderer.toneMappingExposure=savedExposure;
   corona.scale.set(savedCorona,savedCorona,1);
   prominences.forEach(p=>{p.material.opacity=p._savedOp??0;});
+  PLANETS.forEach((p,i)=>p._mesh.scale.copy(savedPlanetScales[i]));
+  moonMesh.scale.setScalar(1);
 
   chronosFlash.style.transition='opacity 0.55s ease-out';
   chronosFlash.style.opacity='0';
@@ -2073,9 +2110,14 @@ webbModal.innerHTML='<div id="webbInner" style="width:344px;max-width:90vw;backg
  +'</div>'
  // ── Step 2: เลือก action ──
  +'<div id="webbStep2" style="display:none">'
- +'<div style="font-size:11px;color:rgba(243,201,122,.65);letter-spacing:.12em;margin-bottom:5px">ระบบสุริยะ ณ</div>'
- +'<div id="webbDateLabel" style="font-size:20px;color:#fff;font-weight:300;margin-bottom:22px"></div>'
- +'<button id="webbShot" style="width:100%;padding:13px;border:none;border-radius:12px;color:#1a1408;font-weight:600;font-size:14px;font-family:var(--th);cursor:pointer;background:linear-gradient(135deg,#f3c97a,#e0a94e)">◉ บันทึกภาพ ✦ แชร์</button>'
+  +'<div style="font-size:11px;color:rgba(243,201,122,.65);letter-spacing:.12em;margin-bottom:5px">ระบบสุริยะ ณ</div>'
+  +'<div id="webbDateLabel" style="font-size:20px;color:#fff;font-weight:300;margin-bottom:22px"></div>'
+  +'<div id="webbShotModes" style="display:flex;gap:7px;justify-content:center;margin:-8px 0 16px">'
+  +'<button type="button" data-mode="orbit" style="font-family:var(--eng);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#1a1408;background:#f3c97a;border:1px solid rgba(243,201,122,.65);border-radius:16px;padding:6px 12px;cursor:pointer">วงโคจร</button>'
+  +'<button type="button" data-mode="portrait" style="font-family:var(--eng);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(243,201,122,.74);background:rgba(243,201,122,.06);border:1px solid rgba(243,201,122,.24);border-radius:16px;padding:6px 12px;cursor:pointer">ภาพเหมือน</button>'
+  +'<button type="button" data-mode="inner" style="font-family:var(--eng);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(243,201,122,.74);background:rgba(243,201,122,.06);border:1px solid rgba(243,201,122,.24);border-radius:16px;padding:6px 12px;cursor:pointer">ดาวชั้นใน</button>'
+  +'</div>'
+  +'<button id="webbShot" style="width:100%;padding:13px;border:none;border-radius:12px;color:#1a1408;font-weight:600;font-size:14px;font-family:var(--th);cursor:pointer;background:linear-gradient(135deg,#f3c97a,#e0a94e)">◉ บันทึกภาพ ✦ แชร์</button>'
  +'<button id="webbLightEcho" style="width:100%;margin-top:10px;padding:12px;background:none;border:none;color:rgba(180,215,255,0.65);font-size:13px;font-family:var(--th);cursor:pointer;letter-spacing:0.02em">✦ แสงจากวันนั้น ยังเดินทางอยู่จนถึงทุกวันนี้ →</button>'
  +'<button id="webbBack" style="margin-top:8px;background:none;border:none;color:var(--muted);font-size:12px;font-family:var(--th);cursor:pointer">← เปลี่ยนวัน</button>'
  +'</div>'
@@ -2083,6 +2125,15 @@ webbModal.innerHTML='<div id="webbInner" style="width:344px;max-width:90vw;backg
 document.body.appendChild(webbModal);
 // chip ลัดเติมโอกาสลงช่องข้อความ
 webbModal.querySelectorAll('.wbchip').forEach(b=>b.onclick=()=>{const i=document.getElementById('webbOccasion');i.value=b.textContent;i.focus();});
+function refreshChronosShotModes(){
+  webbModal.querySelectorAll('#webbShotModes button').forEach(b=>{
+    const on=b.dataset.mode===chronosShotMode;
+    b.style.color=on?'#1a1408':'rgba(243,201,122,.74)';
+    b.style.background=on?'#f3c97a':'rgba(243,201,122,.06)';
+    b.style.borderColor=on?'rgba(243,201,122,.65)':'rgba(243,201,122,.24)';
+  });
+}
+webbModal.querySelectorAll('#webbShotModes button').forEach(b=>b.onclick=()=>{chronosShotMode=b.dataset.mode;refreshChronosShotModes();});
 
 // viewfinder overlay — กรอบทองเบาๆ เหมือนมองผ่านเลนส์
 const vf=document.createElement('div');
@@ -2101,6 +2152,7 @@ const hideVF=()=>vf.style.opacity='0';
 function webbShowStep(n){
   document.getElementById('webbStep1').style.display=n===1?'block':'none';
   document.getElementById('webbStep2').style.display=n===2?'block':'none';
+  if(n===2)refreshChronosShotModes();
 }
 function openWebbPanel(){
   const di=document.getElementById('webbDate'),ti=document.getElementById('webbTime');
@@ -2126,10 +2178,14 @@ document.getElementById('webbGo').onclick=()=>{
   const target=new Date(v+'T'+t+':00Z');if(isNaN(target))return;
   webbOccasion=(document.getElementById('webbOccasion').value||'').trim().slice(0,40);
   webbBirthday=target;exitLive();running=false;play.innerHTML=ICON_PLAY;
-  dateTween={from:simDate.getTime(),to:target.getTime(),t0:performance.now(),dur:2400,onDone:null};
-  // ไม่ปิด modal — ไปต่อ step 2
-  document.getElementById('webbDateLabel').textContent=target.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
-  webbShowStep(2);
+  webbModal.style.display='none';hideVF();
+  chronosWarpSound();startChronosTravelFX();
+  dateTween={from:simDate.getTime(),to:target.getTime(),t0:performance.now(),dur:2400,onDone:()=>{
+    document.getElementById('webbDateLabel').textContent=target.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
+    webbShowStep(2);
+    finishChronosTravelFX();
+    setTimeout(()=>{webbModal.style.display='flex';showVF();},1650);
+  }};
 };
 document.getElementById('webbBack').onclick=()=>webbShowStep(1);
 document.getElementById('webbShot').onclick=()=>{webbModal.style.display='none';hideVF();setTimeout(doCapture,80);};
@@ -2321,6 +2377,11 @@ function fmtRate(){const d=daysPerSec();if(d<1)return Math.round(d*24)+' ชม.
 function updateClock(){cDate.textContent=simDate.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
   cTime.textContent=simDate.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit',timeZone:'UTC'})+' UTC';rate.textContent=fmtRate();
   if(afterClock)afterClock();}
+let clockUiAcc=0;
+function queueClockUpdate(dt,force){
+  clockUiAcc+=dt;
+  if(force||clockUiAcc>0.16){clockUiAcc=0;updateClock();}
+}
 
 const ICON_PAUSE='<svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>';
 const ICON_PLAY='<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
@@ -3048,6 +3109,7 @@ function skipIntro(){if(!intro)return;intro=false;controls.enabled=true;controls
 
 // ============ LOOP ============
 const clock=new THREE.Clock();
+let uiAcc=0,dashAcc=0;
 function animate(){if(document.hidden)return;requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),0.05);
   if(intro){introT+=dt;const t=Math.min(introT/5,1);const e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
     camera.position.lerpVectors(introA,introB,e);camera.lookAt(0,0,0);
@@ -3055,13 +3117,14 @@ function animate(){if(document.hidden)return;requestAnimationFrame(animate);cons
   if(dateTween){ // ค่อย ๆ พาดาวเคราะห์ไปยังตำแหน่งจริงของวันเป้าหมาย (เช่น วันเกิด)
     const e=Math.min(1,(performance.now()-dateTween.t0)/dateTween.dur);
     const k=e<.5?2*e*e:1-Math.pow(-2*e+2,2)/2;
-    simDate=new Date(dateTween.from+(dateTween.to-dateTween.from)*k);updateClock();
+    simDate=new Date(dateTween.from+(dateTween.to-dateTween.from)*k);queueClockUpdate(dt);
     if(e>=1){const cb=dateTween.onDone;dateTween=null;if(cb)cb();}
   }
-  else if(liveMode){simDate=new Date();updateClock();}
-  else if(running){simDate=new Date(simDate.getTime()+dt*1000*daysPerSec()*86400);updateClock();}
+  else if(liveMode){simDate=new Date();queueClockUpdate(dt);}
+  else if(running){simDate=new Date(simDate.getTime()+dt*1000*daysPerSec()*86400);queueClockUpdate(dt);}
   updateBodies(simDate);updateMoons(simDate);
-  physAcc+=dt;if(physAcc>0.18){physAcc=0;updatePhysics(simDate);updateMissionVisual(simDate);updateMissionDash(simDate);}
+  physAcc+=dt;if(physAcc>0.18){physAcc=0;updatePhysics(simDate);updateMissionVisual(simDate);}
+  dashAcc+=dt;if(dashAcc>1){dashAcc=0;updateMissionDash(simDate);}
   const sp=running?daysPerSec():0.04;
   for(const p of PLANETS)p._mesh.rotation.y+=p.spin*dt*(0.25+sp*0.05);
   // สเกลสมจริง: ค่อย ๆ ขยับรัศมีดาว + ย่อ/ขยายวงแหวน/แถบ + ถอยกล้อง
@@ -3084,7 +3147,8 @@ function animate(){if(document.hidden)return;requestAnimationFrame(animate);cons
   for(const m of planetMeshes)if(m.material.emissive)m.material.emissive.setRGB(0,0,0);
   if(hovered&&hovered!==sunMesh&&hovered.material.emissive)hovered.material.emissive.setRGB(.12,.16,.24);
   if(selectedObj&&selectedObj!==sunMesh&&selectedObj.material.emissive)selectedObj.material.emissive.setRGB(.1,.13,.22);
-  applyFocus();if(!intro)controls.update();updateLabels();updateZodiacLabels();updateMissionLabels();updateWebb(dt);
+  applyFocus();if(!intro)controls.update();updateWebb(dt);
+  uiAcc+=dt;if(uiAcc>0.08){uiAcc=0;updateLabels();updateZodiacLabels();updateMissionLabels();}
   if(_breath){
     const e=Math.min(1,(performance.now()-_breath.t0)/_breath.dur),s=Math.sin(Math.PI*e); // หายใจเข้า-ออก 0→1→0
     bokeh.uniforms.aperture.value=_breath.peak*s;
