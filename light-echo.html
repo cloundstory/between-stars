@@ -162,7 +162,7 @@ function reveal(d){
   const star=pickStar(ly);
   const idx=STARS.indexOf(star);
   const di=new Date(d);
-  const dateStr=di.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'});
+  const dateStr=di.toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric'});
   document.getElementById('rdist').textContent='แสงเดินทางมาแล้ว '+fmt(ly)+' ปีแสง';
   const notReached=ly<STARS[0].ly;
   if(notReached){
