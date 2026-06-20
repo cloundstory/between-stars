@@ -128,9 +128,17 @@ function bars(byDay){
     <div class="legend"><span><i style="background:var(--gold)"></i>การเข้าชม</span><span><i style="background:#7fb0ff"></i>เครื่องที่ไม่ซ้ำ</span></div>`;
 }
 
-function list(items, kKey, label){
+function list(items, kKey, vKey){
+  vKey = vKey || 'views';
   if(!items || !items.length) return '<div class="muted">ยังไม่มีข้อมูล</div>';
-  return items.map(it=>`<div class="row"><span class="k">${esc(it[kKey])}</span><span class="v">${nf(it.views)}</span></div>`).join('');
+  return items.map(it=>`<div class="row"><span class="k">${esc(it[kKey])}</span><span class="v">${nf(it[vKey])}</span></div>`).join('');
+}
+function fmtDur(sec){
+  if(sec==null) return '–';
+  sec = Math.round(sec);
+  if(sec < 60) return sec + ' วิ';
+  const m = Math.floor(sec/60), s = sec%60;
+  return m + ' น. ' + (s? s+' วิ' : '');
 }
 
 function statsView(s, email){
@@ -144,9 +152,16 @@ function statsView(s, email){
       <div class="stat"><b>${nf(s.total_visitors)}</b><div class="lbl">ผู้เข้าชม (ไม่ซ้ำ)</div></div>
       <div class="stat"><b>${nf(s.views_today)}</b><div class="lbl">วันนี้</div><div class="sub2">เวลาไทย</div></div>
       <div class="stat"><b>${nf(s.views_7d)}</b><div class="lbl">7 วันล่าสุด</div><div class="sub2">${nf(s.visitors_7d)} ผู้เข้าชม</div></div>
+      <div class="stat"><b>${nf(s.new_visitors)}</b><div class="lbl">ผู้เข้าชมใหม่</div></div>
+      <div class="stat"><b>${nf(s.returning_visitors)}</b><div class="lbl">กลับมาเล่นซ้ำ</div></div>
+      <div class="stat"><b>${fmtDur(s.avg_dwell)}</b><div class="lbl">เวลาเฉลี่ย/หน้า</div></div>
+      <div class="stat"><b>${fmtDur(s.median_dwell)}</b><div class="lbl">มัธยฐาน/หน้า</div></div>
     </div>
     <div class="sec card"><h2>รายวัน · 21 วันล่าสุด</h2>${bars(s.by_day)}</div>
+    <div class="sec card"><h2>การใช้ฟีเจอร์ · Events</h2>${list(s.top_events,'name','count')}</div>
     <div class="sec card"><h2>หน้าที่นิยม</h2>${list(s.by_path,'path')}</div>
+    <div class="sec card"><h2>อุปกรณ์</h2>${list(s.by_device,'source')}</div>
+    <div class="sec card"><h2>ภาษา</h2>${list(s.by_lang,'source')}</div>
     <div class="sec card"><h2>ที่มา · Referrer</h2>${list(s.by_ref,'source')}</div>
   `;
   document.getElementById('out').onclick = async ()=>{ await sb.auth.signOut(); loginView(); };

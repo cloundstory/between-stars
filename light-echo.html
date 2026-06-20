@@ -158,6 +158,7 @@ function fmt(n){return n.toLocaleString('th-TH',{maximumFractionDigits:1});}
 
 let lastResult=null;
 function reveal(d){
+  if(window.bsEvent)bsEvent('lightecho');
   const ly=yearsSince(d);
   const star=pickStar(ly);
   const idx=STARS.indexOf(star);

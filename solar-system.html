@@ -1863,6 +1863,7 @@ let chronosEntryBusy=false;
 let chronosEntryCam=null;
 function openChronosLens(){
   if(chronosEntryBusy)return;
+  if(window.bsEvent)bsEvent('chronos_open');
   chronosEntryBusy=true;focusObj=null;following=false;chronosEntry.classList.add('on');
   chronosEntryCam={
     t0:performance.now(),
@@ -2023,6 +2024,7 @@ async function buildChronosCard(){
 }
 
 async function doCapture(){
+  if(window.bsEvent)bsEvent('capture');
   chronosFlash.style.transition='opacity 0.06s ease-in';
   chronosFlash.style.opacity='1';
   shutterClick();
@@ -2065,6 +2067,7 @@ async function doCapture(){
 // แชร์ต้องเรียก navigator.share *แบบ sync* ในจังหวะ gesture (iOS ตัดสิทธิ์ถ้ามี await คั่นก่อน) — เตรียม File ไว้ตั้งแต่ตอน capture แล้ว
 function shareCapture(){
   if(!capturedDataURL)return;
+  if(window.bsEvent)bsEvent('share');
   const bd=webbBirthday?webbBirthday.toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}):'';
   const text='ระบบสุริยะ ณ '+(webbOccasion||'วันสำคัญของฉัน')+(bd?' · '+bd:'')+' · ห้วงดาว · between-stars.vercel.app';
   if(capturedFile&&navigator.canShare&&navigator.canShare({files:[capturedFile]})){
@@ -3360,6 +3363,7 @@ $p('resSubmit').onclick=()=>{
   if(BADWORDS.some(w=>t.toLowerCase().includes(w))){$p('resWarn').textContent='มีคำไม่เหมาะสม';return;}
   if(!resCurrentPlanet)return;
   postResonance(resCurrentPlanet.en,t.slice(0,280));
+  if(window.bsEvent)bsEvent('resonance');
   $p('resTextarea').value='';$p('resWarn').textContent='';
   renderResonances(resCurrentPlanet.en,resCurrentPlanet.color);
 };
@@ -3703,6 +3707,7 @@ document.getElementById('grSubmit').onclick=()=>{
   if(pool.length>200)pool.splice(0,pool.length-200);
   writeGRPool(pool);
   markGRWritten(new Date().toISOString(),ownId,ownText);
+  if(window.bsEvent)bsEvent('golden_save');
   if(window.BSync&&window.BSync.push)window.BSync.push();
   // show confirmation then close
   document.getElementById('grForm').style.display='none';
@@ -3950,6 +3955,7 @@ function saveMood(){
   const today=moodLocalStr(),j=readMood();
   j[today]={m:_moodSel,note:($p('moodNote').value||'').trim().slice(0,200),q:_moodQText,t:Date.now()};
   writeMood(j);updateMoodBtn();renderMoodCal();refreshMyStar();
+  if(window.bsEvent)bsEvent('mood_save');
   if(window.BSync&&window.BSync.push)window.BSync.push();
   const afterStage=myStarSummary().stageIdx;
   const btn=$p('moodSave');btn.textContent='บันทึกแล้ว ✦';btn.disabled=true;
