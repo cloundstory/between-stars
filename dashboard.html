@@ -113,10 +113,40 @@
   @keyframes orb{to{transform:rotate(360deg)}}
 
   .foot{text-align:center;margin-top:60px;font-family:var(--eng);font-size:9px;letter-spacing:.14em;color:var(--faint);line-height:1.9}
+
+  /* aurora glow behind header */
+  #aurora{position:fixed;left:50%;top:-160px;width:min(120vw,1100px);height:520px;transform:translateX(-50%);z-index:0;pointer-events:none;
+    background:radial-gradient(50% 60% at 50% 40%,rgba(243,201,122,.10),transparent 70%),radial-gradient(40% 50% at 64% 30%,rgba(127,176,255,.08),transparent 72%);filter:blur(8px)}
+
+  /* entrance */
+  @keyframes riseIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .rise{animation:riseIn .6s cubic-bezier(.22,.68,0,1.1) both}
+  /* grow-in via transform — final size stays in inline style, so it's correct even if anim never paints */
+  @keyframes growV{from{transform:scaleY(.001)}}
+  @keyframes growH{from{transform:scaleX(0)}}
+  .c.anim{transform-origin:bottom center;animation:growV .6s cubic-bezier(.22,.68,0,1.1) both}
+  .meter.anim{transform-origin:left center;animation:growH .7s cubic-bezier(.22,.68,0,1.1) both}
+  .seg span.anim{transform-origin:left center;animation:growH .8s cubic-bezier(.22,.68,0,1.1) both}
+
+  /* floating chart tooltip */
+  #tip{position:fixed;z-index:9;pointer-events:none;opacity:0;transform:translate(-50%,-100%);transition:opacity .15s ease;
+    background:rgba(10,13,22,.96);border:1px solid rgba(243,201,122,.3);border-radius:10px;padding:8px 11px;
+    font-family:var(--th);font-size:12px;color:var(--ink);white-space:nowrap;box-shadow:0 8px 26px rgba(0,0,0,.5)}
+  #tip .t-d{font-family:var(--eng);font-size:9px;letter-spacing:.1em;color:var(--gold);margin-bottom:3px}
+  #tip .t-v i{display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:5px;vertical-align:0}
+
+  /* segmented device bar */
+  .seg{display:flex;height:12px;border-radius:7px;overflow:hidden;margin-bottom:14px;background:rgba(255,255,255,.04)}
+  .seg span{height:100%;transition:width .7s cubic-bezier(.22,.68,0,1.1)}
+  .seglg{display:flex;flex-wrap:wrap;gap:7px 16px;margin-bottom:16px;font-family:var(--th);font-size:12px;color:var(--muted)}
+  .seglg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+  .seglg b{color:var(--ink);font-family:var(--eng);font-weight:500;font-size:12px;margin-left:5px}
 </style>
 </head>
 <body>
 <canvas id="stars"></canvas>
+<div id="aurora"></div>
+<div id="tip"></div>
 <div class="wrap">
   <a class="back" href="index.html">← ห้วงดาว</a>
   <header class="head">
@@ -153,6 +183,7 @@ const FOUNDER = 'cloundstory@gmail.com';
 const view = document.getElementById('view');
 const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const nf  = n => (n==null?'–':Number(n).toLocaleString('en-US'));
+const reduceMotion = matchMedia('(prefers-reduced-motion:reduce)').matches;
 const fmtDur = sec => { if(sec==null) return '–'; sec=Math.round(sec); if(sec<60) return sec+'<small style="font-size:.5em;color:var(--muted)"> วิ</small>'; const m=Math.floor(sec/60),s=sec%60; return m+'<small style="font-size:.5em;color:var(--muted)"> น</small>'+(s?' '+s+'<small style="font-size:.5em;color:var(--muted)"> วิ</small>':''); };
 
 // nicer labels for events / paths
@@ -194,7 +225,11 @@ function deniedView(email){
   document.getElementById('out').onclick = async ()=>{ await sb.auth.signOut(); loginView(); };
 }
 
-function statCard(val,lbl,sub){ return `<div class="stat"><div class="halo"></div><b>${val}</b><div class="lbl">${lbl}</div>${sub?`<div class="sub2">${sub}</div>`:''}</div>`; }
+function statCard(val,lbl,sub,raw){
+  const num = (typeof raw==='number' && isFinite(raw) && !reduceMotion);
+  const inner = num ? `<b data-count="${raw}">${val}</b>` : `<b>${val}</b>`;
+  return `<div class="stat"><div class="halo"></div>${inner}<div class="lbl">${lbl}</div>${sub?`<div class="sub2">${sub}</div>`:''}</div>`;
+}
 
 function bars(byDay){
   const days = (byDay||[]).slice(-21);
@@ -206,8 +241,11 @@ function bars(byDay){
     const hv = Math.max(2,(d.views/max)*100), hu = Math.max(0,((d.visitors||0)/max)*100);
     const dd = d.day ? d.day.slice(8)+'/'+d.day.slice(5,7) : '';
     const show = (i%lblStep===0)||i===ncols-1;
-    return `<div class="bar" title="${esc(d.day)} · ${nf(d.views)} เข้าชม / ${nf(d.visitors)} คน">
-      <div class="pair"><div class="c v" style="height:${hv}%"></div><div class="c u" style="height:${hu}%"></div></div>
+    const ac = reduceMotion ? '' : ' anim';
+    const dl = reduceMotion ? '' : `;animation-delay:${i*7}ms`;
+    const tip = `<div class='t-d'>${esc(d.day)}</div><div class='t-v'><i style='background:#f3c97a'></i>${nf(d.views)} เข้าชม</div><div class='t-v'><i style='background:#7fb0ff'></i>${nf(d.visitors)} คน</div>`;
+    return `<div class="bar" data-tip="${tip}">
+      <div class="pair"><div class="c v${ac}" style="height:${hv}%${dl}"></div><div class="c u${ac}" style="height:${hu}%${dl}"></div></div>
       <div class="d">${show?esc(dd):''}</div></div>`;
   }).join('');
   return `<div class="chart">
@@ -225,10 +263,46 @@ function ranked(items, kKey, vKey, labeler){
   return `<div class="rows">` + items.map((it,i)=>{
     const w = Math.round(((it[vKey]||0)/max)*100);
     const name = labeler ? labeler(it[kKey]) : it[kKey];
-    return `<div class="lr"><div class="meter" style="width:${w}%"></div>
+    const ac = reduceMotion ? '' : ' anim';
+    const dl = reduceMotion ? '' : `;animation-delay:${i*26}ms`;
+    return `<div class="lr"><div class="meter${ac}" style="width:${w}%${dl}"></div>
       <div class="k"><span class="rk">${i+1}</span><span class="nm">${esc(name)}</span></div>
       <span class="vv">${nf(it[vKey])}</span></div>`;
   }).join('') + `</div>`;
+}
+
+const DEV_COL = { mobile:['#f6d79a','#cf9a44','มือถือ'], desktop:['#9cc3ff','#4a6fb0','คอม'], tablet:['#b9a6d6','#7a6aa0','แท็บเล็ต'] };
+function deviceSplit(items){
+  if(!items || !items.length) return '';
+  const total = items.reduce((a,b)=>a+(b.views||0),0) || 1;
+  const segs = items.map(it=>{ const c = DEV_COL[it.source] || ['#7e8aa6','#4a5470', it.source]; return { pct:(it.views||0)/total*100, c }; });
+  const seg = segs.map(s=>{ const bg = `background:linear-gradient(90deg,${s.c[0]},${s.c[1]})`;
+    return `<span class="${reduceMotion?'':'anim'}" style="${bg};width:${s.pct.toFixed(1)}%"></span>`; }).join('');
+  const lg = segs.map(s=>`<span><i style="background:${s.c[0]}"></i>${esc(s.c[2])}<b>${Math.round(s.pct)}%</b></span>`).join('');
+  return `<div class="seg">${seg}</div><div class="seglg">${lg}</div>`;
+}
+
+function afterRender(){
+  // entrance stagger
+  if(!reduceMotion){ [...view.children].forEach((el,i)=>{ el.classList.add('rise'); el.style.animationDelay = Math.min(i*55,520)+'ms'; }); }
+  // count up — final value is already in the DOM; only animate when visible (with a guaranteed fallback)
+  if(!reduceMotion && !document.hidden){
+    document.querySelectorAll('b[data-count]').forEach(el=>{
+      const final = el.textContent, target = +el.dataset.count, dur = 950, t0 = performance.now();
+      el.textContent = '0';
+      const tick = now=>{ const e = Math.min(1,(now-t0)/dur), k = 1-Math.pow(1-e,3);
+        el.textContent = Math.round(target*k).toLocaleString('en-US'); if(e<1) requestAnimationFrame(tick); };
+      requestAnimationFrame(tick);
+      setTimeout(()=>{ el.textContent = final; }, dur+200);   // ensure final even if rAF is throttled
+    });
+  }
+  // chart tooltip
+  const tip = document.getElementById('tip');
+  document.querySelectorAll('.bar[data-tip]').forEach(b=>{
+    b.addEventListener('mouseenter',()=>{ tip.innerHTML = b.dataset.tip; tip.style.opacity='1'; });
+    b.addEventListener('mousemove',e=>{ tip.style.left = e.clientX+'px'; tip.style.top = (e.clientY-14)+'px'; });
+    b.addEventListener('mouseleave',()=>{ tip.style.opacity='0'; });
+  });
 }
 
 function statsView(s, email){
@@ -240,16 +314,16 @@ function statsView(s, email){
 
     <div class="slabel"><span>Overview</span><span class="th">ภาพรวม</span></div>
     <div class="stats">
-      ${statCard(nf(s.total_views),'การเข้าชมรวม')}
-      ${statCard(nf(s.total_visitors),'ผู้เข้าชม','ไม่ซ้ำ')}
-      ${statCard(nf(s.views_today),'วันนี้','เวลาไทย')}
-      ${statCard(nf(s.views_7d),'7 วันล่าสุด', nf(s.visitors_7d)+' คน')}
+      ${statCard(nf(s.total_views),'การเข้าชมรวม',null,s.total_views)}
+      ${statCard(nf(s.total_visitors),'ผู้เข้าชม','ไม่ซ้ำ',s.total_visitors)}
+      ${statCard(nf(s.views_today),'วันนี้','เวลาไทย',s.views_today)}
+      ${statCard(nf(s.views_7d),'7 วันล่าสุด', nf(s.visitors_7d)+' คน',s.views_7d)}
     </div>
 
     <div class="slabel"><span>Engagement</span><span class="th">การมีส่วนร่วม</span></div>
     <div class="stats">
-      ${statCard(nf(s.new_visitors),'ผู้เข้าชมใหม่')}
-      ${statCard(nf(s.returning_visitors),'กลับมาเล่นซ้ำ')}
+      ${statCard(nf(s.new_visitors),'ผู้เข้าชมใหม่',null,s.new_visitors)}
+      ${statCard(nf(s.returning_visitors),'กลับมาเล่นซ้ำ',null,s.returning_visitors)}
       ${statCard(fmtDur(s.avg_dwell),'เวลาเฉลี่ย/หน้า')}
       ${statCard(fmtDur(s.median_dwell),'มัธยฐาน/หน้า')}
     </div>
@@ -265,7 +339,7 @@ function statsView(s, email){
 
     <div class="slabel"><span>Audience</span><span class="th">ผู้ชม</span></div>
     <div class="grid2">
-      <div class="card"><div class="ctitle">Devices</div><div class="csub">อุปกรณ์</div>${ranked(s.by_device,'source','views')}</div>
+      <div class="card"><div class="ctitle">Devices</div><div class="csub">อุปกรณ์</div>${deviceSplit(s.by_device)}${ranked(s.by_device,'source','views')}</div>
       <div class="card"><div class="ctitle">Language</div><div class="csub">ภาษา</div>${ranked(s.by_lang,'source','views')}</div>
     </div>
 
@@ -274,6 +348,7 @@ function statsView(s, email){
   `;
   document.getElementById('out').onclick = async ()=>{ await sb.auth.signOut(); loginView(); };
   document.getElementById('refresh').onclick = ()=> load();
+  afterRender();
 }
 
 async function load(){
