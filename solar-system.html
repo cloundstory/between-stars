@@ -1167,47 +1167,47 @@ const SUN={ name:'ดวงอาทิตย์', en:'The Sun', size:8, color:'
     'ทุกวินาทีเปลี่ยนไฮโดรเจน <b>~600 ล้านตัน</b> เป็นพลังงานด้วยปฏิกิริยานิวเคลียร์ฟิวชัน'] };
 
 const PLANETS=[
-  { name:'ดาวพุธ', en:'Mercury', orbit:19, size:0.9, spin:0.6, color:'#b7b0a8', tilt:0.01, bands:false, map:'mercurymap.jpg',
+  { name:'ดาวพุธ', en:'Mercury', orbit:19, size:0.9, spin:0.6, rotH:1407.6, color:'#b7b0a8', tilt:0.01, bands:false, map:'mercurymap.jpg',
     orbitData:[['ระยะจากดวงอาทิตย์','57.9 ล้าน กม.'],['คาบโคจร','88 วันโลก'],['คาบหมุนรอบตัว','176 วันโลก'],['ความเร็ววงโคจร','47.4 กม./วิ']],
     phys:[['เส้นผ่านศูนย์กลาง','4,879 กม.'],['แรงโน้มถ่วง','0.38 g'],['อุณหภูมิ','-180 ถึง 430 °C'],['ดวงจันทร์','ไม่มี'],['องค์ประกอบ','หินและเหล็ก'],['บรรยากาศ','แทบไม่มี']],
     facts:['ดาวที่เล็กและใกล้ดวงอาทิตย์ที่สุด — กลางวันร้อนจัด กลางคืนหนาวจัด เพราะแทบไม่มีบรรยากาศกักความร้อน',
       'พื้นผิวเต็มไปด้วยหลุมอุกกาบาตคล้ายดวงจันทร์ และมี <b>ช่วงอุณหภูมิต่างกันมากที่สุด</b>ในระบบสุริยะ'] },
-  { name:'ดาวศุกร์', en:'Venus', orbit:28, size:1.5, spin:0.5, color:'#e8b96b', tilt:0.05, bands:true, atmo:'#ffd98a', map:'venusmap.jpg',
+  { name:'ดาวศุกร์', en:'Venus', orbit:28, size:1.5, spin:0.5, rotH:-5832.5, color:'#e8b96b', tilt:0.05, bands:true, atmo:'#ffd98a', map:'venusmap.jpg',
     orbitData:[['ระยะจากดวงอาทิตย์','108 ล้าน กม.'],['คาบโคจร','225 วันโลก'],['คาบหมุนรอบตัว','243 วัน (ถอยหลัง)'],['ความเร็ววงโคจร','35 กม./วิ']],
     phys:[['เส้นผ่านศูนย์กลาง','12,104 กม.'],['แรงโน้มถ่วง','0.90 g'],['อุณหภูมิ','~465 °C'],['ดวงจันทร์','ไม่มี'],['องค์ประกอบ','หิน · แกนเหล็ก'],['บรรยากาศ','CO₂ หนาแน่น · เมฆกรดกำมะถัน']],
     facts:['ดาวที่ร้อนที่สุดจากปรากฏการณ์เรือนกระจกรุนแรง และ <b>หมุนรอบตัวเองช้ากว่าโคจรรอบดวงอาทิตย์</b>',
       'หมุนสวนทางดาวอื่น — บนดาวศุกร์ดวงอาทิตย์จะ <b>ขึ้นทางทิศตะวันตก</b>'] },
-  { name:'โลก', en:'Earth', orbit:34, size:1.6, spin:1.2, color:'#5b9bff', tilt:0.41, bands:true, atmo:'#6ab8ff', map:'earthmap1k.jpg', bump:'earthbump1k.jpg', clouds:'earthcloudmap.jpg', spec:'earthspec1k.jpg', lights:'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r160/examples/textures/planets/earth_lights_2048.png', moon:true,
+  { name:'โลก', en:'Earth', orbit:34, size:1.6, spin:1.2, rotH:23.934, color:'#5b9bff', tilt:0.41, bands:true, atmo:'#6ab8ff', map:'earthmap1k.jpg', bump:'earthbump1k.jpg', clouds:'earthcloudmap.jpg', spec:'earthspec1k.jpg', lights:'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r160/examples/textures/planets/earth_lights_2048.png', moon:true,
     orbitData:[['ระยะจากดวงอาทิตย์','149.6 ล้าน กม.'],['คาบโคจร','365.25 วัน'],['คาบหมุนรอบตัว','23.9 ชม.'],['ความเร็ววงโคจร','29.8 กม./วิ']],
     phys:[['เส้นผ่านศูนย์กลาง','12,742 กม.'],['แรงโน้มถ่วง','1.00 g'],['อุณหภูมิเฉลี่ย','15 °C'],['ดวงจันทร์','1 ดวง'],['องค์ประกอบ','หิน · แกนเหล็ก-นิกเกิล'],['บรรยากาศ','N₂ 78% · O₂ 21%']],
     facts:['ดาวเคราะห์ดวงเดียวเท่าที่รู้ที่มี <b>สิ่งมีชีวิต</b> และมีน้ำของเหลวปกคลุมกว่า 70% ของพื้นผิว',
       'สนามแม่เหล็กโลกช่วย <b>ปกป้องจากลมสุริยะ</b> และทำให้เกิดแสงเหนือ–แสงใต้'] },
-  { name:'ดาวอังคาร', en:'Mars', orbit:44, size:1.2, spin:1.1, color:'#e1623d', tilt:0.44, bands:false, atmo:'#e08a5a', map:'marsmap1k.jpg', bump:'marsbump1k.jpg',
+  { name:'ดาวอังคาร', en:'Mars', orbit:44, size:1.2, spin:1.1, rotH:24.623, color:'#e1623d', tilt:0.44, bands:false, atmo:'#e08a5a', map:'marsmap1k.jpg', bump:'marsbump1k.jpg',
     orbitData:[['ระยะจากดวงอาทิตย์','228 ล้าน กม.'],['คาบโคจร','687 วันโลก'],['คาบหมุนรอบตัว','24.6 ชม.'],['ความเร็ววงโคจร','24.1 กม./วิ']],
     phys:[['เส้นผ่านศูนย์กลาง','6,779 กม.'],['แรงโน้มถ่วง','0.38 g'],['อุณหภูมิ','-140 ถึง 20 °C'],['ดวงจันทร์','2 ดวง'],['องค์ประกอบ','หินภูเขาไฟ · เหล็กออกไซด์'],['บรรยากาศ','CO₂ เบาบาง']],
     facts:['"ดาวเคราะห์สีแดง" จากสนิมเหล็ก มีภูเขาไฟ <b>โอลิมปัส มอนส์</b> สูงที่สุดในระบบสุริยะ (~22 กม.)',
       'มีแคนยอน <b>วาลเลส มาริเนริส</b> ยาวกว่า 4,000 กม. และมีน้ำแข็งที่ขั้วทั้งสอง'] },
-  { name:'ดาวพฤหัสบดี', en:'Jupiter', orbit:91, size:4.5, spin:2.4, color:'#d9a066', tilt:0.05, bands:true, atmo:'#e8c79a', map:'jupitermap.jpg',
+  { name:'ดาวพฤหัสบดี', en:'Jupiter', orbit:91, size:4.5, spin:2.4, rotH:9.925, color:'#d9a066', tilt:0.05, bands:true, atmo:'#e8c79a', map:'jupitermap.jpg',
     orbitData:[['ระยะจากดวงอาทิตย์','778 ล้าน กม.'],['คาบโคจร','11.9 ปีโลก'],['คาบหมุนรอบตัว','9.9 ชม.'],['ความเร็ววงโคจร','13.1 กม./วิ']],
     phys:[['เส้นผ่านศูนย์กลาง','139,820 กม.'],['แรงโน้มถ่วง','2.53 g'],['อุณหภูมิ','~-110 °C'],['ดวงจันทร์','95 ดวง'],['องค์ประกอบ','ดาวแก๊ส · ไฮโดรเจน-ฮีเลียม'],['บรรยากาศ','เมฆแอมโมเนียหลายชั้น']],
     facts:['ดาวเคราะห์ที่ใหญ่ที่สุด — <b>จุดแดงใหญ่</b> คือพายุที่ใหญ่กว่าโลก พัดต่อเนื่องหลายร้อยปี',
       'ดวงจันทร์ <b>แกนีมีด</b> ใหญ่ที่สุดในระบบสุริยะ — ใหญ่กว่าดาวพุธเสียอีก'] },
-  { name:'ดาวเสาร์', en:'Saturn', orbit:132, size:3.9, spin:2.2, color:'#e3ca8c', tilt:0.47, bands:true, ring:true, atmo:'#efdcab', map:'saturnmap.jpg', ringMap:'saturnringcolor.jpg', ringAlpha:'saturnringpattern.gif',
+  { name:'ดาวเสาร์', en:'Saturn', orbit:132, size:3.9, spin:2.2, rotH:10.656, color:'#e3ca8c', tilt:0.47, bands:true, ring:true, atmo:'#efdcab', map:'saturnmap.jpg', ringMap:'saturnringcolor.jpg', ringAlpha:'saturnringpattern.gif',
     orbitData:[['ระยะจากดวงอาทิตย์','1,430 ล้าน กม.'],['คาบโคจร','29.5 ปีโลก'],['คาบหมุนรอบตัว','10.7 ชม.'],['ความเร็ววงโคจร','9.7 กม./วิ']],
     phys:[['เส้นผ่านศูนย์กลาง','116,460 กม.'],['แรงโน้มถ่วง','1.07 g'],['อุณหภูมิ','~-140 °C'],['ดวงจันทร์','146 ดวง'],['องค์ประกอบ','ดาวแก๊ส · ไฮโดรเจน-ฮีเลียม'],['ความหนาแน่น','น้อยกว่าน้ำ (ลอยน้ำได้)']],
     facts:['มี <b>วงแหวน</b> สวยที่สุด จากน้ำแข็งและหินนับล้านชิ้น กว้างหลายแสนกิโลเมตรแต่หนาเพียงไม่กี่สิบเมตร',
       'ดวงจันทร์ <b>ไททัน</b> มีบรรยากาศหนาและทะเลสาบมีเทนเหลว — เป้าหมายค้นหาสิ่งมีชีวิต'] },
-  { name:'ดาวยูเรนัส', en:'Uranus', orbit:200, size:2.7, spin:1.4, color:'#9fe3e0', tilt:1.7, bands:false, ring:true, atmo:'#b8f0ee', map:'uranusmap.jpg', ringMap:'uranusringcolour.jpg', ringAlpha:'uranusringtrans.gif',
+  { name:'ดาวยูเรนัส', en:'Uranus', orbit:200, size:2.7, spin:1.4, rotH:-17.24, color:'#9fe3e0', tilt:1.7, bands:false, ring:true, atmo:'#b8f0ee', map:'uranusmap.jpg', ringMap:'uranusringcolour.jpg', ringAlpha:'uranusringtrans.gif',
     orbitData:[['ระยะจากดวงอาทิตย์','2,870 ล้าน กม.'],['คาบโคจร','84 ปีโลก'],['คาบหมุนรอบตัว','17 ชม. (ถอยหลัง)'],['ความเร็ววงโคจร','6.8 กม./วิ']],
     phys:[['เส้นผ่านศูนย์กลาง','50,724 กม.'],['แรงโน้มถ่วง','0.89 g'],['อุณหภูมิ','~-195 °C'],['ดวงจันทร์','28 ดวง'],['องค์ประกอบ','ดาวน้ำแข็ง · น้ำ-มีเทน-แอมโมเนีย'],['บรรยากาศ','ไฮโดรเจน · ฮีเลียม · มีเทน']],
     facts:['ดาวที่ <b>เอียงตะแคงข้าง</b> เกือบ 98° เหมือนกลิ้งไปตามวงโคจร ทำให้ฤดูกาลยาวนานสุดขั้ว',
       'มีเทนในบรรยากาศดูดกลืนแสงสีแดง ทำให้เห็นเป็น <b>สีฟ้าอมเขียว</b>'] },
-  { name:'ดาวเนปจูน', en:'Neptune', orbit:262, size:2.6, spin:1.5, color:'#4f6bff', tilt:0.49, bands:true, atmo:'#6a82ff', map:'neptunemap.jpg',
+  { name:'ดาวเนปจูน', en:'Neptune', orbit:262, size:2.6, spin:1.5, rotH:16.11, color:'#4f6bff', tilt:0.49, bands:true, atmo:'#6a82ff', map:'neptunemap.jpg',
     orbitData:[['ระยะจากดวงอาทิตย์','4,500 ล้าน กม.'],['คาบโคจร','165 ปีโลก'],['คาบหมุนรอบตัว','16 ชม.'],['ความเร็ววงโคจร','5.4 กม./วิ']],
     phys:[['เส้นผ่านศูนย์กลาง','49,244 กม.'],['แรงโน้มถ่วง','1.14 g'],['อุณหภูมิ','~-200 °C'],['ดวงจันทร์','16 ดวง'],['องค์ประกอบ','ดาวน้ำแข็ง · น้ำ-มีเทน-แอมโมเนีย'],['บรรยากาศ','ไฮโดรเจน · ฮีเลียม · มีเทน']],
     facts:['ดาวที่ไกลที่สุด มีลมแรงที่สุดในระบบสุริยะถึง <b>2,100 กม./ชม.</b>',
       'ดาวเคราะห์ดวงแรกที่ถูกค้นพบด้วย <b>การคำนวณทางคณิตศาสตร์</b> ก่อนส่องกล้องเห็นจริง (ปี 1846)'] },
-  { name:'ดาวพลูโต', en:'Pluto', orbit:304, size:0.7, spin:0.4, color:'#c9b6a0', tilt:0.3, bands:false, map:'plutomap1k.jpg', type:'ดาวเคราะห์แคระ · Dwarf planet',
+  { name:'ดาวพลูโต', en:'Pluto', orbit:304, size:0.7, spin:0.4, rotH:-153.29, color:'#c9b6a0', tilt:0.3, bands:false, map:'plutomap1k.jpg', type:'ดาวเคราะห์แคระ · Dwarf planet',
     orbitData:[['ระยะจากดวงอาทิตย์','5,900 ล้าน กม.'],['คาบโคจร','248 ปีโลก'],['คาบหมุนรอบตัว','6.4 วันโลก'],['ความเร็ววงโคจร','4.7 กม./วิ']],
     phys:[['เส้นผ่านศูนย์กลาง','2,377 กม.'],['แรงโน้มถ่วง','0.063 g'],['อุณหภูมิ','~-230 °C'],['ดวงจันทร์','5 ดวง (คารอน ฯลฯ)'],['องค์ประกอบ','หิน + น้ำแข็งไนโตรเจน'],['สถานะ','ดาวเคราะห์แคระ (2006)']],
     facts:['ดาวเคราะห์แคระในแถบไคเปอร์ — เคยเป็นดาวเคราะห์ดวงที่ 9 จนถูกจัดประเภทใหม่ปี 2006',
@@ -3219,9 +3219,9 @@ function animate(){if(document.hidden)return;requestAnimationFrame(animate);cons
     physAcc+=dt;if(physAcc>0.18){physAcc=0;updatePhysics(simDate);updateMissionVisual(simDate);}
     dashAcc+=dt;if(dashAcc>1){dashAcc=0;updateMissionDash(simDate);}
   }
-  // live = เวลาจริง → ดาวหมุนนิ่ง ๆ เหมือนตอนหยุดเวลา (ไม่ใช้จังหวะเร่งของ fast-forward)
-  const sp=(running&&!liveMode)?daysPerSec():0.04;
-  for(const p of PLANETS)p._mesh.rotation.y+=p.spin*dt*(0.25+sp*0.05);
+  // หมุนรอบแกนตามจริง: มุม = (เวลาในซิม / คาบหมุนจริง) → live=ช้าตามจริง, เร่งเวลา=เห็นเร็วสัมพัทธ์ถูกต้อง, หยุด=นิ่ง (rotH ติดลบ = หมุนถอยหลัง เช่น ศุกร์/ยูเรนัส)
+  const _hrs=simDate.getTime()/3600000;
+  for(const p of PLANETS)p._mesh.rotation.y=((_hrs/p.rotH)%1)*6.283185307;
   // สเกลสมจริง: ค่อย ๆ ขยับรัศมีดาว + ย่อ/ขยายวงแหวน/แถบ + ถอยกล้อง
   for(let i=0;i<PLANETS.length;i++){const p=PLANETS[i];
     if(Math.abs(p._rad-p._radTarget)>0.05)p._rad+=(p._radTarget-p._rad)*0.06;
@@ -3230,7 +3230,7 @@ function animate(){if(document.hidden)return;requestAnimationFrame(animate);cons
   kuiper.scale.x+=(kuiperTS-kuiper.scale.x)*0.06;kuiper.scale.z=kuiper.scale.x;
   if(camLerp){camera.position.lerp(camLerp,0.05);camLerpT+=dt;if(camLerpT>1.6)camLerp=null;}
   cloudLayers.forEach(c=>c.rotation.y+=dt*0.03);
-  moonMesh.rotation.y+=dt*0.1;sunMesh.rotation.y+=dt*0.03;
+  moonMesh.rotation.y=((_hrs/655.72)%1)*6.283185307;sunMesh.rotation.y=((_hrs/609.12)%1)*6.283185307;// ดวงจันทร์/ดวงอาทิตย์หมุนตามคาบจริงเช่นกัน
   turb.rotation.y-=dt*0.04;turb.rotation.x+=dt*0.01;
   {const cp=1+0.05*Math.sin(performance.now()*0.0012);corona.scale.set(SUN.size*3.2*cp,SUN.size*3.2*cp,1);}
   beltGroup.rotation.y+=dt*0.012*(running?Math.max(daysPerSec()*0.04,1):0.3);
