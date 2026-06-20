@@ -1537,17 +1537,28 @@ function updateZodiacLabels(){
 // ============ REAL POSITIONS ============
 function dirFromEcliptic(elonDeg,elatDeg){const lo=elonDeg*D2R,la=elatDeg*D2R,cl=Math.cos(la);
   return [cl*Math.cos(lo),Math.sin(la),cl*Math.sin(lo)];} // [x(in-plane), y(up=ecliptic north), z(in-plane)]
-function updateBodies(date){
+// ส่วนคำนวณ (แพง) — เรียก astronomy-engine เฉพาะตอนเวลาเปลี่ยนจริง แล้ว cache ลองจิจูด/ทิศดวงจันทร์
+let _bodiesT=null;const _moonDir=new THREE.Vector3();
+function computeBodies(date){
   for(const p of PLANETS){
     const e=Astronomy.Ecliptic(Astronomy.HelioVector(p.body,date));
-    const R=p._rad||p.orbit, lo=e.elon*D2R;
-    // วางบนระนาบสุริยวิถี (y=0) ที่ลองจิจูดจริง → ดาวนั่งบนวงแหวนพอดี (กันพลูโต/ดาวเอียงหลุดเส้น)
-    p._mesh.position.set(Math.cos(lo)*R,0,Math.sin(lo)*R);
+    p._lon=e.elon*D2R;
   }
   const em=Astronomy.Ecliptic(Astronomy.GeoMoon(date));
-  const md=dirFromEcliptic(em.elon,em.elat);const ep=EARTH._mesh.position;
-  moonMesh.position.set(ep.x+md[0]*MOON_DIST,ep.y+md[1]*MOON_DIST,ep.z+md[2]*MOON_DIST);
+  const md=dirFromEcliptic(em.elon,em.elat);_moonDir.set(md[0],md[1],md[2]);
+  _bodiesT=date.getTime();
 }
+// ส่วนวางตำแหน่ง (ถูก) — cos/sin จากลองจิจูดที่ cache ไว้ × รัศมีปัจจุบัน (รองรับอนิเมชันสเกลดาวทุกเฟรม)
+function placeBodies(){
+  for(const p of PLANETS){
+    const R=p._rad||p.orbit;
+    // วางบนระนาบสุริยวิถี (y=0) ที่ลองจิจูดจริง → ดาวนั่งบนวงแหวนพอดี (กันพลูโต/ดาวเอียงหลุดเส้น)
+    p._mesh.position.set(Math.cos(p._lon)*R,0,Math.sin(p._lon)*R);
+  }
+  const ep=EARTH._mesh.position;
+  moonMesh.position.set(ep.x+_moonDir.x*MOON_DIST,ep.y+_moonDir.y*MOON_DIST,ep.z+_moonDir.z*MOON_DIST);
+}
+function updateBodies(date){ computeBodies(date); placeBodies(); }
 
 // ============ COMET — หางเส้นเรียวสวย พุ่งออกจากดวงอาทิตย์ ============
 const comet=new THREE.Group();scene.add(comet);
@@ -3176,7 +3187,7 @@ function skipIntro(){if(!intro)return;intro=false;controls.enabled=true;controls
 
 // ============ LOOP ============
 const clock=new THREE.Clock();
-let uiAcc=0,dashAcc=0;
+let uiAcc=0,dashAcc=0,bodiesAcc=0;
 function animate(){if(document.hidden)return;requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),0.05);
   if(intro){introT+=dt;const t=Math.min(introT/5,1);const e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
     camera.position.lerpVectors(introA,introB,e);camera.lookAt(0,0,0);
@@ -3197,9 +3208,17 @@ function animate(){if(document.hidden)return;requestAnimationFrame(animate);cons
   }
   else if(liveMode){simDate=new Date();queueClockUpdate(dt);}
   else if(running){simDate=new Date(simDate.getTime()+dt*1000*daysPerSec()*86400);queueClockUpdate(dt);}
-  updateBodies(simDate);updateMoons(simDate);
-  physAcc+=dt;if(physAcc>0.18){physAcc=0;updatePhysics(simDate);updateMissionVisual(simDate);}
-  dashAcc+=dt;if(dashAcc>1){dashAcc=0;updateMissionDash(simDate);}
+  // คำนวณตำแหน่งดาราศาสตร์เฉพาะตอนเวลาเปลี่ยน + throttle ~20Hz (ดาวขยับช้ามาก ตาดูไม่ออก) — วางตำแหน่งทุกเฟรม (ถูก) ให้กล้อง/อนิเมชันลื่น 60fps
+  const _timeMoved=simDate.getTime()!==_bodiesT;
+  if(_timeMoved){
+    bodiesAcc+=dt;
+    if(_bodiesT===null||bodiesAcc>=0.05||daysPerSec()>30){bodiesAcc=0;computeBodies(simDate);}
+  }
+  placeBodies();updateMoons(simDate);
+  if(_timeMoved){
+    physAcc+=dt;if(physAcc>0.18){physAcc=0;updatePhysics(simDate);updateMissionVisual(simDate);}
+    dashAcc+=dt;if(dashAcc>1){dashAcc=0;updateMissionDash(simDate);}
+  }
   const sp=running?daysPerSec():0.04;
   for(const p of PLANETS)p._mesh.rotation.y+=p.spin*dt*(0.25+sp*0.05);
   // สเกลสมจริง: ค่อย ๆ ขยับรัศมีดาว + ย่อ/ขยายวงแหวน/แถบ + ถอยกล้อง
