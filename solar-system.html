@@ -1913,7 +1913,7 @@ function addCardText(ctx,CW,CH){
   ctx.restore();
 
   if(webbBirthday){
-    const dateStr=webbBirthday.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
+    const dateStr=webbBirthday.toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
     ctx.save();
     ctx.font='600 30px "Noto Sans Thai","Space Grotesk",sans-serif';
     ctx.fillStyle='#f3c97a';
@@ -2026,7 +2026,7 @@ async function doCapture(){
 // แชร์ต้องเรียก navigator.share *แบบ sync* ในจังหวะ gesture (iOS ตัดสิทธิ์ถ้ามี await คั่นก่อน) — เตรียม File ไว้ตั้งแต่ตอน capture แล้ว
 function shareCapture(){
   if(!capturedDataURL)return;
-  const bd=webbBirthday?webbBirthday.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'}):'';
+  const bd=webbBirthday?webbBirthday.toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric'}):'';
   const text='ระบบสุริยะ ณ '+(webbOccasion||'วันสำคัญของฉัน')+(bd?' · '+bd:'')+' · ห้วงดาว · between-stars.vercel.app';
   if(capturedFile&&navigator.canShare&&navigator.canShare({files:[capturedFile]})){
     navigator.share({files:[capturedFile],title:'ห้วงดาว · Between Stars',text}).catch(()=>{});
@@ -2163,7 +2163,7 @@ function openWebbPanel(){
     const mm=webbBirthday.getUTCMinutes().toString().padStart(2,'0');
     if(hh!=='12'||mm!=='00')ti.value=hh+':'+mm;
     // ถ้ามีวันอยู่แล้ว เปิด step 2 ทันที
-    document.getElementById('webbDateLabel').textContent=webbBirthday.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'});
+    document.getElementById('webbDateLabel').textContent=webbBirthday.toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric'});
     webbShowStep(2);
   }else{
     webbShowStep(1);
@@ -2181,7 +2181,7 @@ document.getElementById('webbGo').onclick=()=>{
   webbModal.style.display='none';hideVF();
   chronosWarpSound();startChronosTravelFX();
   dateTween={from:simDate.getTime(),to:target.getTime(),t0:performance.now(),dur:2400,onDone:()=>{
-    document.getElementById('webbDateLabel').textContent=target.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
+    document.getElementById('webbDateLabel').textContent=target.toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
     webbShowStep(2);
     finishChronosTravelFX();
     setTimeout(()=>{webbModal.style.display='flex';showVF();},1650);
@@ -2374,7 +2374,7 @@ let showOrbits=true,showLabels=true,showBelt=true;
 const cDate=document.getElementById('cDate'),cTime=document.getElementById('cTime'),rate=document.getElementById('rate');
 function daysPerSec(){return speedMul*speedMul*3;}
 function fmtRate(){const d=daysPerSec();if(d<1)return Math.round(d*24)+' ชม./วิ';if(d<60)return d.toFixed(0)+' วัน/วิ';return (d/365).toFixed(1)+' ปี/วิ';}
-function updateClock(){cDate.textContent=simDate.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
+function updateClock(){cDate.textContent=simDate.toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
   cTime.textContent=simDate.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit',timeZone:'UTC'})+' UTC';rate.textContent=fmtRate();
   if(afterClock)afterClock();}
 let clockUiAcc=0;
@@ -3118,7 +3118,7 @@ function animate(){if(document.hidden)return;requestAnimationFrame(animate);cons
     const e=Math.min(1,(performance.now()-dateTween.t0)/dateTween.dur);
     const k=e<.5?2*e*e:1-Math.pow(-2*e+2,2)/2;
     simDate=new Date(dateTween.from+(dateTween.to-dateTween.from)*k);queueClockUpdate(dt);
-    if(e>=1){const cb=dateTween.onDone;dateTween=null;if(cb)cb();}
+    if(e>=1){simDate=new Date(dateTween.to);updateClock();const cb=dateTween.onDone;dateTween=null;if(cb)cb();}
   }
   else if(liveMode){simDate=new Date();queueClockUpdate(dt);}
   else if(running){simDate=new Date(simDate.getTime()+dt*1000*daysPerSec()*86400);queueClockUpdate(dt);}
@@ -3605,7 +3605,7 @@ function openGoldenRecord(){
   document.getElementById('grForm').style.display=already?'none':'';
   if(already){
     const d=new Date(already.date);
-    document.getElementById('grAlreadyDate').textContent='บันทึกเมื่อ '+d.toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
+    document.getElementById('grAlreadyDate').textContent='บันทึกเมื่อ '+d.toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{year:'numeric',month:'long',day:'numeric'});
   }
   document.getElementById('grTextarea').value='';
   document.getElementById('grWarn').textContent='';
@@ -3715,7 +3715,7 @@ function cosmicDailyData(date){
 function openCosmicDaily(){
   const d=new Date(); // ดวงวันนี้จริง — ไม่ผูกกับ simDate
   const cd=cosmicDailyData(d);
-  document.getElementById('cdDate').textContent='วัน'+cd.ruler.day+'ที่ '+d.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('cdDate').textContent='วัน'+cd.ruler.day+'ที่ '+d.toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric'});
   document.getElementById('cdGlyph').textContent=cd.ruler.g;
   document.getElementById('cdRuler').textContent=cd.ruler.th+'ครองวัน';
   document.getElementById('cdPos').textContent='โคจรอยู่ในราศี'+cd.sign.th+' '+cd.sign.g+' · องศาที่ '+cd.deg;
@@ -3841,7 +3841,7 @@ function showMoodDay(ds){
 }
 function renderMoodCal(){
   const y=_moodCalRef.getFullYear(),mo=_moodCalRef.getMonth();
-  $p('moodCalTitle').textContent=new Date(y,mo,1).toLocaleDateString('th-TH',{month:'long',year:'numeric'});
+  $p('moodCalTitle').textContent=new Date(y,mo,1).toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{month:'long',year:'numeric'});
   const grid=$p('moodCal');grid.innerHTML='';
   ['อา','จ','อ','พ','พฤ','ศ','ส'].forEach(d=>{const h=document.createElement('div');h.className='mcal-dow';h.textContent=d;grid.appendChild(h);});
   const first=new Date(y,mo,1).getDay(),days=new Date(y,mo+1,0).getDate();
@@ -3861,7 +3861,7 @@ function openMoodPanel(){
   const today=moodLocalStr(),e=readMood()[today];
   _moodSel=e?e.m:null;
   _moodQText=e?(e.q||''):'';
-  $p('moodDate').textContent=new Date().toLocaleDateString('th-TH',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  $p('moodDate').textContent=new Date().toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   $p('moodNote').value=e?(e.note||''):'';
   $p('moodSave').disabled=!_moodSel;
   $p('moodSave').textContent=e?'อัปเดตห้วงใจ':'บันทึกห้วงใจ';
