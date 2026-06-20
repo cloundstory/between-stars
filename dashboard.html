@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>ห้วงดาว · Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --bg:#05070d; --panel:#0c1018; --line:rgba(243,201,122,.14); --gold:#f3c97a; --ink:#eef1f6; --muted:#8b93a4; --faint:#5a6172; --th:'Noto Sans Thai',sans-serif; --eng:'Space Grotesk',sans-serif; }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#0c1326 0%,var(--bg) 55%);color:var(--ink);font-family:var(--th);min-height:100vh;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:920px;margin:0 auto;padding:34px 18px 80px}
+  a{color:inherit}
+  .back{display:inline-block;font-family:var(--eng);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none;margin-bottom:22px}
+  .back:hover{color:var(--gold)}
+  h1{font-weight:300;font-size:clamp(24px,4vw,34px);margin:0 0 4px;letter-spacing:.01em}
+  .sub{font-family:var(--eng);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);opacity:.7;margin-bottom:30px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px}
+  .center{min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px}
+  .muted{color:var(--muted);font-size:14px;line-height:1.7}
+  /* stat grid */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+  @media(max-width:620px){.stats{grid-template-columns:repeat(2,1fr)}}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 16px}
+  .stat b{display:block;font-family:var(--eng);font-weight:600;font-size:30px;color:#fff;line-height:1}
+  .stat .lbl{font-size:12px;color:var(--muted);margin-top:8px}
+  .stat .sub2{font-size:11px;color:var(--faint);margin-top:3px}
+  /* sections */
+  .sec{margin-top:24px}
+  .sec h2{font-family:var(--eng);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);opacity:.85;margin:0 0 14px;font-weight:600}
+  /* bar chart */
+  .chart{display:flex;align-items:flex-end;gap:6px;height:160px;padding:8px 4px 0;overflow-x:auto}
+  .bar{flex:1 0 16px;min-width:16px;display:flex;flex-direction:column;align-items:center;gap:6px;justify-content:flex-end;height:100%}
+  .bar .col{width:62%;min-height:2px;border-radius:4px 4px 0 0;background:linear-gradient(180deg,var(--gold),#b8843a);transition:height .4s ease}
+  .bar .col.v{background:linear-gradient(180deg,#7fb0ff,#3f6cc4)}
+  .bar .d{font-family:var(--eng);font-size:9px;color:var(--faint);writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap}
+  .legend{display:flex;gap:16px;font-size:11px;color:var(--muted);margin-top:10px}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+  /* lists */
+  .row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:14px}
+  .row:last-child{border-bottom:none}
+  .row .k{color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:75%}
+  .row .v{font-family:var(--eng);color:var(--gold);font-weight:600}
+  /* controls */
+  .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+  .who{font-size:12px;color:var(--muted)}
+  .who b{color:var(--gold)}
+  button{font-family:var(--th);cursor:pointer}
+  .btn{background:rgba(243,201,122,.08);border:1px solid var(--line);color:var(--gold);font-size:12px;padding:8px 16px;border-radius:9px}
+  .btn:hover{background:rgba(243,201,122,.16)}
+  .btn-ghost{background:none;border:1px solid var(--line);color:var(--faint);font-family:var(--eng);font-size:10px;letter-spacing:.14em;padding:7px 14px;border-radius:8px}
+  /* login */
+  .inrow{display:flex;gap:8px;width:100%;max-width:340px}
+  .inrow input{flex:1;background:#0a0e16;border:1px solid var(--line);color:var(--ink);font-family:var(--th);font-size:14px;padding:11px 13px;border-radius:10px}
+  .inrow input:focus{outline:none;border-color:rgba(243,201,122,.5)}
+  .send{background:linear-gradient(135deg,#f3c97a,#e0a94e);border:none;color:#1a1408;font-weight:600;font-size:14px;padding:11px 18px;border-radius:10px}
+  .msg{font-size:13px;color:var(--muted);min-height:18px;line-height:1.6}
+  .spin{width:26px;height:26px;border:2px solid var(--line);border-top-color:var(--gold);border-radius:50%;animation:sp 1s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← ห้วงดาว</a>
+  <h1>สถิติผู้เข้าชม</h1>
+  <div class="sub">Founder Dashboard</div>
+  <div id="view"><div class="center"><div class="spin"></div><div class="muted">กำลังตรวจสอบสิทธิ์…</div></div></div>
+</div>
+
+<script type="module">
+const SUPABASE_URL  = 'https://isiqrzcywrzwpynfgmam.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlzaXFyemN5d3J6d3B5bmZnbWFtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE4NTA4MjQsImV4cCI6MjA5NzQyNjgyNH0.-kwWj13ScY_wTY8tfFVOoRe_hm1gpva-j301N_woQhs';
+const FOUNDER = 'cloundstory@gmail.com';
+const view = document.getElementById('view');
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const nf  = n => (n==null?'–':Number(n).toLocaleString('en-US'));
+
+let sb;
+try{
+  const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+  sb = createClient(SUPABASE_URL, SUPABASE_ANON, { auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, flowType:'pkce' } });
+}catch(e){ view.innerHTML = errBox('โหลดระบบไม่สำเร็จ ลองรีเฟรชอีกครั้ง'); throw e; }
+
+function errBox(t){ return `<div class="center"><div class="muted">${esc(t)}</div></div>`; }
+
+function loginView(prefill=''){
+  view.innerHTML = `<div class="center">
+    <div class="muted">หน้านี้สำหรับผู้ก่อตั้งเท่านั้น<br>ป้อนอีเมลเพื่อรับลิงก์เข้าระบบ</div>
+    <div class="inrow"><input id="em" type="email" placeholder="your@email.com" value="${esc(prefill)}"><button class="send" id="go">ส่งลิงก์</button></div>
+    <div class="msg" id="m"></div>
+  </div>`;
+  const m = document.getElementById('m');
+  document.getElementById('go').onclick = async ()=>{
+    const v = (document.getElementById('em').value||'').trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){ m.textContent='รูปแบบอีเมลไม่ถูกต้อง'; return; }
+    m.textContent = 'กำลังส่งลิงก์…';
+    const { error } = await sb.auth.signInWithOtp({ email:v, options:{ emailRedirectTo: location.origin + location.pathname } });
+    m.innerHTML = error ? ('ส่งไม่สำเร็จ: '+esc(error.message))
+      : `ส่งลิงก์ไปที่ <b style="color:var(--gold)">${esc(v)}</b> แล้ว<br><span style="opacity:.6">เปิดเมลแล้วคลิกลิงก์เพื่อเข้าสู่ระบบ</span>`;
+  };
+}
+
+function deniedView(email){
+  view.innerHTML = `<div class="center">
+    <div class="muted">บัญชี <b style="color:var(--gold)">${esc(email)}</b><br>ไม่มีสิทธิ์เข้าถึงหน้านี้</div>
+    <button class="btn-ghost" id="out">ออกจากระบบ</button>
+  </div>`;
+  document.getElementById('out').onclick = async ()=>{ await sb.auth.signOut(); loginView(); };
+}
+
+function bars(byDay){
+  const days = (byDay||[]).slice(-21);
+  if(!days.length) return '<div class="muted">ยังไม่มีข้อมูล</div>';
+  const max = Math.max(1, ...days.map(d=>d.views));
+  const cols = days.map(d=>{
+    const hv = Math.round((d.views/max)*100), hu = Math.round(((d.visitors||0)/max)*100);
+    const lbl = d.day ? d.day.slice(5) : '';
+    return `<div class="bar" title="${esc(d.day)} · ${nf(d.views)} views / ${nf(d.visitors)} visitors">
+      <div style="display:flex;gap:2px;align-items:flex-end;width:100%;height:100%;justify-content:center">
+        <div class="col" style="height:${hv}%"></div>
+        <div class="col v" style="height:${hu}%"></div>
+      </div><div class="d">${esc(lbl)}</div></div>`;
+  }).join('');
+  return `<div class="chart">${cols}</div>
+    <div class="legend"><span><i style="background:var(--gold)"></i>การเข้าชม</span><span><i style="background:#7fb0ff"></i>เครื่องที่ไม่ซ้ำ</span></div>`;
+}
+
+function list(items, kKey, label){
+  if(!items || !items.length) return '<div class="muted">ยังไม่มีข้อมูล</div>';
+  return items.map(it=>`<div class="row"><span class="k">${esc(it[kKey])}</span><span class="v">${nf(it.views)}</span></div>`).join('');
+}
+
+function statsView(s, email){
+  view.innerHTML = `
+    <div class="toolbar">
+      <div class="who">เข้าสู่ระบบ · <b>${esc(email)}</b></div>
+      <div style="display:flex;gap:8px"><button class="btn" id="refresh">รีเฟรช</button><button class="btn-ghost" id="out">ออกจากระบบ</button></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>${nf(s.total_views)}</b><div class="lbl">การเข้าชมรวม</div></div>
+      <div class="stat"><b>${nf(s.total_visitors)}</b><div class="lbl">ผู้เข้าชม (ไม่ซ้ำ)</div></div>
+      <div class="stat"><b>${nf(s.views_today)}</b><div class="lbl">วันนี้</div><div class="sub2">เวลาไทย</div></div>
+      <div class="stat"><b>${nf(s.views_7d)}</b><div class="lbl">7 วันล่าสุด</div><div class="sub2">${nf(s.visitors_7d)} ผู้เข้าชม</div></div>
+    </div>
+    <div class="sec card"><h2>รายวัน · 21 วันล่าสุด</h2>${bars(s.by_day)}</div>
+    <div class="sec card"><h2>หน้าที่นิยม</h2>${list(s.by_path,'path')}</div>
+    <div class="sec card"><h2>ที่มา · Referrer</h2>${list(s.by_ref,'source')}</div>
+  `;
+  document.getElementById('out').onclick = async ()=>{ await sb.auth.signOut(); loginView(); };
+  document.getElementById('refresh').onclick = ()=> load();
+}
+
+async function load(){
+  view.innerHTML = '<div class="center"><div class="spin"></div></div>';
+  const { data:{ session } } = await sb.auth.getSession();
+  if(!session){ loginView(); return; }
+  const email = session.user.email || '';
+  if(email !== FOUNDER){ deniedView(email); return; }
+  const { data, error } = await sb.rpc('founder_stats');
+  if(error){ view.innerHTML = errBox('ดึงข้อมูลไม่สำเร็จ: '+error.message+' (ตั้งค่า RPC ใน Supabase แล้วหรือยัง?)'); return; }
+  statsView(data, email);
+}
+
+sb.auth.onAuthStateChange((ev)=>{ if(ev==='SIGNED_IN'||ev==='SIGNED_OUT'||ev==='INITIAL_SESSION') load(); });
+load();
+</script>
+</body>
+</html>

@@ -3425,6 +3425,7 @@ function renderSigIdentity(){
       <div class="sig-stat"><b>${found}</b><span>เจอแล้ว</span></div>
       <div class="sig-stat"><b>${totalRes}</b><span>resonance</span></div>
     </div>
+    ${creator?`<a href="dashboard.html" style="display:block;text-align:center;margin:2px 0 18px;padding:11px;border:1px solid rgba(243,201,122,.38);border-radius:11px;color:var(--gold);font-family:var(--eng);font-size:10px;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;background:rgba(243,201,122,.05)">✦ สถิติผู้เข้าชม · Dashboard →</a>`:''}
     <div class="sig-login-head">เชื่อมต่อ SIGNAL กับ EMAIL</div>
     <div class="sig-login-desc">${linked
       ?'เข้าสู่ระบบแล้ว · <b style="color:var(--gold)">'+escapeHtml(email)+'</b><br>'+(cfg?'บันทึกของคุณ (อารมณ์ · ดาว · Golden Record) ซิงก์อัตโนมัติทุกเครื่อง':'Signal จะซิงก์ข้ามเครื่องเมื่อ backend พร้อม')
