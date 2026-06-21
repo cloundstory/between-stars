@@ -249,7 +249,7 @@
   .ob-tip{position:fixed;z-index:13;pointer-events:none;font-family:var(--eng);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(243,201,122,.9);background:rgba(243,201,122,.06);border:1px solid rgba(243,201,122,.22);border-radius:20px;padding:6px 14px;white-space:nowrap;opacity:0;transition:opacity .9s ease}
   .ob-tip.on{opacity:1}
   /* onboarding guide — ไกด์ 30 วิแรก */
-  #obGuide{position:fixed;left:50%;bottom:104px;transform:translateX(-50%) translateY(10px);z-index:16;width:min(92vw,400px);
+  #obGuide{position:fixed;left:50%;bottom:152px;transform:translateX(-50%) translateY(10px);z-index:16;width:min(92vw,400px);
     background:rgba(10,13,22,.93);border:1px solid rgba(243,201,122,.28);border-radius:16px;padding:18px 20px 16px;
     backdrop-filter:blur(9px);box-shadow:0 14px 44px rgba(0,0,0,.55);opacity:0;pointer-events:none;text-align:center;
     transition:opacity .6s ease,transform .6s cubic-bezier(.22,.68,0,1.1)}
@@ -266,9 +266,9 @@
   #obGuide .ob-dots{display:flex;gap:6px;justify-content:center;margin-top:14px}
   #obGuide .ob-dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.18);transition:background .3s}
   #obGuide .ob-dots i.on{background:var(--gold)}
-  @media(max-width:560px){#obGuide,#dailyNudge{bottom:120px}}
+  @media(max-width:560px){#obGuide,#dailyNudge{bottom:168px}}
   /* daily return ritual — ชวนกลับมาบันทึกห้วงใจ */
-  #dailyNudge{position:fixed;left:50%;bottom:104px;transform:translateX(-50%) translateY(10px);z-index:16;width:min(92vw,380px);
+  #dailyNudge{position:fixed;left:50%;bottom:152px;transform:translateX(-50%) translateY(10px);z-index:16;width:min(92vw,380px);
     background:rgba(10,13,22,.93);border:1px solid rgba(243,201,122,.26);border-radius:16px;padding:18px 20px 16px;
     backdrop-filter:blur(9px);box-shadow:0 14px 44px rgba(0,0,0,.55);opacity:0;pointer-events:none;text-align:center;
     transition:opacity .6s ease,transform .6s cubic-bezier(.22,.68,0,1.1)}
@@ -3694,9 +3694,8 @@ function obGuide(force){
   const el=$p('obGuide');if(!el)return;
   const dn=$p('dailyNudge');if(dn&&dn.classList.contains('on')){dn.classList.remove('on');setTimeout(()=>{dn.style.display='none';},300);}  // กันการ์ดรายวันซ้อน
   const steps=[
-    {s:'01 · ยินดีต้อนรับ',t:'นี่คือห้วงดาว',d:'ระบบสุริยะที่เห็น เคลื่อนตามตำแหน่งดาวจริง ณ ตอนนี้ — ลากเพื่อมองรอบ ๆ เลื่อนเพื่อซูม',go:'ถัดไป',act:'next'},
-    {s:'02 · ลองสิ่งนี้',t:'จักรวาลในวันเกิดคุณ',d:'พิมพ์วันเกิด แล้วเก็บภาพระบบสุริยะของวันนั้นไว้เป็นที่ระลึก · แชร์ให้คนที่คุณรักได้',go:'✦ เปิดเลย',act:'chronos'},
-    {s:'03 · ค้นพบต่อได้เรื่อย ๆ',t:'เล่นด้วยใจ',d:'แตะดาวสักดวงเพื่อฟังเสียงของมัน · หรือกด “✦ ใคร่ครวญ” เพื่อพักใจกับห้วงอวกาศ',go:'เริ่มสำรวจ',act:'done'}
+    {s:'01 · ลองเลื่อนดู',t:'นี่คือห้วงดาว',d:'ระบบสุริยะที่เห็น เคลื่อนตามตำแหน่งดาวจริง ณ ตอนนี้ — ลากเพื่อมองรอบ ๆ เลื่อนเพื่อซูมเข้า/ออก',go:'ถัดไป',act:'next'},
+    {s:'02 · เก็บภาพ',t:'จักรวาลในวันเกิดคุณ',d:'พิมพ์วันเกิด แล้วเก็บภาพระบบสุริยะของวันนั้นไว้เป็นที่ระลึก · แชร์ให้คนที่คุณรักได้',go:'✦ เปิดเลย',act:'chronos'}
   ];
   let i=0;
   function finish(){markObDone();el.classList.remove('on');setTimeout(()=>{el.style.display='none';},700);}
@@ -3704,7 +3703,7 @@ function obGuide(force){
     const st=steps[i];
     el.innerHTML=`<div class="ob-step">${st.s}</div><div class="ob-t">${st.t}</div><div class="ob-d">${st.d}</div>`
       +`<div class="ob-row"><button class="ob-b ob-go" id="obGo">${st.go}</button>`
-      +(i<steps.length-1?'<button class="ob-b ob-skip" id="obSkip">ข้าม</button>':'')+`</div>`
+      +`<button class="ob-b ob-skip" id="obSkip">${i<steps.length-1?'ข้าม':'ปิด'}</button></div>`
       +`<div class="ob-dots">${steps.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('')}</div>`;
     $p('obGo').onclick=()=>{
       if(st.act==='chronos'){finish();openChronosLens();return;}
