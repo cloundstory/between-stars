@@ -2134,7 +2134,7 @@ function saveCapture(){
 }
 document.getElementById('prevShare').onclick=shareCapture;
 document.getElementById('prevSave').onclick=saveCapture;
-document.getElementById('prevClose').onclick=()=>{chronosPreview.style.display='none';chronosTextVisible=true;};
+document.getElementById('prevClose').onclick=()=>{chronosPreview.style.display='none';chronosTextVisible=true;showClosingTip();};
 document.getElementById('prevTextToggle').onclick=()=>rebuildCard(!chronosTextVisible);
 document.getElementById('prevLookOut').onclick=()=>{
   const d=webbBirthday?webbBirthday.toISOString().slice(0,10):'';
@@ -2267,7 +2267,7 @@ function openWebbPanel(fromChronosEntry=false){
   di.max=new Date().toISOString().slice(0,10);webbModal.style.display='flex';showVF();
   if(fromChronosEntry){inner.classList.add('webb-in');chronosOpenSound();}
 }
-document.getElementById('webbClose').onclick=()=>{webbModal.style.display='none';hideVF();};
+document.getElementById('webbClose').onclick=()=>{webbModal.style.display='none';hideVF();showClosingTip();};
 webbModal.addEventListener('click',e=>{if(e.target===webbModal){webbModal.style.display='none';hideVF();}});
 document.getElementById('webbGo').onclick=()=>{
   const v=document.getElementById('webbDate').value;if(!v)return;
@@ -3688,7 +3688,19 @@ function showObTip(id,dur,onHide){
 }
 function obSignalTip(){if(!isFirstVisit())return;setTimeout(()=>{_obDismissSignal=showObTip('obSignal',5500);},3500);}
 function obCometTip(){if(!isFirstVisit()||_obPhiloDone)return;_obPhiloDone=true;setTimeout(()=>showObTip('obComet',7000,markObDone),2200);}
-// ไกด์ 30 วิแรก — 3 สเต็ป เน้น Chronos Lens เป็น hook (ข้ามได้ จำว่าเคยดู)
+// ไกด์ 30 วิแรก — 2 สเต็ป เน้น Chronos Lens เป็น hook (ข้ามได้ จำว่าเคยดู)
+let _obClosingPending=false;   // ตั้งเมื่อเข้ากล้องจากไกด์ → โชว์ tip ปิดท้ายตอนกลับมาที่ฉาก
+function showClosingTip(){
+  if(!_obClosingPending)return;_obClosingPending=false;
+  const el=$p('obGuide');if(!el)return;
+  el.innerHTML='<div class="ob-step">✦ พร้อมแล้ว</div><div class="ob-t">ค้นพบต่อด้วยตัวคุณเอง</div>'
+    +'<div class="ob-d">แตะดาวสักดวงเพื่อฟังเสียงของมัน · หรือกด “✦ ใคร่ครวญ” เพื่อพักใจกับห้วงอวกาศ · อยากเก็บภาพอีกครั้ง แตะที่กล้องได้เสมอ</div>'
+    +'<div class="ob-row"><button class="ob-b ob-go" id="obClose2">เข้าใจแล้ว</button></div>';
+  el.style.display='';setTimeout(()=>el.classList.add('on'),300);
+  const close=()=>{el.classList.remove('on');setTimeout(()=>{el.style.display='none';},600);};
+  $p('obClose2').onclick=close;
+  setTimeout(()=>{if(el.classList.contains('on'))close();},9000);
+}
 function obGuide(force){
   if(!force&&!isFirstVisit())return;
   const el=$p('obGuide');if(!el)return;
@@ -3706,7 +3718,7 @@ function obGuide(force){
       +`<button class="ob-b ob-skip" id="obSkip">${i<steps.length-1?'ข้าม':'ปิด'}</button></div>`
       +`<div class="ob-dots">${steps.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('')}</div>`;
     $p('obGo').onclick=()=>{
-      if(st.act==='chronos'){finish();openChronosLens();return;}
+      if(st.act==='chronos'){_obClosingPending=true;finish();openChronosLens();return;}
       if(st.act==='done'){finish();return;}
       i++;render();
     };
