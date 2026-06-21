@@ -847,6 +847,7 @@
   <span class="tog on" id="tQuality">คุณภาพ: สูง</span>
   <span class="tog" id="tHideUI">ซ่อน UI</span>
   <span class="tog" id="tReset">รีเซ็ตมุมมอง</span>
+  <span class="tog" id="tReplayGuide">✦ ทบทวนเส้นทาง</span>
 </div>
 
 <div class="events" id="events">
@@ -2557,6 +2558,7 @@ document.getElementById('tHideUI').onclick=toggleUI;
 document.getElementById('restoreUI').onclick=toggleUI;
 addEventListener('keydown',e=>{if(e.key==='h'||e.key==='H')toggleUI();});
 document.getElementById('tReset').onclick=()=>{focusObj=null;setActiveNav(null);controls.target.set(0,0,0);camera.position.set(0,200,440);};
+document.getElementById('tReplayGuide').onclick=()=>{viewsPop.classList.remove('open');layersBtn.classList.remove('on');obGuide(true);};
 
 // ============ AMBIENT AUDIO — เสียงอวกาศสังเคราะห์ (Web Audio, ไม่มีไฟล์นอก) ============
 let audioCtx=null,ambient=null,soundOn=false;
@@ -3235,8 +3237,8 @@ camera.position.copy(introA);camera.lookAt(0,0,0);
 const introEl=document.getElementById('intro');let uiShown=false;
 function showUI(){uiShown=true;introEl.classList.add('gone');
   ['nav','dock','events','missionPanel','timeline'].forEach(id=>document.getElementById(id).classList.add('in'));
-  obGuide();/* ไกด์ 30 วิแรก (แทน obSignalTip เดิม) */
-  setTimeout(dailyReturnNudge,2800);/* คนเก่า: ชวนกลับมาบันทึกห้วงใจ */}
+  if(location.hash==='#guide'){obGuide(true);/* เปิดผ่านลิงก์ → บังคับโชว์ไกด์ */}
+  else{obGuide();/* ไกด์ 30 วิแรก */ setTimeout(dailyReturnNudge,2800);/* คนเก่า: ชวนกลับมาบันทึกห้วงใจ */}}
 function skipIntro(){if(!intro)return;intro=false;controls.enabled=true;controls.target.set(0,0,0);camera.position.copy(introB);if(!uiShown)showUI();}
 
 // ============ LOOP ============
@@ -3687,9 +3689,10 @@ function showObTip(id,dur,onHide){
 function obSignalTip(){if(!isFirstVisit())return;setTimeout(()=>{_obDismissSignal=showObTip('obSignal',5500);},3500);}
 function obCometTip(){if(!isFirstVisit()||_obPhiloDone)return;_obPhiloDone=true;setTimeout(()=>showObTip('obComet',7000,markObDone),2200);}
 // ไกด์ 30 วิแรก — 3 สเต็ป เน้น Chronos Lens เป็น hook (ข้ามได้ จำว่าเคยดู)
-function obGuide(){
-  if(!isFirstVisit())return;
+function obGuide(force){
+  if(!force&&!isFirstVisit())return;
   const el=$p('obGuide');if(!el)return;
+  const dn=$p('dailyNudge');if(dn&&dn.classList.contains('on')){dn.classList.remove('on');setTimeout(()=>{dn.style.display='none';},300);}  // กันการ์ดรายวันซ้อน
   const steps=[
     {s:'01 · ยินดีต้อนรับ',t:'นี่คือห้วงดาว',d:'ระบบสุริยะที่เห็น เคลื่อนตามตำแหน่งดาวจริง ณ ตอนนี้ — ลากเพื่อมองรอบ ๆ เลื่อนเพื่อซูม',go:'ถัดไป',act:'next'},
     {s:'02 · ลองสิ่งนี้',t:'จักรวาลในวันเกิดคุณ',d:'พิมพ์วันเกิด แล้วเก็บภาพระบบสุริยะของวันนั้นไว้เป็นที่ระลึก · แชร์ให้คนที่คุณรักได้',go:'✦ เปิดเลย',act:'chronos'},
