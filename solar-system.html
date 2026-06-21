@@ -2491,15 +2491,33 @@ layersBtn.onclick=e=>{e.stopPropagation();const o=!viewsPop.classList.contains('
     viewsPop.style.right=Math.max(8,innerWidth-r.right)+'px';viewsPop.style.bottom=(innerHeight-r.top+12)+'px';}};
 addEventListener('pointerdown',e=>{if(viewsPop.classList.contains('open')&&!viewsPop.contains(e.target)&&e.target!==layersBtn){
   viewsPop.classList.remove('open');layersBtn.classList.remove('on');}});
-let hiQuality=!isMobile&&!prefersReduced;   // มือถือ/เครื่องอ่อน/ตั้งค่าลดการเคลื่อนไหว เริ่มที่โหมดประหยัด
+let hiQuality=!isMobile&&!prefersReduced;   // ปุ่ม manual = เพดานคุณภาพ (สูง/ประหยัด)
 const tQ=document.getElementById('tQuality');
+// ระบบ 3 ระดับ: 2=สูง(DPR2+เงา+DoF) · 1=กลาง(DPR1, บลูมยังอยู่) · 0=ประหยัดสุด(ปิดบลูม)
+const QNAME=['ประหยัด','กลาง','สูง'];
+let qAuto=hiQuality?2:1,qBokehAllowed=true,_lastShadow=null;   // qAuto = เพดานที่ governor อนุญาต
+function qCeil(){return hiQuality?2:1;}                        // ประหยัด=1 (คงบลูมไว้), สูง=2
+function qLevel(){return Math.min(qAuto,qCeil());}
 function applyQuality(){
-  tQ.textContent='คุณภาพ: '+(hiQuality?'สูง':'ประหยัด');tQ.classList.toggle('on',hiQuality);
-  renderer.setPixelRatio(hiQuality?Math.min(devicePixelRatio,2):1);composer.setSize(innerWidth,innerHeight);
-  renderer.shadowMap.enabled=hiQuality;sunLight.castShadow=hiQuality;bokeh.enabled=hiQuality;
-  scene.traverse(o=>{if(o.isMesh&&o.material)o.material.needsUpdate=true;});}
-tQ.onclick=()=>{hiQuality=!hiQuality;applyQuality();};
-applyQuality();   // ใช้ค่าเริ่มต้นทันทีตามชนิดเครื่อง
+  const L=qLevel(),far=_prLite;
+  tQ.textContent='คุณภาพ: '+QNAME[L]+(qAuto<qCeil()?' · อัตโนมัติ':'');tQ.classList.toggle('on',L>=2);
+  const pr=(L>=2&&!far)?Math.min(devicePixelRatio,2):1;
+  if(renderer.getPixelRatio()!==pr){renderer.setPixelRatio(pr);composer.setSize(innerWidth,innerHeight);}
+  bloom.enabled=(L>=1);
+  const sh=(L>=2);renderer.shadowMap.enabled=sh;sunLight.castShadow=sh;
+  qBokehAllowed=(L>=2)&&!far;bokeh.enabled=qBokehAllowed;
+  if(_lastShadow!==sh){_lastShadow=sh;scene.traverse(o=>{if(o.isMesh&&o.material)o.material.needsUpdate=true;});}}   // recompile เฉพาะตอนเงาเปลี่ยน
+tQ.onclick=()=>{hiQuality=!hiQuality;qAuto=qCeil();applyQuality();};   // กดเอง = รีเซ็ต governor ไปเพดานใหม่
+applyQuality();
+// ── auto governor: เฟรมตกนาน → ลดระดับ, ลื่นต่อเนื่อง → คืน (warmup กันช่วงโหลด + cooldown กันแกว่ง) ──
+let _gAcc=0,_gN=0,_gWarm=0,_gCool=0;
+function perfGovernor(dt){
+  if(intro){_gWarm=0;return;}
+  if(_gWarm<2.5){_gWarm+=dt;return;}
+  _gAcc+=dt;_gN++;
+  if(_gAcc>=1){const fps=_gN/_gAcc;_gAcc=0;_gN=0;if(_gCool>0)_gCool--;
+    if(fps<38&&qAuto>0){qAuto--;_gCool=12;applyQuality();}              // ตกต่ำกว่า 38 → ลด
+    else if(fps>57&&qAuto<qCeil()&&_gCool<=0){qAuto++;applyQuality();}}}// ลื่น >57 และพ้น cooldown → คืน
 function toggleUI(){document.body.classList.toggle('cinematic');}
 document.getElementById('tHideUI').onclick=toggleUI;
 document.getElementById('restoreUI').onclick=toggleUI;
@@ -3189,7 +3207,7 @@ function skipIntro(){if(!intro)return;intro=false;controls.enabled=true;controls
 // ============ LOOP ============
 const clock=new THREE.Clock();
 let uiAcc=0,dashAcc=0,bodiesAcc=0;
-function animate(){if(document.hidden)return;requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),0.05);
+function animate(){if(document.hidden)return;requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),0.05);perfGovernor(dt);
   if(intro){introT+=dt;const t=Math.min(introT/5,1);const e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
     camera.position.lerpVectors(introA,introB,e);camera.lookAt(0,0,0);
     if(t>.55&&!uiShown)showUI();if(t>=1){intro=false;controls.enabled=true;controls.target.set(0,0,0);}}
@@ -3249,16 +3267,15 @@ function animate(){if(document.hidden)return;requestAnimationFrame(animate);cons
     const e=Math.min(1,(performance.now()-_breath.t0)/_breath.dur),s=Math.sin(Math.PI*e); // หายใจเข้า-ออก 0→1→0
     bokeh.uniforms.aperture.value=_breath.peak*s;
     bokeh.uniforms.maxblur.value=0.008+(_breath.peakBlur-0.008)*s;
-    if(e>=1){_breath=null;bokeh.uniforms.maxblur.value=0.008;bokeh.uniforms.aperture.value=0;bokeh.enabled=hiQuality;}
+    if(e>=1){_breath=null;bokeh.uniforms.maxblur.value=0.008;bokeh.uniforms.aperture.value=0;bokeh.enabled=qBokehAllowed;}
   }else if(focusObj){focusObj.getWorldPosition(_v);const d=camera.position.distanceTo(_v);
     bokeh.uniforms.focus.value=d; // เกาะระยะดาวทันที → ดาวคมตั้งแต่เริ่มซูม (ไม่เบลอแวบแรก)
     bokeh.uniforms.aperture.value+=(0.0009-bokeh.uniforms.aperture.value)*0.06;}
   else bokeh.uniforms.aperture.value+=(0-bokeh.uniforms.aperture.value)*0.06;
-  // ลดภาระ GPU ตอนซูมออกไกล: ลด pixel ratio + ปิด DoF (hysteresis กันสั่นที่รอยต่อ)
+  // ลดภาระ GPU ตอนซูมออกไกล (คุมผ่าน applyQuality, hysteresis กันสั่นที่รอยต่อ)
   if(hiQuality){const _cd=camera.position.distanceTo(controls.target);
-    if(!_prLite&&_cd>560){_prLite=true;renderer.setPixelRatio(1);composer.setSize(innerWidth,innerHeight);}
-    else if(_prLite&&_cd<430){_prLite=false;renderer.setPixelRatio(Math.min(devicePixelRatio,2));composer.setSize(innerWidth,innerHeight);}
-    if(_prLite)bokeh.enabled=false;}
+    if(!_prLite&&_cd>560){_prLite=true;applyQuality();}
+    else if(_prLite&&_cd<430){_prLite=false;applyQuality();}}
   // hover pick เฟรมละครั้ง (ข้ามตอนลากกล้อง)
   if(_pendingHover&&!downXY){hovered=pickClickable(_pendingHover);renderer.domElement.style.cursor=hovered?'pointer':'grab';_pendingHover=null;}
   composer.render();}
