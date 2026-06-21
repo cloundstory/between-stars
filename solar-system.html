@@ -2378,8 +2378,9 @@ function pickClickable(e){
   }
   return best;
 }
-renderer.domElement.addEventListener('pointermove',e=>{if(intro)return;
-  hovered=pickClickable(e);renderer.domElement.style.cursor=hovered?'pointer':'grab';});
+// hover pick แพงเพราะ raycast — เก็บ event ไว้ ทำจริงแค่เฟรมละครั้งใน loop และข้ามตอนกำลังลากกล้อง
+let _pendingHover=null;
+renderer.domElement.addEventListener('pointermove',e=>{if(intro||downXY)return;_pendingHover=e;});
 let downXY=null;
 renderer.domElement.addEventListener('pointerdown',e=>{if(intro){skipIntro();return;}downXY=[e.clientX,e.clientY];});
 renderer.domElement.addEventListener('pointerup',e=>{if(!downXY)return;const moved=Math.hypot(e.clientX-downXY[0],e.clientY-downXY[1])>(isMobile?12:6);downXY=null;if(moved)return;
@@ -2470,7 +2471,7 @@ const tMi=document.getElementById('tMissions');tMi.onclick=()=>{if(realistic)ret
     if(m._trav)m._trav.visible=showPaths&&!!m._curAU;if(m._travGlow)m._travGlow.visible=showPaths&&!!m._curAU;});};
 
 // ---- สเกลสมจริง (เฉพาะโหมดวิทย์) — ดาวถอยออกตาม AU จริง (ขยายพอดี), ซ่อนยาน ----
-let realistic=false,camLerp=null,camLerpT=0,beltTS=1,kuiperTS=1;
+let realistic=false,camLerp=null,camLerpT=0,beltTS=1,kuiperTS=1,_prLite=false;
 PLANETS.forEach(p=>{p._rad=p.orbit;p._radTarget=p.orbit;});
 const tSc=document.getElementById('tScale');
 tSc.onclick=()=>{realistic=!realistic;tSc.classList.toggle('on',realistic);
@@ -3253,6 +3254,13 @@ function animate(){if(document.hidden)return;requestAnimationFrame(animate);cons
     bokeh.uniforms.focus.value=d; // เกาะระยะดาวทันที → ดาวคมตั้งแต่เริ่มซูม (ไม่เบลอแวบแรก)
     bokeh.uniforms.aperture.value+=(0.0009-bokeh.uniforms.aperture.value)*0.06;}
   else bokeh.uniforms.aperture.value+=(0-bokeh.uniforms.aperture.value)*0.06;
+  // ลดภาระ GPU ตอนซูมออกไกล: ลด pixel ratio + ปิด DoF (hysteresis กันสั่นที่รอยต่อ)
+  if(hiQuality){const _cd=camera.position.distanceTo(controls.target);
+    if(!_prLite&&_cd>560){_prLite=true;renderer.setPixelRatio(1);composer.setSize(innerWidth,innerHeight);}
+    else if(_prLite&&_cd<430){_prLite=false;renderer.setPixelRatio(Math.min(devicePixelRatio,2));composer.setSize(innerWidth,innerHeight);}
+    if(_prLite)bokeh.enabled=false;}
+  // hover pick เฟรมละครั้ง (ข้ามตอนลากกล้อง)
+  if(_pendingHover&&!downXY){hovered=pickClickable(_pendingHover);renderer.domElement.style.cursor=hovered?'pointer':'grab';_pendingHover=null;}
   composer.render();}
 
 // ============ TIMELINE — ลากปีข้ามทศวรรษ (1950–2050) ============
