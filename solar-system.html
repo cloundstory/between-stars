@@ -258,15 +258,28 @@
   #obGuide .ob-t{font-family:var(--th);font-weight:300;font-size:19px;color:#fff;line-height:1.35}
   #obGuide .ob-d{font-family:var(--th);font-size:13px;color:rgba(238,242,251,.62);line-height:1.7;margin-top:8px}
   #obGuide .ob-row{display:flex;gap:8px;justify-content:center;margin-top:16px}
-  #obGuide .ob-b{font-family:var(--th);font-size:13px;cursor:pointer;border-radius:10px;padding:9px 17px;transition:.2s;border:none}
-  #obGuide .ob-go{background:linear-gradient(135deg,#f3c97a,#e0a94e);color:#1a1408;font-weight:600}
-  #obGuide .ob-go:hover{filter:brightness(1.06)}
-  #obGuide .ob-skip{background:none;border:1px solid var(--line);color:var(--muted)}
-  #obGuide .ob-skip:hover{color:var(--ink)}
+  .ob-b{font-family:var(--th);font-size:13px;cursor:pointer;border-radius:10px;padding:9px 17px;transition:.2s;border:none}
+  .ob-go{background:linear-gradient(135deg,#f3c97a,#e0a94e);color:#1a1408;font-weight:600}
+  .ob-go:hover{filter:brightness(1.06)}
+  .ob-skip{background:none;border:1px solid var(--line);color:var(--muted)}
+  .ob-skip:hover{color:var(--ink)}
   #obGuide .ob-dots{display:flex;gap:6px;justify-content:center;margin-top:14px}
   #obGuide .ob-dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.18);transition:background .3s}
   #obGuide .ob-dots i.on{background:var(--gold)}
-  @media(max-width:560px){#obGuide{bottom:120px}}
+  @media(max-width:560px){#obGuide,#dailyNudge{bottom:120px}}
+  /* daily return ritual — ชวนกลับมาบันทึกห้วงใจ */
+  #dailyNudge{position:fixed;left:50%;bottom:104px;transform:translateX(-50%) translateY(10px);z-index:16;width:min(92vw,380px);
+    background:rgba(10,13,22,.93);border:1px solid rgba(243,201,122,.26);border-radius:16px;padding:18px 20px 16px;
+    backdrop-filter:blur(9px);box-shadow:0 14px 44px rgba(0,0,0,.55);opacity:0;pointer-events:none;text-align:center;
+    transition:opacity .6s ease,transform .6s cubic-bezier(.22,.68,0,1.1)}
+  #dailyNudge.on{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
+  #dailyNudge .dn-x{position:absolute;top:7px;right:13px;color:rgba(255,255,255,.3);font-size:18px;cursor:pointer;line-height:1}
+  #dailyNudge .dn-x:hover{color:#fff}
+  #dailyNudge .dn-pre{font-family:var(--eng);font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:rgba(243,201,122,.6);margin-bottom:9px}
+  #dailyNudge .dn-t{font-family:var(--th);font-size:15px;color:rgba(238,242,251,.85);line-height:1.6}
+  #dailyNudge .dn-t b{color:var(--gold);font-weight:500}
+  #dailyNudge .dn-row{display:flex;gap:8px;justify-content:center;margin-top:15px}
+  .mood-streak{margin-left:7px;font-family:var(--eng);font-size:9px;font-weight:600;letter-spacing:.04em;color:var(--gold);vertical-align:1px}
   #obSignal{top:66px;right:24px}
   #obComet{top:22%;left:50%;transform:translateX(-50%)}
   @media(max-width:860px){#obSignal{top:56px;right:14px}}
@@ -875,6 +888,7 @@
 <div id="obSignal" class="ob-tip">ตัวตนของคุณในห้วงอวกาศ</div>
 <div id="obComet" class="ob-tip">✦ แตะดาวตกเพื่อรับสาร</div>
 <div id="obGuide" style="display:none"></div>
+<div id="dailyNudge" style="display:none"></div>
 <div id="philoTint"></div>
 <div id="modePulse"></div>
 <div id="philoBar">
@@ -3221,7 +3235,8 @@ camera.position.copy(introA);camera.lookAt(0,0,0);
 const introEl=document.getElementById('intro');let uiShown=false;
 function showUI(){uiShown=true;introEl.classList.add('gone');
   ['nav','dock','events','missionPanel','timeline'].forEach(id=>document.getElementById(id).classList.add('in'));
-  obGuide();/* ไกด์ 30 วิแรก (แทน obSignalTip เดิม) */}
+  obGuide();/* ไกด์ 30 วิแรก (แทน obSignalTip เดิม) */
+  setTimeout(dailyReturnNudge,2800);/* คนเก่า: ชวนกลับมาบันทึกห้วงใจ */}
 function skipIntro(){if(!intro)return;intro=false;controls.enabled=true;controls.target.set(0,0,0);camera.position.copy(introB);if(!uiShown)showUI();}
 
 // ============ LOOP ============
@@ -3698,6 +3713,25 @@ function obGuide(){
   el.style.display='';render();
   setTimeout(()=>el.classList.add('on'),500);
 }
+// ชวนกลับมาบันทึกห้วงใจรายวัน (เฉพาะคนที่เคยมาแล้ว + ยังไม่บันทึกวันนี้ + วันละครั้ง) — สร้างวงจรกลับมา
+function dailyReturnNudge(){
+  if(isFirstVisit())return;                          // คนใหม่ให้ทำ onboarding ก่อน
+  if(readMood()[moodLocalStr()])return;              // วันนี้บันทึกแล้ว ไม่กวน
+  if(localStorage.getItem('dnSeen')===todayStr())return;
+  const el=$p('dailyNudge');if(!el)return;
+  localStorage.setItem('dnSeen',todayStr());
+  // นับ streak ที่ต่อเนื่องถึง "เมื่อวาน" (วันนี้ยังไม่บันทึก) → ใช้กระตุ้นไม่ให้ขาดช่วง
+  const j=readMood();let s=0,_d=new Date();_d.setDate(_d.getDate()-1);while(j[moodLocalStr(_d)]){s++;_d.setDate(_d.getDate()-1);}
+  const line=s>0?`✦ คุณบันทึกห้วงใจต่อเนื่อง <b>${s} วัน</b> — วันนี้อย่าให้ขาดช่วงนะ`:'วันนี้คุณรู้สึกยังไง? ลองฝากไว้กับห้วงดาวสักครู่';
+  el.innerHTML=`<div class="dn-x" id="dnX">×</div><div class="dn-pre">ห้วงใจวันนี้</div><div class="dn-t">${line}</div>`
+    +`<div class="dn-row"><button class="ob-b ob-go" id="dnMood">◐ บันทึกห้วงใจ</button><button class="ob-b ob-skip" id="dnCosmic">ดวงประจำวัน</button></div>`;
+  const close=()=>{el.classList.remove('on');setTimeout(()=>{el.style.display='none';},600);};
+  el.style.display='';setTimeout(()=>el.classList.add('on'),300);
+  $p('dnX').onclick=close;
+  $p('dnMood').onclick=()=>{close();openMoodPanel();};
+  $p('dnCosmic').onclick=()=>{close();openCosmicDaily();};
+  setTimeout(()=>{if(el.classList.contains('on'))close();},13000);   // ซ่อนเองถ้าไม่แตะ
+}
 // ===== END ONBOARDING =====
 
 $p('sigClose').onclick=()=>$p('sigModal').classList.remove('on');
@@ -3977,7 +4011,10 @@ function moodStreak(){const j=readMood();let n=0,d=new Date();while(j[moodLocalS
 
 let _moodSel=null,_moodQText='',_moodCalRef=new Date(),_moodDaySel=null;
 
-function updateMoodBtn(){const b=$p('moodBtn');if(!b)return;b.classList.toggle('undone',!readMood()[moodLocalStr()]);}
+function updateMoodBtn(){const b=$p('moodBtn');if(!b)return;b.classList.toggle('undone',!readMood()[moodLocalStr()]);
+  const s=moodStreak();let bd=b.querySelector('.mood-streak');   // โชว์ streak ตลอด = เห็นรางวัล + กันขาดช่วง
+  if(s>1){if(!bd){bd=document.createElement('span');bd.className='mood-streak';b.appendChild(bd);}bd.textContent='✦'+s;}
+  else if(bd){bd.remove();}}
 
 function renderMoodChips(){
   const wrap=$p('moodChips');wrap.innerHTML='';
@@ -4050,8 +4087,8 @@ function saveMood(){
   if(window.bsEvent)bsEvent('mood_save');
   if(window.BSync&&window.BSync.push)window.BSync.push();
   const afterStage=myStarSummary().stageIdx;
-  const btn=$p('moodSave');btn.textContent='บันทึกแล้ว ✦';btn.disabled=true;
-  setTimeout(()=>{btn.textContent='อัปเดตห้วงใจ';btn.disabled=false;},1500);
+  const st=moodStreak();const btn=$p('moodSave');btn.textContent=st>1?('บันทึกแล้ว ✦ ต่อเนื่อง '+st+' วัน'):'บันทึกแล้ว ✦';btn.disabled=true;
+  setTimeout(()=>{btn.textContent='อัปเดตห้วงใจ';btn.disabled=false;},1800);
   if(afterStage>beforeStage)setTimeout(()=>celebrateStageUp(STAR_STAGES[afterStage]),650); // เลื่อนระดับ → ฉลอง
 }
 $p('moodReroll').onclick=()=>{if(!_moodSel)return;_moodQText=pickMoodQ(_moodSel);renderMoodQ();};
