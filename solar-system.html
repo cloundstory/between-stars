@@ -267,6 +267,11 @@
   #obGuide .ob-dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.18);transition:background .3s}
   #obGuide .ob-dots i.on{background:var(--gold)}
   @media(max-width:560px){#obGuide,#dailyNudge{bottom:168px}}
+  /* คำชวนเริ่มบันทึก (ใคร่ครวญ สำหรับคนใหม่) */
+  #philoHint{position:fixed;left:50%;bottom:19%;transform:translateX(-50%);z-index:8;pointer-events:none;
+    font-family:var(--th);font-size:14px;color:rgba(243,201,122,.72);text-align:center;letter-spacing:.02em;
+    opacity:0;transition:opacity 1.2s ease;text-shadow:0 0 18px rgba(0,0,0,.7);max-width:80vw}
+  #philoHint.on{opacity:1}
   /* daily return ritual — ชวนกลับมาบันทึกห้วงใจ */
   #dailyNudge{position:fixed;left:50%;bottom:152px;transform:translateX(-50%) translateY(10px);z-index:16;width:min(92vw,380px);
     background:rgba(10,13,22,.93);border:1px solid rgba(243,201,122,.26);border-radius:16px;padding:18px 20px 16px;
@@ -890,6 +895,7 @@
 <div id="obComet" class="ob-tip">✦ แตะดาวตกเพื่อรับสาร</div>
 <div id="obGuide" style="display:none"></div>
 <div id="dailyNudge" style="display:none"></div>
+<div id="philoHint">✦ บันทึก “ห้วงใจ” ให้ดาวของคุณค่อย ๆ เปล่งแสง</div>
 <div id="philoTint"></div>
 <div id="modePulse"></div>
 <div id="philoBar">
@@ -2401,7 +2407,7 @@ function pickClickable(e){
   mouse.x=((e.clientX-r.left)/r.width)*2-1;mouse.y=-((e.clientY-r.top)/r.height)*2+1;
   ray.setFromCamera(mouse,camera);
   const hit=ray.intersectObjects(clickable,false)[0];
-  if(hit)return hit.object;
+  if(hit&&_shown(hit.object))return hit.object;   // กันคลิกโดนวัตถุที่ซ่อน (เช่น ดาวเคราะห์ในโหมดใคร่ครวญ)
   let best=null,bestD=TAP_R;
   for(const o of clickable){
     if(!_shown(o))continue;
@@ -2783,7 +2789,7 @@ const $p=id=>document.getElementById(id);
 
 // ============ BLACK HOLE — ที่สถิตของการ "ปล่อยวาง" (โหมดใคร่ครวญ) ============
 const blackHoleGroup=new THREE.Group();
-blackHoleGroup.position.set(-560,70,92);blackHoleGroup.visible=false;blackHoleGroup.scale.setScalar(0.001); // ไกลพ้นพลูโต (304) ฝั่ง −X — ดันออกไปไกลรับขนาด supermassive
+blackHoleGroup.position.set(-760,110,150);blackHoleGroup.visible=false;blackHoleGroup.scale.setScalar(0.001); // ไกลมากฝั่ง −X — ในใคร่ครวญอยู่ขอบฟ้าให้ตามไปปล่อยวาง
 scene.add(blackHoleGroup);
 const BH_R=40; // supermassive — จานพอกพูน/glow ใหญ่มหึมา (ดันตำแหน่งออกไกลกัน disk ล้ำเข้าระบบชั้นใน)
 // event horizon — ความมืดสนิทที่บังทุกสิ่งด้านหลัง
@@ -3142,6 +3148,16 @@ function modeBreath(toPhilo){
   bokeh.enabled=true; // เปิด DoF ชั่วคราวเผื่ออยู่โหมดคุณภาพต่ำ
   _breath={t0:performance.now(),dur:toPhilo?1600:1050,peak:toPhilo?0.0085:0.0052,peakBlur:toPhilo?0.026:0.017};
 }
+// วัตถุระบบสุริยะทั้งหมด — ซ่อนยกชุดในโหมดใคร่ครวญ (เหลือแค่ดาวของเรา)
+const SOLAR_HIDE=[sunMesh,sunLight,moonMesh,beltGroup,kuiper,missionGroup].concat(planetMeshes).concat(MOONS.map(m=>m.mesh));
+let _zodiacWas=false;
+function setSolarVisible(v){
+  for(const o of SOLAR_HIDE)o.visible=v;
+  if(v){orbitRings.forEach(r=>r.visible=showOrbits);beltGroup.visible=showBelt;kuiper.visible=showBelt;zodiacGroup.visible=_zodiacWas;}
+  else{_zodiacWas=zodiacGroup.visible;orbitRings.forEach(r=>r.visible=false);zodiacGroup.visible=false;}
+}
+function philoHint(show){const el=$p('philoHint');if(!el)return;
+  if(show&&Object.keys(readMood()).length<2)el.classList.add('on');else el.classList.remove('on');}// คนใหม่: ชวนเริ่มบันทึก
 function setMode(p){philo=p;document.body.classList.toggle('philo',p);
   modeBreath(p);
   modeBtn.textContent=p?'✦ สำรวจ':'✦ ใคร่ครวญ';
@@ -3152,15 +3168,23 @@ function setMode(p){philo=p;document.body.classList.toggle('philo',p);
   _msTarget=p?1:0; // ดาวของเราปรากฏ/เลือนหายตามโหมด
   if(p){
     webb.visible=false;webbHit.visible=false; // ซ่อน Chronos Lens ในโหมดใคร่ครวญ
-    liveMode=true;tLive.classList.add('on');running=true;play.innerHTML=ICON_PAUSE;simDate=new Date();updateBodies(simDate);updateClock();updatePhysics(simDate);// บังคับ LIVE (อยู่กับปัจจุบัน)
-    orbitRings.forEach(r=>r.visible=false);tO.classList.remove('on');tO.classList.add('disabled');// วงโคจรปิด + ปุ่มไม่ไฮไลต์
+    liveMode=true;tLive.classList.add('on');running=true;play.innerHTML=ICON_PAUSE;simDate=new Date();updateBodies(simDate);updateClock();updatePhysics(simDate);// บังคับ LIVE
+    tO.classList.remove('on');tO.classList.add('disabled');
     prevSound=soundOn;prevVol=vol;soundOn=true;vol=0.3;volSlider.value=Math.round(vol/MAXVOL*100);refreshSoundIcon();tryStartAudio();// ambient อัตโนมัติ
-    viewsPop.classList.remove('open');layersBtn.classList.remove('on');// ปิดแผงเลเยอร์ (ซ่อนปุ่มในโหมดนี้)
-    startQuotes();startComets();updateLetterStat();updateMoodBtn();refreshMyStar();obCometTip();updateMoodBtn();
+    viewsPop.classList.remove('open');layersBtn.classList.remove('on');
+    myStarGroup.position.x=0;myStarGroup.position.z=0;          // ดาวของเรา = ศูนย์กลาง
+    focusOn(msCore);                                            // กล้องโฟกัสดาวเรา
+    setTimeout(()=>{if(philo)setSolarVisible(false);},650);     // ละมุน: ซ่อนระบบสุริยะหลังจอเบลอ
+    philoHint(true);
+    startQuotes();startComets();updateLetterStat();updateMoodBtn();refreshMyStar();obCometTip();
   }else{
     webb.visible=true;webbHit.visible=true; // คืน Chronos Lens
     exitLive();updateClock();
-    orbitRings.forEach(r=>r.visible=showOrbits);tO.classList.remove('disabled');tO.classList.toggle('on',showOrbits);
+    setTimeout(()=>{if(!philo)setSolarVisible(true);},400);     // คืนระบบสุริยะแบบละมุน
+    myStarGroup.position.x=360;myStarGroup.position.z=-56;       // คืนตำแหน่งดาวเรา (พ้นวงพลูโต)
+    if(focusObj===msCore){focusObj=null;following=false;}
+    philoHint(false);
+    tO.classList.remove('disabled');tO.classList.toggle('on',showOrbits);
     soundOn=prevSound;vol=prevVol;volSlider.value=Math.round(vol/MAXVOL*100);refreshSoundIcon();fadeAudio(soundOn?vol:0);// คืนค่าเสียงเดิม
     stopQuotes();stopComets();msgPanel.classList.remove('open');msgRead.classList.remove('on');$p('sigModal').classList.remove('on');
     if(focusObj===bhHorizon){focusObj=null;following=false;}
@@ -3235,8 +3259,11 @@ if(window.visualViewport)visualViewport.addEventListener('resize',onViewportResi
 let intro=true,introT=0;const introA=new THREE.Vector3(0,900,1700),introB=new THREE.Vector3(0,200,440);
 camera.position.copy(introA);camera.lookAt(0,0,0);
 const introEl=document.getElementById('intro');let uiShown=false;
+// เข้าจากประตู "การใคร่ครวญ" บน index → ดิ่งสู่ฉากดาวเราเลย (ละมุน) ไม่ขึ้นไกด์สำรวจ
+let _startContemplate=(new URLSearchParams(location.search).get('mode')==='contemplate');
 function showUI(){uiShown=true;introEl.classList.add('gone');
   ['nav','dock','events','missionPanel','timeline'].forEach(id=>document.getElementById(id).classList.add('in'));
+  if(_startContemplate){_startContemplate=false;skipIntro();setTimeout(()=>setMode(true),120);return;}
   if(location.hash==='#guide'){obGuide(true);/* เปิดผ่านลิงก์ → บังคับโชว์ไกด์ */}
   else{obGuide();/* ไกด์ 30 วิแรก */ setTimeout(dailyReturnNudge,2800);/* คนเก่า: ชวนกลับมาบันทึกห้วงใจ */}}
 function skipIntro(){if(!intro)return;intro=false;controls.enabled=true;controls.target.set(0,0,0);camera.position.copy(introB);if(!uiShown)showUI();}
