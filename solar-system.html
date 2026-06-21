@@ -373,8 +373,8 @@
   @keyframes modePulse{0%{opacity:0;transform:translate(-50%,-50%) scale(.18)}
     14%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(38)}}
   body.philo #events{opacity:0!important;pointer-events:none!important;transition:opacity .8s}
-  /* ใคร่ครวญ: ซ่อนพาเนลซ้าย (รายชื่อดาว/ยาน) */
-  body.philo #nav,body.philo #missionPanel{opacity:0!important;pointer-events:none!important;transition:opacity .7s}
+  /* ใคร่ครวญ: ซ่อนพาเนลซ้ายทั้งบล็อก (รายชื่อดาว + เส้นแบ่ง + ยาน) */
+  body.philo .leftnav{opacity:0!important;pointer-events:none!important;transition:opacity .7s}
   /* ป้ายชื่อดาว/ยานที่ลอยในจอ — ใช้ display:none ให้หายแน่นอน */
   body.philo #labels,body.philo #missLabels{display:none!important}
   #philoBar{position:fixed;left:0;right:0;bottom:150px;z-index:8;display:none;flex-direction:column;align-items:center;gap:18px;pointer-events:none;padding:0 24px}
@@ -757,7 +757,18 @@
   #moodDayView{font-family:var(--th);font-size:13px;line-height:1.8;color:rgba(222,218,240,.82);min-height:18px;text-align:center;padding:2px}
   #moodDayView .mdv-mood{color:var(--mc);font-style:italic}
   #moodDayView .mdv-note{color:rgba(238,233,250,.92);margin-top:3px}
-  @media(min-width:560px){.mood-card{max-width:560px}#moodNote{height:150px;font-size:15px;line-height:1.7}}
+  /* layout: header + 2 คอลัมน์ (วันนี้ | ปฏิทิน) */
+  .mood-head{display:flex;flex-direction:column;gap:4px}
+  .mood-cols{display:flex;flex-direction:column;gap:15px}
+  .mood-col{display:flex;flex-direction:column;gap:13px;min-width:0}
+  @media(min-width:560px){#moodNote{height:120px;font-size:15px;line-height:1.7}}
+  @media(min-width:640px){
+    .mood-card{max-width:760px}
+    .mood-cols{flex-direction:row;align-items:stretch;gap:28px}
+    .mood-col{flex:1 1 0}
+    .mcol-cal{border-left:1px solid rgba(243,201,122,.12);padding-left:28px}
+    .mcol-today #moodNote{flex:1 1 auto;height:auto;min-height:110px}
+  }
   @media(max-width:520px){.mood-card{padding:26px 18px 20px;max-height:90vh}
     .mood-chips{grid-template-columns:repeat(3,1fr);gap:6px}.mood-chip{font-size:11.5px}}
 
@@ -1099,28 +1110,35 @@
 <div id="moodModal">
   <div class="mood-card">
     <button class="mood-x" id="moodClose">×</button>
-    <div class="mood-pre">ห้วงใจ · INNER SPACE</div>
-    <div class="mood-date" id="moodDate"></div>
-    <div class="mood-hero empty" id="moodHero"><div class="mood-hero-orb"></div><div class="mood-hero-lab" id="moodHeroLab">วันนี้ใจคุณเป็นแบบไหน?</div></div>
-    <div class="mood-chips" id="moodChips"></div>
-    <div class="mood-qwrap empty" id="moodQWrap">
-      <div class="mood-q" id="moodQ"></div>
-      <button class="mood-reroll" id="moodReroll">↻ คำถามอื่น</button>
+    <div class="mood-head">
+      <div class="mood-pre">ห้วงใจ · INNER SPACE</div>
+      <div class="mood-date" id="moodDate"></div>
     </div>
-    <textarea id="moodNote" maxlength="200" placeholder="บันทึกสั้น ๆ ถึงตัวเอง (ถ้าอยาก)…"></textarea>
-    <div class="mood-foot">
-      <span id="moodStreak"></span>
-      <button id="moodSave">บันทึกห้วงใจ</button>
+    <div class="mood-cols">
+      <div class="mood-col mcol-today">
+        <div class="mood-hero empty" id="moodHero"><div class="mood-hero-orb"></div><div class="mood-hero-lab" id="moodHeroLab">วันนี้ใจคุณเป็นแบบไหน?</div></div>
+        <div class="mood-chips" id="moodChips"></div>
+        <div class="mood-qwrap empty" id="moodQWrap">
+          <div class="mood-q" id="moodQ"></div>
+          <button class="mood-reroll" id="moodReroll">↻ คำถามอื่น</button>
+        </div>
+        <textarea id="moodNote" maxlength="200" placeholder="บันทึกสั้น ๆ ถึงตัวเอง (ถ้าอยาก)…"></textarea>
+        <div class="mood-foot">
+          <span id="moodStreak"></span>
+          <button id="moodSave">บันทึกห้วงใจ</button>
+        </div>
+      </div>
+      <div class="mood-col mcol-cal">
+        <div class="mcal-head">
+          <button id="moodPrev">‹</button>
+          <span class="mcal-title" id="moodCalTitle"></span>
+          <button id="moodNext">›</button>
+        </div>
+        <div class="mcal-grid" id="moodCal"></div>
+        <div class="mcal-legend" id="moodLegend"></div>
+        <div id="moodDayView"></div>
+      </div>
     </div>
-    <div class="mood-div"></div>
-    <div class="mcal-head">
-      <button id="moodPrev">‹</button>
-      <span class="mcal-title" id="moodCalTitle"></span>
-      <button id="moodNext">›</button>
-    </div>
-    <div class="mcal-grid" id="moodCal"></div>
-    <div class="mcal-legend" id="moodLegend"></div>
-    <div id="moodDayView"></div>
   </div>
 </div>
 
@@ -3268,10 +3286,20 @@ const introEl=document.getElementById('intro');let uiShown=false;
 let _startContemplate=(new URLSearchParams(location.search).get('mode')==='contemplate');
 function showUI(){uiShown=true;introEl.classList.add('gone');
   ['nav','dock','events','missionPanel','timeline'].forEach(id=>document.getElementById(id).classList.add('in'));
-  if(_startContemplate){_startContemplate=false;skipIntro();setTimeout(()=>setMode(true),120);return;}
+  if(philo)return;   // อยู่ในใคร่ครวญแล้ว → ไม่ขึ้นไกด์สำรวจ
   if(location.hash==='#guide'){obGuide(true);/* เปิดผ่านลิงก์ → บังคับโชว์ไกด์ */}
   else{obGuide();/* ไกด์ 30 วิแรก */ setTimeout(dailyReturnNudge,2800);/* คนเก่า: ชวนกลับมาบันทึกห้วงใจ */}}
 function skipIntro(){if(!intro)return;intro=false;controls.enabled=true;controls.target.set(0,0,0);camera.position.copy(introB);if(!uiShown)showUI();}
+// ประตู "การใคร่ครวญ" จาก index → ดิ่งสู่ฉากดาวเลย ข้ามฟลายอินสำรวจ (ละมุน: กล้องค่อย ๆ เข้า + จางจากหน้าโหลด)
+if(_startContemplate){
+  _startContemplate=false;
+  intro=false;uiShown=true;controls.enabled=true;controls.target.set(0,0,0);
+  camera.position.set(0,90,360);
+  introEl.classList.add('gone');             // จางหน้าโหลดออก
+  ['nav','dock','events','missionPanel','timeline'].forEach(id=>document.getElementById(id).classList.add('in'));
+  // defer จนโมดูลโหลดเสร็จก่อน (กัน TDZ ของ const ที่นิยามใต้บรรทัดนี้) แล้วค่อยเข้าโหมด
+  setTimeout(()=>{setSolarVisible(false);setMode(true);},0);
+}
 
 // ============ LOOP ============
 const clock=new THREE.Clock();
