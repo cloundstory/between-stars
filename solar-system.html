@@ -268,10 +268,10 @@
   #obGuide .ob-dots i.on{background:var(--gold)}
   @media(max-width:560px){#obGuide,#dailyNudge{bottom:168px}}
   /* คำชวนเริ่มบันทึก (ใคร่ครวญ สำหรับคนใหม่) */
-  #philoHint{position:fixed;left:50%;bottom:19%;transform:translateX(-50%);z-index:8;pointer-events:none;
-    font-family:var(--th);font-size:14px;color:rgba(243,201,122,.72);text-align:center;letter-spacing:.02em;
-    opacity:0;transition:opacity 1.2s ease;text-shadow:0 0 18px rgba(0,0,0,.7);max-width:80vw}
-  #philoHint.on{opacity:1}
+  #philoHint{display:none;font-family:var(--th);font-size:14px;color:rgba(243,201,122,.78);text-align:center;
+    letter-spacing:.02em;text-shadow:0 0 18px rgba(0,0,0,.7);max-width:80vw;pointer-events:none}
+  #philoBar #philoHint.on{display:block;animation:philoHintIn 1s ease both}
+  @keyframes philoHintIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   /* daily return ritual — ชวนกลับมาบันทึกห้วงใจ */
   #dailyNudge{position:fixed;left:50%;bottom:152px;transform:translateX(-50%) translateY(10px);z-index:16;width:min(92vw,380px);
     background:rgba(10,13,22,.93);border:1px solid rgba(243,201,122,.26);border-radius:16px;padding:18px 20px 16px;
@@ -1035,10 +1035,10 @@
 <div id="obComet" class="ob-tip">✦ แตะดาวตกเพื่อรับสาร</div>
 <div id="obGuide" style="display:none"></div>
 <div id="dailyNudge" style="display:none"></div>
-<div id="philoHint">✦ บันทึก “ห้วงใจ” ให้ดาวของคุณค่อย ๆ เปล่งแสง</div>
 <div id="philoTint"></div>
 <div id="modePulse"></div>
 <div id="philoBar">
+  <div id="philoHint">✦ บันทึก “ห้วงใจ” ให้ดาวของคุณค่อย ๆ เปล่งแสง</div>
   <div id="quoteLine"></div>
   <div class="prow">
     <button id="moodBtn">◐ ห้วงใจ</button>
