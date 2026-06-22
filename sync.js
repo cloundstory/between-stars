@@ -7,7 +7,8 @@ const SUPABASE_URL  = 'https://isiqrzcywrzwpynfgmam.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlzaXFyemN5d3J6d3B5bmZnbWFtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE4NTA4MjQsImV4cCI6MjA5NzQyNjgyNH0.-kwWj13ScY_wTY8tfFVOoRe_hm1gpva-j301N_woQhs';
 
 // localStorage keys ที่ซิงก์ (Phase 1 = ข้อมูลส่วนตัวล้วน ไม่มีของคนอื่น)
-const SYNC_KEYS = ['moodJournal','resonanceSignal','sigCreated','goldenRecord','craftMsgDate'];
+const SYNC_KEYS = ['moodJournal','resonanceSignal','sigCreated','goldenRecord','craftMsgDate',
+  'memoryStarOrbit','memoryStarArchive','memoryStarCandidate','memoryStarNames'];
 
 // API กลาง — โค้ดหลักเรียกผ่าน window.BSync (มี fallback no-op ถ้ายังไม่ตั้งค่า)
 window.BSync = {
@@ -88,6 +89,9 @@ function mergeBlobs(local, remote){
     out.goldenRecord = newerGR(local.goldenRecord, remote.goldenRecord);
     if(out.goldenRecord===remote.goldenRecord && remote.craftMsgDate!=null) out.craftMsgDate=remote.craftMsgDate;
   }
+  // ชื่อดาว: รวมจากทั้งสองเครื่อง (union) — ชื่อที่ตั้งไว้ไม่หาย, ของ local ชนะถ้าซ้ำคีย์
+  if(local.memoryStarNames || remote.memoryStarNames)
+    out.memoryStarNames = JSON.stringify({...parseJSON(remote.memoryStarNames,{}), ...parseJSON(local.memoryStarNames,{})});
   // เติม key ที่มีเฉพาะฝั่ง cloud
   for(const k of SYNC_KEYS) if(out[k]==null && remote[k]!=null) out[k]=remote[k];
   return out;

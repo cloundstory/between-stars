@@ -1,0 +1,17 @@
+# dependencies
+node_modules/
+
+# local tooling / editor / agent state
+.claude/
+serve.bat
+
+# local media work files (ไม่ deploy)
+*.mp4
+
+# reference/work asset (ไม่ใช้บนเว็บจริง)
+assets/memory-textures/memory-texture-contact-sheet.png
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.log
