@@ -3628,6 +3628,8 @@ const SEED_LETTERS=[
 function readLocal(){try{return JSON.parse(localStorage.getItem(LKEY)||'[]');}catch(e){return[];}}
 function writeLocal(a){try{localStorage.setItem(LKEY,JSON.stringify(a.slice(-300)));}catch(e){}}
 const DISP_STATS='dispatchStats';
+const DISPATCH_PUB_KEY='dispatchDate_pub';
+const DISPATCH_PRIV_KEY='dispatchDate_priv';
 function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
 function todayStr(){return new Date().toISOString().slice(0,10);}
 function checkDailyLimit(key){return localStorage.getItem(key)===todayStr();}
@@ -3635,8 +3637,8 @@ function setDailyLimit(key){localStorage.setItem(key,todayStr());}
 function getDispatchStats(){try{return JSON.parse(localStorage.getItem(DISP_STATS)||'{"priv":0}');}catch(e){return{priv:0};}}
 function incPrivCount(){const s=getDispatchStats();s.priv=(s.priv||0)+1;localStorage.setItem(DISP_STATS,JSON.stringify(s));}
 function castLetter(text,pub){
-  if(!pub){incPrivCount();updateLetterStat();return;} // ปล่อยวาง — ไม่ spawnDrift (ใช้ ritual ดูดเข้าหลุมดำแทน)
-  setDailyLimit('dispatchDate_pub');
+  if(!pub){setDailyLimit(DISPATCH_PRIV_KEY);incPrivCount();updateLetterStat();return;} // ปล่อยวาง — ไม่ spawnDrift (ใช้ ritual ดูดเข้าหลุมดำแทน)
+  setDailyLimit(DISPATCH_PUB_KEY);
   const a=readLocal();
   a.push({id:genId(),text,t:Date.now(),pub:true,sig:getSignal(),replies:[],pinned:false});
   writeLocal(a);spawnDrift(0xfff0c8);updateLetterStat();
@@ -3703,7 +3705,7 @@ function releaseToBlackHole(text,anchorEl){
 function trySend(pub){let t=(msgInput.value||'').trim();
   if(!t){msgWarn.textContent='เขียนข้อความก่อนนะ';return;}
   if(BADWORDS.some(w=>t.toLowerCase().includes(w))){msgWarn.textContent='มีคำไม่เหมาะสม ลองใหม่อีกที';return;}
-  if(pub&&checkDailyLimit('dispatchDate_pub')){
+  if(checkDailyLimit(pub?DISPATCH_PUB_KEY:DISPATCH_PRIV_KEY)){
     msgWarn.textContent=pub?'วันนี้ฝากไว้แล้ว · รอพรุ่งนี้':'วันนี้ปล่อยวางไปแล้ว · รอพรุ่งนี้';return;}
   if(!pub)releaseToBlackHole(t,msgPanel);
   castLetter(t.slice(0,200),pub);msgInput.value='';
@@ -3727,6 +3729,7 @@ $p('bhRelease').onclick=()=>{
   const t=($p('bhInput').value||'').trim(),warn=$p('bhWarn');
   if(!t){warn.textContent='เขียนสิ่งที่อยากปล่อยก่อน';return;}
   if(BADWORDS.some(w=>t.toLowerCase().includes(w))){warn.textContent='มีคำไม่เหมาะสม ลองใหม่';return;}
+  if(checkDailyLimit(DISPATCH_PRIV_KEY)){warn.textContent='วันนี้ปล่อยวางไปแล้ว · รอพรุ่งนี้';return;}
   releaseToBlackHole(t,$p('bhPanel'));
   castLetter(t.slice(0,200),false);
   $p('bhInput').value='';warn.textContent='ปล่อยแล้ว — มันจะไม่กลับมาอีก';
