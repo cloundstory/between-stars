@@ -77,7 +77,7 @@
   .nav .en{font-family:var(--eng);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:#9a8358}
 
   /* bottom time dock */
-  .dock{position:fixed;bottom:72px;left:50%;transform:translateX(-50%);z-index:6;
+  .dock{position:fixed;bottom:72px;left:50%;transform:translateX(-50%);z-index:8;
     display:flex;align-items:center;gap:16px;padding:10px 18px;
     background:var(--panel);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:16px;
     opacity:0;transition:opacity 1s .5s}
@@ -113,7 +113,7 @@
   @keyframes livePulse{0%,100%{opacity:1}50%{opacity:.6}}
 
   /* view toggles bottom-right */
-  .views{position:fixed;bottom:130px;left:50%;transform:translateX(-50%);z-index:7;
+  .views{position:fixed;bottom:130px;left:50%;transform:translateX(-50%);z-index:9;
     display:none;flex-direction:column;gap:4px;align-items:stretch;
     background:var(--panel);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:14px;padding:10px}
   .views.open{display:flex}
@@ -391,6 +391,56 @@
   #philoBar button{font-family:var(--eng);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);
     background:rgba(8,11,20,.55);border:1px solid var(--line);border-radius:9px;padding:10px 16px;cursor:pointer;backdrop-filter:blur(8px);transition:.25s}
   #philoBar button:hover{border-color:var(--gold);background:var(--gold-dim)}
+  #starEchoModal{position:fixed;inset:0;z-index:28;display:none;align-items:center;justify-content:center;padding:24px;
+    background:radial-gradient(110% 86% at 50% 20%,rgba(28,30,46,.58),rgba(2,3,9,.82));backdrop-filter:blur(10px)}
+  #starEchoModal.on{display:flex}
+  .se-card{position:relative;width:min(540px,92vw);max-height:calc(100vh - 48px);overflow:hidden;
+    background:linear-gradient(180deg,rgba(10,13,24,.96),rgba(6,8,16,.94));
+    border:1px solid rgba(216,199,154,.2);border-radius:16px;padding:30px 30px 26px;
+    box-shadow:0 30px 84px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,255,255,.05);text-align:center}
+  #starEchoModal.on .se-card{animation:seCardIn .42s cubic-bezier(.2,.7,.16,1) both}
+  @keyframes seCardIn{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:none}}
+  .se-card::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.72;
+    background:radial-gradient(circle at 50% 6%,color-mix(in srgb,var(--seA,#f3c97a) 24%,transparent),transparent 38%),
+      linear-gradient(90deg,transparent,rgba(216,199,154,.08),transparent)}
+  .se-card>*{position:relative;z-index:1}
+  .se-x{position:absolute;top:13px;right:15px;z-index:2;background:none;border:none;color:rgba(255,255,255,.36);
+    font-size:20px;line-height:1;cursor:pointer;padding:5px;transition:.2s}
+  .se-x:hover{color:#fff}
+  .se-pre{font-family:var(--eng);font-size:8.5px;letter-spacing:.28em;text-transform:uppercase;color:rgba(216,199,154,.7)}
+  .se-date{font-family:var(--th);font-size:12px;color:rgba(255,255,255,.42);margin-top:5px}
+  .se-orb{width:58px;height:58px;border-radius:50%;margin:20px auto 12px;
+    background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.9),var(--seB,#ffe7b0) 22%,var(--seA,#7aa8ff) 62%,rgba(0,0,0,.32));
+    box-shadow:0 0 28px color-mix(in srgb,var(--seA,#7aa8ff) 50%,transparent),inset -14px -10px 22px rgba(0,0,0,.34);
+    animation:seOrbPulse 3.8s ease-in-out infinite}
+  #starEchoModal.on .se-orb{animation:seOrbIn .72s cubic-bezier(.2,.8,.16,1) both,seOrbPulse 3.8s ease-in-out .72s infinite}
+  @keyframes seOrbIn{0%{opacity:0;transform:scale(.7);filter:blur(5px)}70%{opacity:1;transform:scale(1.08);filter:blur(0)}100%{opacity:1;transform:scale(1);filter:blur(0)}}
+  @keyframes seOrbPulse{0%,100%{transform:scale(1);filter:saturate(1)}50%{transform:scale(1.045);filter:saturate(1.16)}}
+  .se-title{font-family:var(--th);font-size:22px;font-weight:500;color:#fff2cf;line-height:1.35}
+  .se-source{font-family:var(--th);font-size:12.5px;line-height:1.7;color:rgba(216,199,154,.72);margin:7px auto 18px;max-width:440px}
+  .se-reading{display:grid;gap:9px;text-align:left;margin-top:8px}
+  .se-item{display:grid;grid-template-columns:118px 1fr;gap:12px;align-items:start;
+    background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.075);border-radius:11px;padding:12px 13px}
+  #starEchoModal.on .se-item{opacity:0;transform:translateY(9px);animation:seLineIn .48s ease forwards}
+  #starEchoModal.on .se-item:nth-child(1){animation-delay:.08s}
+  #starEchoModal.on .se-item:nth-child(2){animation-delay:.16s}
+  #starEchoModal.on .se-item:nth-child(3){animation-delay:.24s}
+  #starEchoModal.on .se-item:nth-child(4){animation-delay:.32s}
+  #starEchoModal.on .se-item:nth-child(5){animation-delay:.4s}
+  @keyframes seLineIn{to{opacity:1;transform:none}}
+  .se-k{font-family:var(--eng);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:rgba(216,199,154,.58);padding-top:3px}
+  .se-v{font-family:var(--th);font-size:15px;line-height:1.72;color:rgba(238,236,225,.9)}
+  .se-cta{display:none;margin:16px auto 0;background:linear-gradient(180deg,rgba(243,201,122,.24),rgba(243,201,122,.08));
+    border:1px solid rgba(243,201,122,.45);border-radius:20px;color:#ffeacb;font-family:var(--th);font-size:13px;
+    padding:10px 18px;cursor:pointer;transition:.2s}
+  .se-cta:hover{background:linear-gradient(180deg,rgba(243,201,122,.34),rgba(243,201,122,.14));box-shadow:0 0 24px rgba(243,201,122,.22)}
+  .se-foot{font-family:var(--th);font-size:11.5px;color:rgba(255,255,255,.34);line-height:1.6;margin-top:16px}
+  @media(max-width:560px){
+    #starEchoModal{padding:14px}
+    .se-card{padding:26px 18px 20px;max-height:calc(100vh - 28px);overflow-y:auto}
+    .se-item{grid-template-columns:1fr;gap:5px}
+    .se-title{font-size:19px}.se-v{font-size:14.5px}
+  }
   #pbd{position:fixed;inset:0;z-index:12;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
     padding:0 8vw 15vh;text-align:center;pointer-events:none;opacity:0;transition:opacity 1.8s}
   #pbd.on{opacity:1;pointer-events:auto}
@@ -1042,6 +1092,7 @@
   <div id="quoteLine"></div>
   <div class="prow">
     <button id="moodBtn">◐ ห้วงใจ</button>
+    <button id="echoBtn">✧ เสียงดาววันนี้</button>
     <button id="bhBtn">◌ ปล่อยวาง</button>
     <button id="writeBtn">✦ คำฝาก</button>
     <button id="philoReset">⊙ รีเซ็ตมุมมอง</button>
@@ -1060,6 +1111,20 @@
   <div id="replyBox">
     <textarea id="replyInput" maxlength="200" placeholder="เขียนตอบ… คำตอบของคุณจะลอยเข้าหาเจ้าของคำฝาก"></textarea>
     <div class="mrow2"><span id="replyWarn"></span><button id="replySend">✦ ปล่อยคำตอบ</button></div>
+  </div>
+</div>
+
+<div id="starEchoModal">
+  <div class="se-card" id="starEchoCard">
+    <button class="se-x" id="starEchoClose">×</button>
+    <div class="se-pre">STAR ECHO · เสียงสะท้อนจากดาว</div>
+    <div class="se-date" id="starEchoDate"></div>
+    <div class="se-orb" id="starEchoOrb"></div>
+    <div class="se-title" id="starEchoTitle"></div>
+    <div class="se-source" id="starEchoSource"></div>
+    <div class="se-reading" id="starEchoReading"></div>
+    <button class="se-cta" id="starEchoMoodCta">บันทึกห้วงใจให้ดาวดวงแรก</button>
+    <div class="se-foot">อ่านเป็นสัญญาณสำหรับทบทวนใจ ไม่ใช่คำทำนายตายตัวของชีวิต</div>
   </div>
 </div>
 
@@ -1401,6 +1466,9 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { BokehPass } from 'three/addons/postprocessing/BokehPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { Lensflare, LensflareElement } from 'three/addons/objects/Lensflare.js';
+import { Line2 } from 'three/addons/lines/Line2.js';
+import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import * as Astronomy from 'https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/+esm';
@@ -1574,6 +1642,13 @@ const bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),0.14,0
 composer.addPass(bloom);
 // เอา vignette ออกถาวร — ขอบมืดของมันไปกลบทางช้างเผือกจนดูเป็นฝ้าขาวเทาที่ขอบจอ
 composer.addPass(new OutputPass());
+function syncRenderSize(w=innerWidth,h=innerHeight,pr=renderer.getPixelRatio()){
+  renderer.setPixelRatio(pr);
+  renderer.setSize(w,h,false);
+  if(composer.setPixelRatio)composer.setPixelRatio(pr);
+  composer.setSize(w,h);
+  if(window.__missionLineMaterials)window.__missionLineMaterials.forEach(m=>m.resolution.set(w,h));
+}
 
 const controls=new OrbitControls(camera,renderer.domElement);
 controls.enableDamping=true;controls.dampingFactor=0.05;controls.minDistance=12;controls.maxDistance=1600;controls.enabled=false;
@@ -1759,8 +1834,10 @@ const kuiper=new THREE.Group();scene.add(kuiper);
     pos[i*3]=Math.cos(a)*r;pos[i*3+1]=y;pos[i*3+2]=Math.sin(a)*r;
     const b=0.5+Math.random()*0.5;col[i*3]=0.72*b;col[i*3+1]=0.82*b;col[i*3+2]=1.0*b;}
   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(pos,3));geo.setAttribute('color',new THREE.BufferAttribute(col,3));
-  kuiper.add(new THREE.Points(geo,new THREE.PointsMaterial({size:1.15,sizeAttenuation:true,transparent:true,opacity:0.55,depthWrite:false,vertexColors:true,
-    map:radialTex([[0,'rgba(255,255,255,1)'],[1,'rgba(255,255,255,0)']]),alphaTest:0.02})));})();
+  geo.computeBoundingSphere();
+  const pts=new THREE.Points(geo,new THREE.PointsMaterial({size:1.15,sizeAttenuation:true,transparent:true,opacity:0.55,depthWrite:false,vertexColors:true,
+    depthTest:false,toneMapped:false,map:radialTex([[0,'rgba(255,255,255,1)'],[1,'rgba(255,255,255,0)']]),alphaTest:0.02}));
+  pts.frustumCulled=false;pts.renderOrder=1;kuiper.add(pts);})();
 
 // ============ ZODIAC (กลุ่มดาวจักรราศีตามแนวสุริยวิถี) ============
 const ZR=3600;
@@ -1960,8 +2037,30 @@ function craftState(m,date){const t=date.getTime(),D=m._dates,N=m._pts.length;
   else{let i=0;while(i<N-1&&t>D[i+1])i++;gt=(i+(t-D[i])/(D[i+1]-D[i]))/(N-1);}
   return {gt,pos:m._curve.getPoint(gt),tan:m._curve.getTangent(gt).normalize()};}
 
-function tubeMat(c,op,add){return new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:op,toneMapped:false,depthWrite:false,
-  blending:add?THREE.AdditiveBlending:THREE.NormalBlending});}
+const missionLineMaterials=window.__missionLineMaterials||(window.__missionLineMaterials=[]);
+function missionPathPositions(points){
+  const a=new Float32Array(points.length*3);
+  for(let i=0;i<points.length;i++){const p=points[i];a[i*3]=p.x;a[i*3+1]=p.y;a[i*3+2]=p.z;}
+  return a;
+}
+function missionLineMat(c,width,op,add){
+  const mat=new LineMaterial({color:c,linewidth:width,transparent:true,opacity:op,toneMapped:false,
+    depthWrite:false,depthTest:false,blending:add?THREE.AdditiveBlending:THREE.NormalBlending});
+  mat.resolution.set(innerWidth,innerHeight);
+  missionLineMaterials.push(mat);
+  return mat;
+}
+function missionLine(points,mat,order){
+  const geo=new LineGeometry();geo.setPositions(missionPathPositions(points));
+  const line=new Line2(geo,mat);line.computeLineDistances();
+  line.visible=false;line.frustumCulled=false;line.renderOrder=order;
+  return line;
+}
+function setMissionLinePoints(line,points){
+  line.geometry.dispose();
+  const geo=new LineGeometry();geo.setPositions(missionPathPositions(points));
+  line.geometry=geo;line.computeLineDistances();line.frustumCulled=false;
+}
 // ช่วงที่ยานบินผ่านไปแล้ว (สว่าง) — ตัดจากเส้นเต็มถึงตำแหน่งยาน
 function setTraveled(m,gt,craftPos){
   const fp=m._fullPts,n=fp.length,pts=[];
@@ -1969,9 +2068,10 @@ function setTraveled(m,gt,craftPos){
   pts.push(craftPos.clone());
   if(pts.length<2){m._trav.visible=false;m._travGlow.visible=false;return;}
   m._trav.visible=true;m._travGlow.visible=true;
-  const c=new THREE.CatmullRomCurve3(pts,false,'catmullrom',0.35),seg=Math.max(12,pts.length*2);
-  m._trav.geometry.dispose();m._trav.geometry=new THREE.TubeGeometry(c,seg,m.tubeR,8,false);
-  m._travGlow.geometry.dispose();m._travGlow.geometry=new THREE.TubeGeometry(c,seg,m.tubeR*2.6,8,false);}
+  const c=new THREE.CatmullRomCurve3(pts,false,'catmullrom',0.35);
+  const smooth=c.getPoints(Math.max(24,pts.length*2));
+  setMissionLinePoints(m._trav,smooth);
+  setMissionLinePoints(m._travGlow,smooth);}
 
 // โมเดลยานสำรวจห้วงอวกาศ (stylized): ตัวยาน + จานสายอากาศ + บูม RTG/science
 function buildSpacecraft(m){
@@ -1995,12 +2095,10 @@ function buildSpacecraft(m){
   return g;}
 function buildMission(m){
   buildPath(m);
-  m._tubeFull=new THREE.Mesh(new THREE.TubeGeometry(m._curve,200,m.tubeR*0.55,8,false),tubeMat(m.color,0.16,false));
-  m._tubeFull.visible=false;
+  m._tubeFull=missionLine(m._fullPts,missionLineMat(m.color,1.55,0.22,false),3);
   missionGroup.add(m._tubeFull);
-  m._trav=new THREE.Mesh(new THREE.BufferGeometry(),tubeMat(m.color,0.95,false));
-  m._travGlow=new THREE.Mesh(new THREE.BufferGeometry(),tubeMat(m.color,0.14,true));
-  m._trav.visible=false;m._travGlow.visible=false;
+  m._trav=missionLine(m._fullPts.slice(0,2),missionLineMat(m.color,3.1,0.86,false),5);
+  m._travGlow=missionLine(m._fullPts.slice(0,2),missionLineMat(m.color,7.8,0.16,true),4);
   missionGroup.add(m._travGlow);missionGroup.add(m._trav);
   const halo=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex,color:m.color,blending:THREE.AdditiveBlending,depthWrite:false,transparent:true,toneMapped:false}));
   halo.scale.set(6,6,1);m._halo=halo;m._gsc=6;
@@ -2282,13 +2380,11 @@ async function buildChronosCard(){
   ctx.fillStyle='#030508';ctx.fillRect(0,0,CW,CH);
 
   const savedW=innerWidth,savedH=innerHeight,savedAspect=camera.aspect,savedPR=renderer.getPixelRatio();
-  renderer.setPixelRatio(1);renderer.setSize(CW,CH,false);
-  composer.setSize(CW,CH);
+  syncRenderSize(CW,CH,1);
   camera.aspect=CW/CH;camera.updateProjectionMatrix();
   composer.render();
   ctx.drawImage(renderer.domElement,0,0,CW,CH);
-  renderer.setPixelRatio(savedPR);renderer.setSize(savedW,savedH,false);
-  composer.setSize(savedW*savedPR,savedH*savedPR);
+  syncRenderSize(savedW,savedH,savedPR);
   camera.aspect=savedAspect;camera.updateProjectionMatrix();
 
   const vig=ctx.createRadialGradient(CW/2,CH*0.36,CW*0.22,CW/2,CH*0.36,CW*0.88);
@@ -2751,12 +2847,18 @@ document.getElementById('tNow').onclick=()=>{exitLive();simDate=new Date();updat
 
 const tO=document.getElementById('tOrbits');tO.onclick=()=>{showOrbits=!showOrbits;orbitRings.forEach(r=>r.visible=showOrbits);tO.classList.toggle('on',showOrbits);};
 const tL=document.getElementById('tLabels');tL.onclick=()=>{showLabels=!showLabels;tL.classList.toggle('on',showLabels);};
-const tB=document.getElementById('tBelt');tB.onclick=()=>{showBelt=!showBelt;beltGroup.visible=showBelt;kuiper.visible=showBelt;tB.classList.toggle('on',showBelt);};
+function syncBeltLayerVisible(){
+  const on=!philo&&showBelt;
+  beltGroup.visible=on;kuiper.visible=on;
+  tB.classList.toggle('on',showBelt);
+}
+const tB=document.getElementById('tBelt');tB.onclick=()=>{showBelt=!showBelt;syncBeltLayerVisible();};
 const tZ=document.getElementById('tZodiac');tZ.onclick=()=>{zodiacGroup.visible=!zodiacGroup.visible;tZ.classList.toggle('on',zodiacGroup.visible);};
 const tMi=document.getElementById('tMissions');tMi.onclick=()=>{if(realistic)return;
   showPaths=!showPaths;tMi.classList.toggle('on',showPaths);
-  MISSIONS.forEach(m=>{if(m._tubeFull)m._tubeFull.visible=showPaths&&!!m._curAU;
-    if(m._trav)m._trav.visible=showPaths&&!!m._curAU;if(m._travGlow)m._travGlow.visible=showPaths&&!!m._curAU;});};
+  if(showPaths){MISSIONS.forEach(m=>m._travGt=-1);updateMissionVisual(simDate);return;}
+  MISSIONS.forEach(m=>{if(m._tubeFull)m._tubeFull.visible=false;
+    if(m._trav)m._trav.visible=false;if(m._travGlow)m._travGlow.visible=false;});};
 
 // ---- สเกลสมจริง (เฉพาะโหมดวิทย์) — ดาวถอยออกตาม AU จริง (ขยายพอดี), ซ่อนยาน ----
 let realistic=false,camLerp=null,camLerpT=0,beltTS=1,kuiperTS=1,_prLite=false;
@@ -2790,7 +2892,7 @@ function applyQuality(){
   const L=qLevel(),far=_prLite;
   tQ.textContent='คุณภาพ: '+QNAME[L]+(qAuto<qCeil()?' · อัตโนมัติ':'');tQ.classList.toggle('on',L>=2);
   const pr=(L>=2&&!far)?Math.min(devicePixelRatio,2):1;
-  if(renderer.getPixelRatio()!==pr){renderer.setPixelRatio(pr);composer.setSize(innerWidth,innerHeight);}
+  if(renderer.getPixelRatio()!==pr)syncRenderSize(innerWidth,innerHeight,pr);
   bloom.enabled=(L>=1);
   const sh=(L>=2);renderer.shadowMap.enabled=sh;sunLight.castShadow=sh;
   qBokehAllowed=(L>=2)&&!far;bokeh.enabled=qBokehAllowed&&!memoryInspect;
@@ -3798,7 +3900,7 @@ const SOLAR_HIDE=[sunMesh,sunLight,moonMesh,beltGroup,kuiper,missionGroup].conca
 let _zodiacWas=false;
 function setSolarVisible(v){
   for(const o of SOLAR_HIDE)o.visible=v;
-  if(v){orbitRings.forEach(r=>r.visible=showOrbits);beltGroup.visible=showBelt;kuiper.visible=showBelt;zodiacGroup.visible=_zodiacWas;}
+  if(v){orbitRings.forEach(r=>r.visible=showOrbits);syncBeltLayerVisible();zodiacGroup.visible=_zodiacWas;}
   else{_zodiacWas=zodiacGroup.visible;orbitRings.forEach(r=>r.visible=false);zodiacGroup.visible=false;}
 }
 function philoHint(show){const el=$p('philoHint');if(!el)return;
@@ -3836,7 +3938,7 @@ function setMode(p){philo=p;document.body.classList.toggle('philo',p);
     soundOn=prevSound;vol=prevVol;volSlider.value=Math.round(vol/MAXVOL*100);refreshSoundIcon();fadeAudio(soundOn?vol:0);// คืนค่าเสียงเดิม
     stopQuotes();stopComets();msgPanel.classList.remove('open');msgRead.classList.remove('on');$p('sigModal').classList.remove('on');
     if(focusObj===bhHorizon){focusObj=null;following=false;}
-    $p('bhPanel').classList.remove('on');$p('moodModal').classList.remove('on');$p('myStarPanel').classList.remove('on');
+    $p('bhPanel').classList.remove('on');$p('moodModal').classList.remove('on');$p('starEchoModal').classList.remove('on');$p('myStarPanel').classList.remove('on');
   }
 }
 modeBtn.onclick=()=>setMode(!philo);
@@ -3899,7 +4001,7 @@ function updatePhysics(date){try{
 }catch(e){}}
 
 function onViewportResize(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
-  renderer.setSize(innerWidth,innerHeight,false);composer.setSize(innerWidth,innerHeight);}
+  syncRenderSize(innerWidth,innerHeight,renderer.getPixelRatio());}
 addEventListener('resize',onViewportResize);addEventListener('orientationchange',()=>setTimeout(onViewportResize,300));
 if(window.visualViewport)visualViewport.addEventListener('resize',onViewportResize);
 
@@ -4425,12 +4527,12 @@ function dailyReturnNudge(){
   const j=readMood();let s=0,_d=new Date();_d.setDate(_d.getDate()-1);while(j[moodLocalStr(_d)]){s++;_d.setDate(_d.getDate()-1);}
   const line=s>0?`✦ คุณบันทึกห้วงใจต่อเนื่อง <b>${s} วัน</b> — วันนี้อย่าให้ขาดช่วงนะ`:'วันนี้คุณรู้สึกยังไง? ลองฝากไว้กับห้วงดาวสักครู่';
   el.innerHTML=`<div class="dn-x" id="dnX">×</div><div class="dn-pre">ห้วงใจวันนี้</div><div class="dn-t">${line}</div>`
-    +`<div class="dn-row"><button class="ob-b ob-go" id="dnMood">◐ บันทึกห้วงใจ</button><button class="ob-b ob-skip" id="dnCosmic">ดวงประจำวัน</button></div>`;
+    +`<div class="dn-row"><button class="ob-b ob-go" id="dnMood">◐ บันทึกห้วงใจ</button><button class="ob-b ob-skip" id="dnEcho">เสียงดาววันนี้</button></div>`;
   const close=()=>{el.classList.remove('on');setTimeout(()=>{el.style.display='none';},600);};
   el.style.display='';setTimeout(()=>el.classList.add('on'),300);
   $p('dnX').onclick=close;
   $p('dnMood').onclick=()=>{close();openMoodPanel();};
-  $p('dnCosmic').onclick=()=>{close();openCosmicDaily();};
+  $p('dnEcho').onclick=()=>{close();openStarEcho();};
   setTimeout(()=>{if(el.classList.contains('on'))close();},13000);   // ซ่อนเองถ้าไม่แตะ
 }
 // ===== END ONBOARDING =====
@@ -4574,6 +4676,7 @@ function showCraftMessage(m){
 document.getElementById('cmClose').onclick=()=>document.getElementById('craftMsg').classList.remove('on');
 
 // ============ COSMIC DAILY — ดวงประจำวัน (อิงตำแหน่งดาวจริง) ============
+const COSMIC_DAILY_ENABLED=false; // ปิดระบบดูดวงเก่าไว้ก่อน ระหว่างย้ายโฟกัสไป "เสียงสะท้อนจากดาว"
 const CD_SEEN_KEY='cosmicDailySeen';
 // ราศี (สายนะ/tropical) เรียงจาก 0° เมษ
 const CD_SIGNS=[
@@ -4618,6 +4721,7 @@ function cosmicDailyData(date){
   return{ruler,sign,deg,msg,lon};
 }
 function openCosmicDaily(){
+  if(!COSMIC_DAILY_ENABLED)return;
   const d=new Date(); // ดวงวันนี้จริง — ไม่ผูกกับ simDate
   const cd=cosmicDailyData(d);
   document.getElementById('cdDate').textContent='วัน'+cd.ruler.day+'ที่ '+d.toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric'});
@@ -4641,6 +4745,7 @@ document.getElementById('cdShare').onclick=async()=>{
 };
 // เด้งอัตโนมัติวันละครั้ง หลังเข้าฉาก
 function maybeShowCosmicDaily(){
+  if(!COSMIC_DAILY_ENABLED)return;
   if(localStorage.getItem(CD_SEEN_KEY)===todayStr())return;
   localStorage.setItem(CD_SEEN_KEY,todayStr());
   setTimeout(openCosmicDaily,1400);
@@ -5066,12 +5171,202 @@ function saveMood(){
   setTimeout(()=>{btn.textContent='อัปเดตห้วงใจ';btn.disabled=false;},1800);
   if(afterStage>beforeStage)setTimeout(()=>celebrateStageUp(STAR_STAGES[afterStage]),650); // เลื่อนระดับ → ฉลอง
 }
+// ============ เสียงสะท้อนจากดาว — daily-style reading จากดาวของผู้ใช้ ============
+const STAR_ECHO_COPY={
+  love:{
+    power:['ความรักที่ไม่ต้องรีบพิสูจน์','ความอบอุ่นที่ค่อยๆ กลับมาอยู่ข้างใน','สายใยบางอย่างที่ยังทำให้ใจไม่โดดเดี่ยว'],
+    feeling:['ใจโทน{mood}วันนี้กำลังอยากได้รับความอ่อนโยนมากกว่าคำตอบ','มีบางส่วนในใจคุณที่อยากถูกมองเห็นโดยไม่ต้องอธิบายเยอะ','วันนี้ความรู้สึกของคุณเหมาะกับการอยู่ใกล้สิ่งที่ทำให้ใจปลอดภัย'],
+    light:['เบาความคาดหวังว่าต้องดูแลทุกคนให้ดีตลอดเวลา','เบาความกลัวว่าจะรักใครหรือรักตัวเองได้ไม่ดีพอ','เบาการพิสูจน์คุณค่าตัวเองผ่านสายตาของคนอื่น'],
+    symbol:['แสงสีส้มอุ่น · ดาววงใน · มือที่ยังไม่ปล่อย','วงแหวนบางๆ · กลิ่นฝนเก่า · ข้อความที่ยังจำได้','ดาวสีแดงนุ่ม · บ้านเล็กๆ · เสียงเรียกชื่อที่ไว้ใจ'],
+    message:['วันนี้เริ่มจากการไม่ทอดทิ้งตัวเองก่อน แล้วความรักจะค่อยๆ มีที่ยืน','ถ้าจะใจดีกับใครสักคนในวันนี้ ให้รวมตัวคุณเองไว้ในนั้นด้วย','บางความผูกพันไม่ต้องดัง แค่ยังอุ่นอยู่ก็พอ']
+  },
+  growth:{
+    power:['การเติบโตที่ไม่จำเป็นต้องรีบ','ก้าวเล็กๆ ที่เริ่มมีแรงโน้มถ่วงของมันเอง','ความกล้าที่ค่อยๆ มีรูปทรง'],
+    feeling:['ใจโทน{mood}วันนี้กำลังเรียนรู้บางอย่างจากเรื่องเดิมในมุมใหม่','มีบางบทเรียนที่ไม่ได้มาเพื่อกดดันคุณ แต่มาเพื่อขยับคุณออกจากที่เดิม','วันนี้เหมาะกับการมองความพยายามของตัวเองอย่างยุติธรรมขึ้น'],
+    light:['เบาความคิดว่าทุกอย่างต้องสำเร็จทันที','เบาการเปรียบเทียบจังหวะของตัวเองกับคนอื่น','เบาความผิดที่เกิดจากการยังไม่เก่งเท่าที่หวัง'],
+    symbol:['พื้นดินหลังฝน · วงโคจรเอียงเล็กน้อย · เมล็ดแสง','ดาวสีเขียวน้ำเงิน · เส้นทางใหม่ · แรงดึงดูดที่นิ่งขึ้น','แผ่นดินแตกร้าวแต่มีต้นอ่อน · ดาววงนอก · ลมหายใจยาว'],
+    message:['วันนี้ไม่ต้องกระโดดไกล แค่ก้าวที่ไม่หักหลังใจตัวเองก็พอ','การค่อยๆ ดีขึ้นยังนับว่าเป็นการเดินทาง แม้ไม่มีใครเห็นตอนเริ่ม','ให้พื้นที่กับตัวเองในการลองใหม่ โดยไม่ใช้ความผิดพลาดเป็นชื่อของคุณ']
+  },
+  hope:{
+    power:['ความหวังที่ยังไม่ยอมดับ','แสงไกลๆ ที่พอให้เดินต่ออีกนิด','ความเป็นไปได้ที่ยังไม่ได้มีชื่อ'],
+    feeling:['ใจโทน{mood}วันนี้ไม่ได้ต้องการคำตอบทั้งหมด แค่ต้องการเหตุผลเล็กๆ ให้ไปต่อ','มีแสงบางชนิดที่ยังสว่างอยู่ แม้คุณจะยังมองไม่เต็มตา','วันนี้คุณอาจไม่ได้มั่นใจเต็มร้อย แต่ยังมีส่วนหนึ่งที่อยากเชื่อ'],
+    light:['เบาความรีบที่จะเห็นปลายทางทั้งหมด','เบาความกลัวว่าความหวังจะทำให้ผิดหวังอีกครั้ง','เบาความคิดว่าถ้ายังไม่ชัด แปลว่าไม่มีทาง'],
+    symbol:['แสงสีฟ้า · ดาวไกล · ประตูที่ยังไม่ปิด','ขอบฟ้าจางๆ · คลื่นน้ำเงิน · จุดสว่างเล็กที่สุด','ดาวเย็นใส · ลมหายใจใหม่ · เส้นขอบฟ้าหลังคืนยาว'],
+    message:['วันนี้ให้ความหวังเป็นตะเกียง ไม่ต้องให้มันเป็นคำสัญญา','ถ้ายังเดินไหวอีกก้าว แสงที่อยู่ไกลก็ยังมีความหมาย','สิ่งดีๆ บางอย่างเริ่มต้นจากการยังไม่ยอมปิดประตูให้ตัวเอง']
+  },
+  healing:{
+    power:['การเยียวยาที่ไม่เร่งรัด','ความสงบที่ค่อยๆ ซึมกลับมา','พื้นที่ปลอดภัยสำหรับส่วนที่ยังอ่อนล้า'],
+    feeling:['ใจโทน{mood}วันนี้อยากพักจากการต้องเข้มแข็งตลอดเวลา','มีแผลบางอย่างที่ไม่ได้ต้องการคำอธิบาย แค่ต้องการความอ่อนโยน','วันนี้เหมาะกับการลดเสียงตำหนิตัวเองลงสักนิด'],
+    light:['เบาความจำเป็นที่จะต้องหายทันที','เบาการย้อนคิดเพื่อทำโทษตัวเองซ้ำๆ','เบาคำว่าไม่เป็นไร ถ้าข้างในยังไม่ไหวจริงๆ'],
+    symbol:['น้ำแข็งใส · แสงขาวนุ่ม · ผ้าห่มบางๆ','ดาวสีฟ้าอ่อน · น้ำนิ่ง · ลมหายใจที่กลับมาเต็มปอด','รอยแตกที่มีแสงลอด · ฝุ่นดาวเงียบ · เส้นชีพจรช้า'],
+    message:['วันนี้ไม่ต้องรีบหาย แค่ไม่ซ้ำเติมตัวเองก็เป็นการเยียวยาแล้ว','การพักไม่ใช่การถอยหลัง มันคือวิธีที่แสงกลับเข้าร่าง','ถ้าคุณยังอ่อนล้า นั่นไม่ได้แปลว่าคุณล้มเหลว']
+  },
+  release:{
+    power:['การปล่อยวางที่เริ่มเบากว่าการแบก','ช่องว่างใหม่หลังมือค่อยๆ คลายออก','ความโล่งที่ยังบาง แต่จริง'],
+    feeling:['ใจโทน{mood}วันนี้กำลังแยกสิ่งที่ควรจำออกจากสิ่งที่ควรวาง','มีบางเรื่องที่คุณอาจไม่ต้องชนะมัน แค่ไม่แบกมันต่อก็พอ','วันนี้เหมาะกับการคืนบางอย่างให้เวลา แทนที่จะเก็บไว้ในอกคนเดียว'],
+    light:['เบาความรู้สึกว่าต้องเข้าใจทุกอย่างก่อนถึงจะปล่อยได้','เบาการถือเรื่องเก่าไว้เพื่อยืนยันว่ามันเคยเจ็บจริง','เบาคำถามที่ไม่มีใครตอบให้คุณได้ในตอนนี้'],
+    symbol:['เมฆสีทองจาง · ประตูเปิดครึ่งหนึ่ง · ฝุ่นที่ลอยออกจากมือ','ดาวสีครีมอ่อน · หลุมดำไกลๆ · เสียงถอนหายใจ','แสงเก่าๆ ที่กำลังลับขอบฟ้า · วงโคจรว่าง · น้ำหนักที่ลดลง'],
+    message:['วันนี้ปล่อยแค่หนึ่งเสี้ยวก็พอ ไม่ต้องปล่อยทั้งจักรวาลในครั้งเดียว','บางอย่างไม่กลับมา ไม่ได้แปลว่ามันไม่เคยมีความหมาย','มือที่ว่างลงอาจยังสั่นอยู่ แต่วันหนึ่งมันจะรับสิ่งใหม่ได้']
+  },
+  shadow:{
+    power:['เงาที่ขอให้ถูกมองอย่างซื่อสัตย์','ความจริงข้างในที่ไม่อยากถูกกลบ','คืนมืดที่ยังมีขอบฟ้า'],
+    feeling:['ใจโทน{mood}วันนี้อาจกำลังพยายามบอกความจริงที่คุณเหนื่อยจะกลบไว้','มีส่วนหนึ่งในใจที่ไม่ได้อยากทำร้ายคุณ แค่อยากให้คุณหันมาฟัง','วันนี้ไม่จำเป็นต้องสว่างทันที แค่ยอมรับว่ามืดตรงไหนก็พอ'],
+    light:['เบาการด่วนตัดสินตัวเองในวันที่ยังไม่ไหว','เบาความคิดว่าความหม่นทำให้คุณไม่น่ารัก','เบาการซ่อนทุกอย่างไว้เพื่อให้ดูเข้มแข็ง'],
+    symbol:['หินบะซอลต์ · ดาวมืด · แสงขอบบาง','ท้องฟ้าไร้จันทร์ · เศษดาวเย็น · ประตูใต้ดิน','เงาสีน้ำเงินเข้ม · ลมหายใจช้า · จุดไฟเล็กๆ'],
+    message:['วันนี้เงาไม่ได้มาเพื่อลากคุณลงไป แต่มาให้คุณรู้ว่าตรงไหนต้องการแสง','คุณไม่จำเป็นต้องสดใสเพื่อมีคุณค่า','บางคืนยาวนาน แต่การยอมอยู่กับมันอย่างอ่อนโยนคือความกล้าแบบหนึ่ง']
+  },
+  return:{
+    power:['การหวนคืนที่พาคุณกลับมาหาตัวเอง','ความทรงจำที่ไม่ได้มีไว้ให้ติดอยู่ แต่ให้เข้าใจ','รากเดิมที่ยังส่งแรงให้วันนี้'],
+    feeling:['ใจโทน{mood}วันนี้อาจกำลังนึกถึงสิ่งเก่า เพื่อหาความหมายใหม่','มีบางความทรงจำที่กลับมา ไม่ใช่เพื่อดึงคุณถอยหลัง แต่เพื่อคืนบางชิ้นส่วนให้คุณ','วันนี้เหมาะกับการมองอดีตด้วยสายตาที่ใจดีกว่าเดิม'],
+    light:['เบาการโทษตัวเองในเรื่องที่ตอนนั้นคุณยังไม่รู้เท่าวันนี้','เบาความคิดว่าการคิดถึงแปลว่ายังไม่ก้าวต่อ','เบาการเอาอดีตทั้งก้อนมาตัดสินตัวเองในตอนนี้'],
+    symbol:['ดาวสีทองน้ำตาล · บ้านไกลๆ · ทางโค้งกลับ','วงแหวนเก่า · กลิ่นฝุ่นหนังสือ · แสงจากหน้าต่างเดิม','ดาวลายพายุอุ่น · เส้นทางวนกลับ · ชื่อที่ยังจำได้'],
+    message:['วันนี้กลับไปมองได้ แต่อย่าลืมพาตัวเองในปัจจุบันกลับมาด้วย','อดีตบางอย่างไม่ได้ขอให้คุณอยู่ต่อ แค่ขอให้คุณเข้าใจมัน','สิ่งที่เคยเป็นคุณยังอยู่ แต่ไม่จำเป็นต้องเป็นกรงของคุณ']
+  }
+};
+STAR_ECHO_COPY.seed={
+  power:['การเริ่มต้นอย่างอ่อนโยน','สัญญาณแรกจากท้องฟ้าที่เพิ่งเปิด','ดาวดวงแรกที่ยังไม่ต้องมีชื่อ'],
+  feeling:['วันนี้ยังไม่ต้องรู้จักตัวเองทั้งหมด แค่เริ่มฟังเสียงเล็กๆ ข้างในก็พอ','จักรวาลยังไม่มีข้อมูลของคุณมากนัก แต่มันยังพอส่งแสงตั้งต้นมาให้','ก่อนจะมีดาวของคุณจริงๆ คืนนี้อาจเป็นแค่การลองเงยหน้าฟังฟ้า'],
+  light:['เบาความกดดันว่าต้องตอบชีวิตให้ได้ทันที','เบาความรู้สึกว่าต้องเริ่มให้สมบูรณ์แบบตั้งแต่ครั้งแรก','เบาความลังเลว่าความรู้สึกเล็กๆ ไม่มีความหมาย'],
+  symbol:['ดาวดวงแรก · ประตูแง้ม · แสงก่อนรุ่งเช้า','ฝุ่นดาวสีอ่อน · หน้ากระดาษว่าง · ลมหายใจแรก','ขอบฟ้ามืดนุ่ม · จุดแสงเล็กๆ · เส้นทางที่ยังไม่ตั้งชื่อ'],
+  message:['จักรวาลไม่รีบรู้จักคุณ คุณเองก็ไม่ต้องรีบเช่นกัน','ถ้าวันนี้ยังไม่มีคำตอบ แค่เริ่มฝากเสียงไว้สักนิดก็พอ','ดาวของคุณจะค่อยๆ เกิดจากสิ่งที่คุณกล้ารับฟังในตัวเอง']
+};
+const STAR_ECHO_EXTRA={
+  love:{
+    power:['แรงดึงดูดของหัวใจที่ยังไม่หายไปไหน','แสงของคนหรือสิ่งที่ทำให้โลกไม่แข็งเกินไป'],
+    feeling:['วันนี้ดาวความรักไม่ได้ถามว่าคุณให้มากพอไหม แต่มันถามว่าคุณได้รับพอบ้างหรือยัง','มีความอ่อนโยนบางอย่างกำลังรอให้คุณหยุดวิ่งผ่านมัน'],
+    light:['เบาความพยายามทำตัวน่ารักทั้งที่ข้างในอยากพัก','เบาความเงียบที่คุณใช้แทนคำว่าอยากถูกรัก'],
+    symbol:['ดาวคู่จางๆ · แก้วน้ำอุ่น · หน้าต่างที่เปิดไฟรอ','แสงริมขอบฟ้า · เส้นด้ายสีทอง · ชื่อที่ทำให้ใจนุ่มลง'],
+    message:['ความรักที่ดีไม่ควรทำให้คุณหายไปจากตัวเอง','วันนี้ให้หัวใจได้อยู่ในที่ที่ไม่ต้องระวังตัวมากนัก']
+  },
+  growth:{
+    power:['บทใหม่ที่เริ่มจากประโยคสั้นมาก','แรงผลักเบาๆ จากตัวคุณในอนาคต'],
+    feeling:['ดาวแห่งการเติบโตกำลังชี้ไปที่ก้าวเล็กๆ ที่คุณมองข้าม เพราะมันไม่ดูยิ่งใหญ่พอ','วันนี้ความคืบหน้าอาจมาในรูปของการเข้าใจตัวเองมากขึ้นหนึ่งชั้น'],
+    light:['เบาความต้องการเห็นผลทันทีหลังจากพยายาม','เบาภาพตัวเองแบบสมบูรณ์ที่ทำให้คุณเริ่มต้นยาก'],
+    symbol:['บันไดสั้นๆ · แสงเขียวบนพื้นดิน · ดาวที่ขยับวงโคจร','แผนที่ยังวาดไม่จบ · ดินชื้น · เงาของยอดเขาไกล'],
+    message:['บางวันการโตขึ้นคือการไม่กลับไปทำร้ายตัวเองแบบเดิม','ความช้าไม่ได้แปลว่าคุณหลงทาง อาจแปลว่าคุณกำลังเดินอย่างระวังขึ้น']
+  },
+  hope:{
+    power:['ประกายที่ยังดื้อจะอยู่ต่อ','ข่าวดีเล็กๆ จากขอบจักรวาล'],
+    feeling:['คืนนี้ดาวแห่งความหวังไม่ได้สัญญาว่าทุกอย่างจะง่าย แต่มันยืนยันว่าทางยังไม่หมด','บางทีใจคุณไม่ได้ต้องการปาฏิหาริย์ แค่ต้องการเห็นว่าพรุ่งนี้ยังมีช่องว่าง'],
+    light:['เบาความคิดว่าถ้าไม่มั่นใจเต็มร้อยก็ไม่ควรหวัง','เบาการปิดไฟให้ตัวเองก่อนที่เช้าจะมาถึง'],
+    symbol:['ดาวหางไกลๆ · ประตูสีฟ้า · ข้อความที่ยังส่งไม่ถึง','แสงใต้เมฆ · เข็มทิศเก่า · ทางเลี้ยวที่ยังไม่เห็นปลาย'],
+    message:['อย่าเพิ่งตัดสินทั้งท้องฟ้าจากคืนที่เมฆหนา','ความหวังไม่จำเป็นต้องใหญ่ แค่พอให้คุณไม่ทิ้งตัวเองก็พอ']
+  },
+  healing:{
+    power:['การพักที่มีศักดิ์ศรีของมันเอง','แสงรักษาแผลที่ค่อยมาก ไม่บุกเข้ามา'],
+    feeling:['ดาวเยียวยาบอกว่าบางแผลไม่ต้องรีบอธิบายให้ใครเข้าใจ ก่อนที่คุณจะอ่อนโยนกับมันได้','วันนี้ร่างกายและใจอาจอยากให้คุณลดความเร็วลงกว่าปกติ'],
+    light:['เบาความเคยชินที่ต้องตอบว่าไหวทุกครั้ง','เบาการใช้ความเข้มแข็งเป็นกำแพงจนแสงเข้าไม่ได้'],
+    symbol:['ผิวน้ำไม่ไหวติง · แสงขาวหลังม่าน · มือที่วางลงบนอก','หิมะบางๆ · ถ้วยชาร้อน · ดาวที่หมุนช้าลง'],
+    message:['การหายดีไม่ใช่การแข่งขัน และคุณไม่จำเป็นต้องรายงานความคืบหน้าให้ใครทุกวัน','วันนี้ขอให้คุณให้เวลาตัวเองเหมือนที่เคยให้เวลากับคนอื่น']
+  },
+  release:{
+    power:['แรงโน้มถ่วงของการวางลง','พิธีเล็กๆ ของมือที่ยอมคลาย'],
+    feeling:['ดาวปล่อยวางไม่ได้เร่งให้ลืม แต่มันชวนให้คุณหยุดอยู่กับสิ่งนั้นทั้งคืน','บางเรื่องอาจไม่ต้องมีตอนจบที่สวยงาม ถึงจะปล่อยให้มันไกลออกไปได้'],
+    light:['เบาความต้องการให้ทุกคนเข้าใจเหตุผลของคุณ','เบาการเก็บเศษคำพูดเก่าๆ ไว้พิสูจน์ความเจ็บ'],
+    symbol:['ขอบฟ้าเหตุการณ์ · กระดาษที่พับเก็บ · ลมหายใจหลังฝน','วงโคจรที่ว่างลง · เศษแสงสีทอง · ประตูที่ปิดอย่างนุ่มนวล'],
+    message:['ปล่อยวางไม่ใช่แพ้ บางครั้งมันคือการเลือกไม่ให้สิ่งเดิมมีอำนาจเท่าเดิม','สิ่งที่คุณวางลงวันนี้ อาจเปิดพื้นที่ให้คุณกลับมาหายใจในวันหน้า']
+  },
+  shadow:{
+    power:['ความมืดที่เริ่มมีภาษา','เงาที่กำลังขอความจริง ไม่ใช่การลงโทษ'],
+    feeling:['คืนนี้ดาวเงาไม่ได้ทำให้คุณมืดลง แต่มันทำให้คุณเห็นว่าความมืดเริ่มตรงไหน','ถ้าความรู้สึกหนักยังอยู่ แปลว่ามันอาจยังมีบางประโยคที่อยากให้คุณฟัง'],
+    light:['เบาการแกล้งสว่างเพื่อให้คนอื่นสบายใจ','เบาความเชื่อว่าคุณต้องจัดการทุกอย่างคนเดียวในความมืด'],
+    symbol:['ห้องเงียบ · ดาวสีน้ำเงินดำ · ไฟดวงเล็กท้ายทาง','กระจกกลางคืน · พื้นหินเย็น · เสียงหัวใจที่ยังเต้น'],
+    message:['การเห็นเงาของตัวเองไม่ได้น่ากลัวเท่าการต้องหนีมันตลอดเวลา','คืนนี้ไม่ต้องชนะความมืด แค่ไม่ทิ้งตัวเองไว้ในนั้นก็พอ']
+  },
+  return:{
+    power:['การกลับมาที่ไม่เหมือนเดิมอีกแล้ว','ความทรงจำที่เปิดไฟให้ปัจจุบัน'],
+    feeling:['ดาวหวนคืนกำลังแตะอดีตเบาๆ เหมือนถามว่าคุณอยากพาอะไรกลับมา และอยากวางอะไรไว้ตรงนั้น','วันนี้ความคิดถึงอาจไม่ได้ดึงคุณถอยหลัง แค่มาบอกว่าบางสิ่งเคยสำคัญจริง'],
+    light:['เบาความพยายามแก้ไขอดีตด้วยใจของวันนี้','เบาการคิดว่ากลับไปมองแปลว่ายังไม่โต'],
+    symbol:['ทางรถไฟเก่า · ดาวสีอำพัน · กล่องจดหมายที่ยังเปิดได้','บ้านที่เห็นจากไกลๆ · แสงในครัว · วงแหวนของเวลา'],
+    message:['คุณกลับไปทำความเข้าใจได้ แต่อย่าลืมว่าคุณไม่ได้อยู่วันนั้นแล้ว','บางความทรงจำเป็นราก ไม่ใช่โซ่']
+  }
+};
+for(const a in STAR_ECHO_EXTRA){
+  for(const k in STAR_ECHO_EXTRA[a]){
+    STAR_ECHO_COPY[a][k].push(...STAR_ECHO_EXTRA[a][k]);
+  }
+}
+const STAR_ECHO_TITLE_POOL=[
+  'ดาว “{name}” ส่งเสียงวันนี้',
+  'คืนนี้ดาว “{name}” เปิดสัญญาณถึงคุณ',
+  'แสงจากดาว “{name}” มาถึงแล้ว',
+  'ดาว “{name}” ขยับวงโคจรเข้ามาใกล้ใจ',
+  'เสียงเบาๆ จากดาว “{name}” เริ่มดังขึ้น'
+];
+const STAR_ECHO_EMPTY_TITLES=[
+  'จักรวาลยังเงียบ แต่ไม่ได้ว่างเปล่า',
+  'ก่อนดาวดวงแรกจะเกิด เสียงแรกมาถึงแล้ว',
+  'คืนนี้ท้องฟ้าส่งสัญญาณตั้งต้นให้คุณ'
+];
+function starEchoPick(a,rng){return a[Math.floor(rng()*a.length)]||'';}
+const STAR_ECHO_DAILY_KEY='starEchoDaily';
+function readStarEchoDaily(){
+  try{
+    const d=JSON.parse(localStorage.getItem(STAR_ECHO_DAILY_KEY)||'null');
+    return d&&d.date===moodLocalStr()&&d.reading&&Array.isArray(d.reading.items)?d.reading:null;
+  }catch(e){return null;}
+}
+function writeStarEchoDaily(reading){
+  try{localStorage.setItem(STAR_ECHO_DAILY_KEY,JSON.stringify({date:moodLocalStr(),reading}));}catch(e){}
+}
+function starEchoPool(){
+  const scored=allScoredMemoryEntries(),byKey=new Map(scored.map(x=>[x.pinKey,x])),seen=new Set(),out=[];
+  const push=k=>{const x=k&&byKey.get(k);if(x&&!seen.has(k)){seen.add(k);out.push(x);}};
+  readMemoryOrbit().forEach(push);push(readMemoryCandidate());readMemoryArchive().forEach(push);
+  if(out.length)return out;
+  if(scored.length)return scored.slice(-MEM_MAX);
+  const j=readMood(),keys=Object.keys(j).sort();if(!keys.length)return[];
+  const ds=keys[keys.length-1],e=j[ds],sc=scoreEntry(e.note||'',e.m)||{archetype:moodArch(e.m)||'hope',score:0,keywords:0,fromMood:true};
+  return[{ds,e,sc,pinKey:memoryStarKey(ds,e),fallbackMood:true}];
+}
+function buildStarEcho(){
+  const locked=readStarEchoDaily();if(locked)return locked;
+  const pool=starEchoPool(),stamp=moodLocalStr(),sig=(typeof getSignal==='function'?getSignal():'')||'';
+  const seed=_strHash(stamp+'|'+sig+'|'+pool.map(x=>x.pinKey).join('|'))||1,rng=mulberry32(seed);
+  const x=pool.length?pool[Math.floor(rng()*pool.length)]:null;
+  const arch=(x&&x.sc&&x.sc.archetype)||'seed',copy=STAR_ECHO_COPY[arch]||STAR_ECHO_COPY.hope;
+  const mood=x&&x.e?x.e.m:null,moodText=moodLabel(mood)||'ใจของคุณ';
+  const title=x?starEchoPick(STAR_ECHO_TITLE_POOL,rng).replace('{name}',starDisplayName(x.pinKey,x.e)):starEchoPick(STAR_ECHO_EMPTY_TITLES,rng);
+  const dlabel=x?new Date(x.ds+'T00:00:00').toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'short',year:'numeric'}):'';
+  const source=x?(x.fallbackMood?('อ่านจากห้วงใจล่าสุด · '+dlabel+' · '+moodText):('ดาวแห่ง'+archLabelTH(arch)+' · บันทึก '+dlabel+' · '+memoryStarReason(x.e.note||'',arch,x.e.m))):'บันทึกห้วงใจสักครั้ง แล้วเสียงสะท้อนนี้จะเริ่มมีดาวของคุณเป็นต้นทาง';
+  const reading={arch,seed:!x,title,source,items:[
+    ['พลังเด่น',starEchoPick(copy.power,rng)],
+    ['จังหวะของใจ',starEchoPick(copy.feeling,rng).replace('{mood}',moodText)],
+    ['สิ่งที่ควรเบา',starEchoPick(copy.light,rng)],
+    ['สัญลักษณ์นำทาง',starEchoPick(copy.symbol,rng)],
+    ['คำฝากจากดาว',starEchoPick(copy.message,rng)]
+  ]};
+  writeStarEchoDaily(reading);
+  return reading;
+}
+function renderStarEcho(){
+  const r=buildStarEcho(),pal=MEM_ARCH[r.arch]||MEM_ARCH.hope,card=$p('starEchoCard');
+  card.style.setProperty('--seA',pal.base);card.style.setProperty('--seB',pal.accent);
+  $p('starEchoDate').textContent=new Date().toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  $p('starEchoTitle').textContent=r.title;$p('starEchoSource').textContent=r.source;
+  const box=$p('starEchoReading');box.innerHTML='';
+  r.items.forEach(([k,v])=>{const item=document.createElement('div');item.className='se-item';
+    const kk=document.createElement('div');kk.className='se-k';kk.textContent=k;
+    const vv=document.createElement('div');vv.className='se-v';vv.textContent=v;
+    item.append(kk,vv);box.appendChild(item);});
+  $p('starEchoMoodCta').style.display=r.seed?'inline-block':'none';
+}
+function openStarEcho(){
+  renderStarEcho();
+  msgPanel.classList.remove('open');msgRead.classList.remove('on');closeMoodPanel();closeBlackHolePanel();closeMemoryCard();
+  $p('myStarPanel').classList.remove('on');$p('starEchoModal').classList.add('on');
+}
+function closeStarEcho(){$p('starEchoModal').classList.remove('on');}
 $p('moodReroll').onclick=()=>{if(!_moodSel)return;_moodQText=pickMoodQ(_moodSel);renderMoodQ();};
 $p('moodCalToggle').onclick=()=>{
   const c=document.querySelector('.mood-card'),on=c.classList.toggle('show-cal');
   $p('moodCalToggle').textContent=on?'▲ ซ่อนปฏิทิน':'📅 ดูปฏิทินย้อนหลัง';
   if(on)setTimeout(()=>$p('moodCalToggle').scrollIntoView({behavior:'smooth',block:'center'}),80);
 };
+$p('echoBtn').onclick=openStarEcho;
+$p('starEchoClose').onclick=closeStarEcho;
+$p('starEchoModal').addEventListener('click',e=>{if(e.target.id==='starEchoModal')closeStarEcho();});
+$p('starEchoMoodCta').onclick=()=>{closeStarEcho();openMoodPanel();};
 $p('moodBtn').onclick=openMoodPanel;
 $p('moodClose').onclick=closeMoodPanel;
 $p('moodSave').onclick=saveMood;
