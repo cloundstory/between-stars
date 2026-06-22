@@ -3334,7 +3334,7 @@ function renderMemoryVault(scored){
     if(x)b.onclick=()=>openVaultAction(i);
     grid.appendChild(b);
   });
-  box.classList.add('on');
+  box.classList.toggle('on', count>0 || !!readMemoryCandidate()); // ซ่อนตอนยังว่าง — โผล่เมื่อมีดาวในคลัง หรือมี candidate ก่อตัว
 }
 function swapArchiveToOrbit(vaultIdx,slot){ // นำดาวจากคลังเข้าวงโคจรช่องที่เลือก · ดวงที่ถูกแทนสลับเข้าคลังช่องเดิม
   const archive=readMemoryArchive(),k=archive[vaultIdx];if(!k)return;
@@ -3382,7 +3382,7 @@ function archiveMemoryCandidate(){
   retireStarToVault(cand); // เก็บเข้าคลัง (คลังเต็ม → ปล่อยดวงเก่าสุด)
   writeMemoryCandidate('');closeCandidateModal();refreshMemoryPlanets();nameStarIfNew(cand); // เก็บเข้าคลังดาว = เป็นของเราแล้ว → ตั้งชื่อ
 }
-function dismissMemoryCandidate(){writeMemoryCandidate('');closeCandidateModal();renderMemoryCandidate(allScoredMemoryEntries());}
+function dismissMemoryCandidate(){writeMemoryCandidate('');closeCandidateModal();const s=allScoredMemoryEntries();renderMemoryCandidate(s);renderMemoryVault(s);}
 // ===== ตั้งชื่อดาว · ดาวที่มีชื่อ = ดาวของเขาจริง (north star: ownership) =====
 const MEM_NAME_KEY='memoryStarNames';
 function readMemoryNames(){try{return JSON.parse(localStorage.getItem(MEM_NAME_KEY)||'{}')||{};}catch(e){return{};}}
