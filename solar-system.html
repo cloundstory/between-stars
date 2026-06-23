@@ -435,6 +435,31 @@
     padding:10px 18px;cursor:pointer;transition:.2s}
   .se-cta:hover{background:linear-gradient(180deg,rgba(243,201,122,.34),rgba(243,201,122,.14));box-shadow:0 0 24px rgba(243,201,122,.22)}
   .se-foot{font-family:var(--th);font-size:11.5px;color:rgba(255,255,255,.34);line-height:1.6;margin-top:16px}
+  /* ask-the-star — stage คำถามก่อนดาวตอบ */
+  #starEchoResult{display:none}
+  .se-card.se-answered #starEchoAsk{display:none}
+  .se-card.se-answered #starEchoResult{display:block}
+  .se-ask-q{font-family:var(--th);font-size:18px;font-weight:500;color:#fff2cf;line-height:1.5;margin:2px auto 3px;max-width:420px}
+  .se-ask-sub{font-family:var(--th);font-size:12.5px;color:rgba(216,199,154,.7);margin:0 auto 6px}
+  .se-sky{position:relative;width:100%;height:212px;margin:8px auto;border-radius:14px;overflow:hidden;
+    background:radial-gradient(120% 100% at 50% 28%,rgba(30,34,54,.42),rgba(4,6,14,.5));border:1px solid rgba(255,255,255,.05)}
+  .se-star{position:absolute;width:18px;height:18px;border-radius:50%;cursor:pointer;transform:translate(-50%,-50%);
+    background:radial-gradient(circle at 38% 32%,#fff,var(--sc) 56%,color-mix(in srgb,var(--sc) 38%,transparent));
+    box-shadow:0 0 12px var(--sc),0 0 26px color-mix(in srgb,var(--sc) 50%,transparent);
+    animation:seStarTw var(--tw,3.4s) ease-in-out infinite;transition:transform .25s,box-shadow .25s}
+  .se-star::after{content:'';position:absolute;inset:-11px;border-radius:50%;
+    border:1px solid color-mix(in srgb,var(--sc) 45%,transparent);opacity:0;transition:.25s}
+  .se-star:hover{transform:translate(-50%,-50%) scale(1.28)}
+  .se-star:hover::after{opacity:1}
+  @keyframes seStarTw{0%,100%{opacity:.68;filter:brightness(1)}50%{opacity:1;filter:brightness(1.32)}}
+  .se-star.chosen{animation:none;transform:translate(-50%,-50%) scale(1.55);
+    box-shadow:0 0 24px var(--sc),0 0 54px var(--sc),0 0 90px color-mix(in srgb,var(--sc) 60%,transparent)}
+  .se-skip{display:block;margin:11px auto 0;background:none;border:none;color:rgba(216,199,154,.55);
+    font-family:var(--th);font-size:12px;cursor:pointer;transition:.2s;text-decoration:underline;text-underline-offset:3px}
+  .se-skip:hover{color:rgba(243,201,122,.85)}
+  .se-demo{display:none;margin:14px auto 0;background:rgba(243,201,122,.12);border:1px dashed rgba(243,201,122,.55);
+    border-radius:20px;color:#ffeacb;font-family:var(--th);font-size:13px;letter-spacing:.02em;padding:9px 20px;cursor:pointer;transition:.2s}
+  .se-demo:hover{background:rgba(243,201,122,.22);box-shadow:0 0 20px rgba(243,201,122,.25)}
   @media(max-width:560px){
     #starEchoModal{padding:14px}
     .se-card{padding:26px 18px 20px;max-height:calc(100vh - 28px);overflow-y:auto}
@@ -1119,11 +1144,25 @@
     <button class="se-x" id="starEchoClose">×</button>
     <div class="se-pre">STAR ECHO · เสียงสะท้อนจากดาว</div>
     <div class="se-date" id="starEchoDate"></div>
-    <div class="se-orb" id="starEchoOrb"></div>
-    <div class="se-title" id="starEchoTitle"></div>
-    <div class="se-source" id="starEchoSource"></div>
-    <div class="se-reading" id="starEchoReading"></div>
-    <button class="se-cta" id="starEchoMoodCta">บันทึกห้วงใจให้ดาวดวงแรก</button>
+
+    <!-- STAGE 1 · ถามดาวก่อน -->
+    <div id="starEchoAsk">
+      <div class="se-ask-q" id="starEchoAskQ">คืนนี้มีดาวส่งสัญญาณถึงคุณ</div>
+      <div class="se-ask-sub">แตะดวงที่ใจคุณถูกดึงไปหา</div>
+      <div class="se-sky" id="starEchoSky"></div>
+      <button class="se-skip" id="starEchoAskSkip">ยังไม่อยากเลือก — ให้ดาวเลือกเองก็ได้</button>
+    </div>
+
+    <!-- STAGE 2 · คำตอบจากดาว -->
+    <div id="starEchoResult">
+      <div class="se-orb" id="starEchoOrb"></div>
+      <div class="se-title" id="starEchoTitle"></div>
+      <div class="se-source" id="starEchoSource"></div>
+      <div class="se-reading" id="starEchoReading"></div>
+      <button class="se-cta" id="starEchoMoodCta">บันทึกห้วงใจให้ดาวดวงแรก</button>
+      <button class="se-demo" id="starEchoDemoAgain" style="display:none">↻ สุ่มดาวใหม่ · DEMO</button>
+    </div>
+
     <div class="se-foot">อ่านเป็นสัญญาณสำหรับทบทวนใจ ไม่ใช่คำทำนายตายตัวของชีวิต</div>
   </div>
 </div>
@@ -5021,9 +5060,9 @@ function pal_lift(arch){return MEM_ARCH[arch]?MEM_ARCH[arch].lift:0;}
 //   ใช้เป็น (1) ตัวตัดสินตอนคำเสมอ · (2) fallback ตอนโน้ตไม่มีคำในคลัง — แทน default มั่ว
 const MOOD_TO_ARCH={radiant:'love',calm:'healing',hopeful:'hope',faded:'return',heavy:'shadow',turbulent:'growth'};
 function moodArch(m){return(m&&MEM_ARCH[MOOD_TO_ARCH[m]])?MOOD_TO_ARCH[m]:null;}
-function scoreEntry(note,mood){
+function scoreEntry(note,mood,minLen=30){
   const cnt={};for(const k in INNER_POOLS)cnt[k]=0;let total=0;
-  if(note&&note.length>=30){
+  if(note&&note.length>=minLen){
     for(const[arch,words]of Object.entries(INNER_POOLS)){
       const seen=new Set();
       for(const w of words){if(!seen.has(w)&&note.includes(w)){seen.add(w);cnt[arch]++;total++;}}
@@ -5279,9 +5318,50 @@ function starEchoPool(){
   const ds=keys[keys.length-1],e=j[ds],sc=scoreEntry(e.note||'',e.m)||{archetype:moodArch(e.m)||'hope',score:0,keywords:0,fromMood:true};
   return[{ds,e,sc,pinKey:memoryStarKey(ds,e),fallbackMood:true}];
 }
-function buildStarEcho(){
-  const locked=readStarEchoDaily();if(locked)return locked;
-  const pool=starEchoPool(),stamp=moodLocalStr(),sig=(typeof getSignal==='function'?getSignal():'')||'';
+// โหมดเดโม (?echoDemo=1) — ปลดล็อกวันละครั้ง + สุ่มใหม่ทุกครั้ง เพื่อเทสต์ทุกสี/ทุกธีม
+const ECHO_DEMO=new URLSearchParams(location.search).get('echoDemo')==='1';
+// พาดหัวพิธีแตะดาว — ไม่ชี้นำ โทนเสี่ยงทาย
+const STAR_ECHO_ASK_Q=[
+  'คืนนี้มีดาวส่งสัญญาณถึงคุณ',
+  'มีดาวสองสามดวงกำลังเรียกคุณอยู่',
+  'ท้องฟ้าคืนนี้เปิดให้คุณเลือกหนึ่งดวง'
+];
+const STAR_ECHO_ASK_TITLES=[
+  'ดาวที่คุณเลือกส่งเสียงแล้ว',
+  'ดวงที่ใจคุณถูกดึงไปหา เปิดสัญญาณ',
+  'เสียงสะท้อนจากดาวที่คุณแตะคืนนี้',
+  'ดาวดวงนั้นขยับเข้ามาตอบคุณ'
+];
+// ดูดวงมี mapping ของตัวเอง แยกจากห้วงใจ (ห้วงใจยังใช้ MOOD_TO_ARCH ตายตัว) — แต่ละสีโยงได้หลายธีม
+// สุ่มตามวัน → แตะสีเดิมคนละวันได้คนละธีม กันเดาทาง แต่ยังคุมโทนอารมณ์ให้ใกล้กัน
+const STAR_ECHO_PICK_ARCH={
+  radiant:  ['love','hope','growth'],
+  calm:     ['healing','return','hope'],
+  hopeful:  ['hope','growth','love'],
+  faded:    ['return','release','shadow'],
+  heavy:    ['shadow','release','healing'],
+  turbulent:['growth','shadow','release']
+};
+// คำตอบจากดาวที่ "แตะเลือก" — สีดาวคงไว้เป็นเอกลักษณ์ ส่วนธีมสุ่มจากชุดของสีนั้นตามวัน
+function buildPickReading(mood,stamp){
+  const seed=_strHash(stamp+'|pick|'+mood+(ECHO_DEMO?('|'+Math.random()):''))||1,rng=mulberry32(seed);
+  const set=STAR_ECHO_PICK_ARCH[mood]||['hope'];
+  const arch=set[Math.floor(rng()*set.length)]||'hope',copy=STAR_ECHO_COPY[arch]||STAR_ECHO_COPY.hope;
+  const moodText=moodLabel(mood)||'ใจของคุณ';
+  return{arch,seed:false,pick:true,pickMood:mood,
+    title:starEchoPick(STAR_ECHO_ASK_TITLES,rng),
+    source:'ดาวแห่ง'+archLabelTH(arch)+' · ดวงที่ใจคุณถูกดึงไปหาคืนนี้',
+    items:[
+      ['พลังเด่น',starEchoPick(copy.power,rng)],
+      ['จังหวะของใจ',starEchoPick(copy.feeling,rng).replace('{mood}',moodText)],
+      ['สิ่งที่ควรเบา',starEchoPick(copy.light,rng)],
+      ['สัญลักษณ์นำทาง',starEchoPick(copy.symbol,rng)],
+      ['คำฝากจากดาว',starEchoPick(copy.message,rng)]
+    ]};
+}
+// คำตอบจากดาวในคลัง — พฤติกรรมเดิม ใช้ตอน "ข้ามคำถาม"
+function buildPoolReading(stamp){
+  const pool=starEchoPool(),sig=(typeof getSignal==='function'?getSignal():'')||'';
   const seed=_strHash(stamp+'|'+sig+'|'+pool.map(x=>x.pinKey).join('|'))||1,rng=mulberry32(seed);
   const x=pool.length?pool[Math.floor(rng()*pool.length)]:null;
   const arch=(x&&x.sc&&x.sc.archetype)||'seed',copy=STAR_ECHO_COPY[arch]||STAR_ECHO_COPY.hope;
@@ -5289,32 +5369,78 @@ function buildStarEcho(){
   const title=x?starEchoPick(STAR_ECHO_TITLE_POOL,rng).replace('{name}',starDisplayName(x.pinKey,x.e)):starEchoPick(STAR_ECHO_EMPTY_TITLES,rng);
   const dlabel=x?new Date(x.ds+'T00:00:00').toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'short',year:'numeric'}):'';
   const source=x?(x.fallbackMood?('อ่านจากห้วงใจล่าสุด · '+dlabel+' · '+moodText):('ดาวแห่ง'+archLabelTH(arch)+' · บันทึก '+dlabel+' · '+memoryStarReason(x.e.note||'',arch,x.e.m))):'บันทึกห้วงใจสักครั้ง แล้วเสียงสะท้อนนี้จะเริ่มมีดาวของคุณเป็นต้นทาง';
-  const reading={arch,seed:!x,title,source,items:[
+  return{arch,seed:!x,title,source,items:[
     ['พลังเด่น',starEchoPick(copy.power,rng)],
     ['จังหวะของใจ',starEchoPick(copy.feeling,rng).replace('{mood}',moodText)],
     ['สิ่งที่ควรเบา',starEchoPick(copy.light,rng)],
     ['สัญลักษณ์นำทาง',starEchoPick(copy.symbol,rng)],
     ['คำฝากจากดาว',starEchoPick(copy.message,rng)]
   ]};
-  writeStarEchoDaily(reading);
+}
+function buildStarEcho(input){
+  const locked=ECHO_DEMO?null:readStarEchoDaily();if(locked)return locked; // วันละครั้ง (เดโมปลดล็อก)
+  const stamp=moodLocalStr();
+  const reading=(input&&input.pick)?buildPickReading(input.pick,stamp):buildPoolReading(stamp);
+  if(!ECHO_DEMO)writeStarEchoDaily(reading);
   return reading;
 }
-function renderStarEcho(){
-  const r=buildStarEcho(),pal=MEM_ARCH[r.arch]||MEM_ARCH.hope,card=$p('starEchoCard');
-  card.style.setProperty('--seA',pal.base);card.style.setProperty('--seB',pal.accent);
-  $p('starEchoDate').textContent=new Date().toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+function renderStarEchoResult(r){
+  const pal=MEM_ARCH[r.arch]||MEM_ARCH.hope,card=$p('starEchoCard');
+  // ดวงที่แตะเลือก = ดวงที่ตอบ → คงสีดาวที่ผู้ใช้แตะ (ไม่ใช่สี planet ของ archetype) กันอาการ "แตะเขียวแต่ฟ้าตอบ"
+  let seA=pal.base,seB=pal.accent;
+  if(r.pick&&r.pickMood){const c=moodColor(r.pickMood);seA=c;seB='color-mix(in srgb,'+c+' 45%,#fff)';}
+  card.style.setProperty('--seA',seA);card.style.setProperty('--seB',seB);
   $p('starEchoTitle').textContent=r.title;$p('starEchoSource').textContent=r.source;
   const box=$p('starEchoReading');box.innerHTML='';
   r.items.forEach(([k,v])=>{const item=document.createElement('div');item.className='se-item';
     const kk=document.createElement('div');kk.className='se-k';kk.textContent=k;
     const vv=document.createElement('div');vv.className='se-v';vv.textContent=v;
     item.append(kk,vv);box.appendChild(item);});
-  $p('starEchoMoodCta').style.display=r.seed?'inline-block':'none';
+  const cta=$p('starEchoMoodCta');
+  if(r.seed){cta.textContent='บันทึกห้วงใจให้ดาวดวงแรก';cta.style.display='inline-block';}
+  else if(r.pick){cta.textContent='เก็บความรู้สึกนี้ไว้ในห้วงใจ';cta.style.display='inline-block';}
+  else{cta.style.display='none';}
+  $p('starEchoDemoAgain').style.display=ECHO_DEMO?'block':'none';
+  card.classList.add('se-answered');
+  const orb=$p('starEchoOrb');orb.style.animation='none';void orb.offsetHeight;orb.style.animation=''; // เด้ง animation ใหม่ตอนสลับ stage
 }
+// ดาวสัญญาณ — 6 ดวง สีตามอารมณ์ วางสุ่มใหม่ทุกวัน (เสถียรภายในวัน) ไม่มีป้ายกำกับ
+function renderStarEchoSky(){
+  const sky=$p('starEchoSky');sky.innerHTML='';
+  const rng=mulberry32(_strHash(moodLocalStr()+'|sky')||1);
+  const order=MOODS.slice();
+  for(let i=order.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[order[i],order[j]]=[order[j],order[i]];}
+  const cols=3,rows=2;
+  order.forEach((m,i)=>{
+    const cx=((i%cols)+0.5)/cols,cy=(Math.floor(i/cols)+0.5)/rows;
+    const x=Math.min(.92,Math.max(.08,cx+(rng()-.5)*0.18));
+    const y=Math.min(.86,Math.max(.14,cy+(rng()-.5)*0.24));
+    const el=document.createElement('div');el.className='se-star';
+    el.style.setProperty('--sc',m.c);
+    el.style.left=(x*100).toFixed(1)+'%';el.style.top=(y*100).toFixed(1)+'%';
+    el.style.setProperty('--tw',(3+rng()*2.2).toFixed(2)+'s');
+    const sz=(15+rng()*8).toFixed(0);el.style.width=el.style.height=sz+'px';
+    el.style.animationDelay=(-rng()*4).toFixed(2)+'s';
+    el.onclick=()=>{el.classList.add('chosen');setTimeout(()=>pickStarEcho(m.k),440);};
+    sky.appendChild(el);
+  });
+}
+function pickStarEcho(mood){renderStarEchoResult(buildStarEcho({pick:mood}));}
+function showStarEchoAsk(){
+  const card=$p('starEchoCard');card.classList.remove('se-answered');
+  $p('starEchoAskQ').textContent=STAR_ECHO_ASK_Q[Math.floor(Math.random()*STAR_ECHO_ASK_Q.length)];
+  renderStarEchoSky();
+  card.style.setProperty('--seA','#8fb8e8');card.style.setProperty('--seB','#ffe7b0'); // โทนกลางก่อนดาวตอบ
+}
+function submitStarEcho(){renderStarEchoResult(buildStarEcho(null));} // ให้ดาวเลือกเอง → อ่านจากคลังดาว/ห้วงใจ
 function openStarEcho(){
-  renderStarEcho();
   msgPanel.classList.remove('open');msgRead.classList.remove('on');closeMoodPanel();closeBlackHolePanel();closeMemoryCard();
-  $p('myStarPanel').classList.remove('on');$p('starEchoModal').classList.add('on');
+  $p('myStarPanel').classList.remove('on');
+  $p('starEchoDate').textContent=new Date().toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const locked=readStarEchoDaily();
+  if(locked)renderStarEchoResult(locked); // ถามไปแล้ววันนี้ → โชว์คำตอบเดิม
+  else showStarEchoAsk();                 // ยังไม่ถาม → ถามก่อน
+  $p('starEchoModal').classList.add('on');
 }
 function closeStarEcho(){$p('starEchoModal').classList.remove('on');}
 $p('moodReroll').onclick=()=>{if(!_moodSel)return;_moodQText=pickMoodQ(_moodSel);renderMoodQ();};
@@ -5325,8 +5451,16 @@ $p('moodCalToggle').onclick=()=>{
 };
 $p('echoBtn').onclick=openStarEcho;
 $p('starEchoClose').onclick=closeStarEcho;
+$p('starEchoAskSkip').onclick=()=>submitStarEcho();
+$p('starEchoDemoAgain').onclick=showStarEchoAsk;
 $p('starEchoModal').addEventListener('click',e=>{if(e.target.id==='starEchoModal')closeStarEcho();});
-$p('starEchoMoodCta').onclick=()=>{closeStarEcho();openMoodPanel();};
+$p('starEchoMoodCta').onclick=()=>{
+  const r=readStarEchoDaily();
+  closeStarEcho();openMoodPanel();
+  // แตะดาวแล้วอยากเก็บ → เปิดห้วงใจพร้อมเลือกอารมณ์ของดวงนั้นให้ (ไม่ทับของที่มีอยู่)
+  const mood=r&&r.pickMood;
+  if(mood&&!_moodSel){_moodSel=mood;_moodQText=pickMoodQ(mood);renderMoodChips();renderMoodHero();renderMoodQ();$p('moodSave').disabled=false;}
+};
 $p('moodBtn').onclick=openMoodPanel;
 $p('moodClose').onclick=closeMoodPanel;
 $p('moodSave').onclick=saveMood;
