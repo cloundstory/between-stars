@@ -224,6 +224,7 @@
   #intro .en2{font-family:var(--eng);font-weight:300;letter-spacing:.5em;text-transform:uppercase;font-size:clamp(11px,1.4vw,15px);color:var(--muted);margin-top:20px;padding-left:.5em}
   #intro .ld{margin-top:46px;font-family:var(--eng);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--faint)}
   #intro .ld2{margin-top:14px;font-family:var(--th);font-size:11.5px;letter-spacing:.04em;color:rgba(255,255,255,.5);line-height:1.6}
+  @media(max-width:860px),(pointer:coarse){#introHint{display:none}}  /* มือถือ = อุปกรณ์หลัก: ไม่ไล่ด้วยคำว่า "ดูบนเดสก์ท็อปดีกว่า" */
   #loading{position:fixed;inset:0;z-index:11;background:var(--bg);display:grid;place-items:center;
     font-family:var(--eng);letter-spacing:.3em;text-transform:uppercase;font-size:11px;color:var(--faint);transition:opacity .6s}
   #restoreUI{position:fixed;top:20px;left:20px;z-index:30;font-family:var(--eng);font-size:11px;letter-spacing:.18em;
@@ -407,6 +408,10 @@
   .se-x{position:absolute;top:13px;right:15px;z-index:2;background:none;border:none;color:rgba(255,255,255,.36);
     font-size:20px;line-height:1;cursor:pointer;padding:5px;transition:.2s}
   .se-x:hover{color:#fff}
+  .se-lang{position:absolute;top:12px;left:14px;z-index:2;background:rgba(255,255,255,.05);border:1px solid rgba(216,199,154,.28);
+    border-radius:13px;color:rgba(216,199,154,.85);font-family:var(--eng);font-size:9.5px;letter-spacing:.12em;
+    padding:4px 10px;cursor:pointer;transition:.2s}
+  .se-lang:hover{background:rgba(216,199,154,.16);color:#fff}
   .se-pre{font-family:var(--eng);font-size:8.5px;letter-spacing:.28em;text-transform:uppercase;color:rgba(216,199,154,.7)}
   .se-date{font-family:var(--th);font-size:12px;color:rgba(255,255,255,.42);margin-top:5px}
   .se-orb{width:58px;height:58px;border-radius:50%;margin:20px auto 12px;
@@ -1016,14 +1021,14 @@
 <div id="app"></div>
 <div id="labels"></div>
 <div id="loading">LOADING</div>
-<div id="restoreUI">⤢ แสดง UI</div>
+<div id="restoreUI" data-i18n="ui.restore">⤢ แสดง UI</div>
 
 <div id="intro"><div>
   <div class="over">An interactive model · แบบจำลองเชิงโต้ตอบ</div>
   <h1>ระบบสุริยะ</h1>
   <div class="en2">The Solar System</div>
   <div class="ld">คลิกเพื่อข้าม · CLICK TO ENTER</div>
-  <div class="ld2">◖ เพื่อรับสัญญาณได้ชัดที่สุด · แนะนำรับชมบนเดสก์ท็อปพร้อมหูฟัง</div>
+  <div class="ld2" id="introHint">◖ เพื่อรับสัญญาณได้ชัดที่สุด · แนะนำรับชมบนเดสก์ท็อปพร้อมหูฟัง</div>
 </div></div>
 
 <div class="brand">
@@ -1034,19 +1039,20 @@
 
 
 <div class="dock" id="dock">
-  <div class="ico" id="sound" title="เสียงบรรยากาศ"></div>
+  <div class="ico" id="sound" title="เสียงบรรยากาศ" data-i18n-title="dock.sound"></div>
   <div class="volpop" id="volPop"><span class="vlab">VOL</span><input type="range" id="vol" min="0" max="100" value="0"></div>
-  <div class="ico" id="play" title="เล่น/หยุดเวลา"></div>
-  <div class="tstep" id="prev" title="ย้อน 1 เดือน">‹</div>
+  <div class="ico" id="play" title="เล่น/หยุดเวลา" data-i18n-title="dock.play"></div>
+  <div class="tstep" id="prev" title="ย้อน 1 เดือน" data-i18n-title="dock.prev">‹</div>
   <div class="clock"><div class="d" id="cDate">—</div><div class="t eng" id="cTime"></div></div>
-  <div class="tstep" id="next" title="เดินหน้า 1 เดือน">›</div>
+  <div class="tstep" id="next" title="เดินหน้า 1 เดือน" data-i18n-title="dock.next">›</div>
   <div class="sep"></div>
-  <div class="grp"><span class="lab">อัตราเวลา</span><input id="speed" type="range" min="0" max="5" step="0.1" value="1"><span class="lab" id="rate"></span></div>
+  <div class="grp"><span class="lab" data-i18n="dock.rate">อัตราเวลา</span><input id="speed" type="range" min="0" max="5" step="0.1" value="1"><span class="lab" id="rate"></span></div>
   <div class="sep"></div>
-  <span class="tog" id="tNow">วันนี้</span>
+  <span class="tog" id="tNow" data-i18n="dock.now">วันนี้</span>
   <span class="tog" id="tLive">● LIVE</span>
   <div class="sep"></div>
-  <span class="tog" id="layersBtn">เลเยอร์ ▾</span>
+  <span class="tog" id="layersBtn" data-i18n="dock.layers">เลเยอร์ ▾</span>
+  <span class="tog" id="tLang" title="ภาษา / Language" data-i18n="lang.toggle">EN</span>
 </div>
 
 <div class="timeline" id="timeline">
@@ -1058,16 +1064,16 @@
 </div>
 
 <div class="views" id="views">
-  <span class="tog on" id="tOrbits">วงโคจร</span>
-  <span class="tog on" id="tLabels">ชื่อดาว</span>
-  <span class="tog on" id="tBelt">แถบดาวเคราะห์/ไคเปอร์</span>
-  <span class="tog" id="tZodiac">จักรราศี</span>
-  <span class="tog" id="tMissions">เส้นทาง</span>
-  <span class="tog" id="tScale">สเกลจริง</span>
+  <span class="tog on" id="tOrbits" data-i18n="views.orbits">วงโคจร</span>
+  <span class="tog on" id="tLabels" data-i18n="views.labels">ชื่อดาว</span>
+  <span class="tog on" id="tBelt" data-i18n="views.belt">แถบดาวเคราะห์/ไคเปอร์</span>
+  <span class="tog" id="tZodiac" data-i18n="views.zodiac">จักรราศี</span>
+  <span class="tog" id="tMissions" data-i18n="views.missions">เส้นทาง</span>
+  <span class="tog" id="tScale" data-i18n="views.scale">สเกลจริง</span>
   <span class="tog on" id="tQuality">คุณภาพ: สูง</span>
-  <span class="tog" id="tHideUI">ซ่อน UI</span>
-  <span class="tog" id="tReset">รีเซ็ตมุมมอง</span>
-  <span class="tog" id="tReplayGuide">✦ ทบทวนเส้นทาง</span>
+  <span class="tog" id="tHideUI" data-i18n="views.hideui">ซ่อน UI</span>
+  <span class="tog" id="tReset" data-i18n="views.reset">รีเซ็ตมุมมอง</span>
+  <span class="tog" id="tReplayGuide" data-i18n="views.replay">✦ ทบทวนเส้นทาง</span>
 </div>
 
 <div class="events" id="events">
@@ -1104,7 +1110,7 @@
   </div>
 </div>
 
-<button id="modeBtn">✦ ใคร่ครวญ</button>
+<button id="modeBtn" data-i18n="mode.contemplate">✦ ใคร่ครวญ</button>
 <button id="sigBtn"><span id="sigBtnDot"></span><span id="sigBtnLabel">SIGNAL</span><span id="sigBadge"></span></button>
 <div id="obSignal" class="ob-tip">ตัวตนของคุณในห้วงอวกาศ</div>
 <div id="obComet" class="ob-tip">✦ แตะดาวตกเพื่อรับสาร</div>
@@ -1113,14 +1119,14 @@
 <div id="philoTint"></div>
 <div id="modePulse"></div>
 <div id="philoBar">
-  <div id="philoHint">✦ บันทึก “ห้วงใจ” ให้ดาวของคุณค่อย ๆ เปล่งแสง</div>
+  <div id="philoHint" data-i18n="philo.hint">✦ บันทึก “ห้วงใจ” ให้ดาวของคุณค่อย ๆ เปล่งแสง</div>
   <div id="quoteLine"></div>
   <div class="prow">
-    <button id="moodBtn">◐ ห้วงใจ</button>
-    <button id="echoBtn">✧ เสียงดาววันนี้</button>
-    <button id="bhBtn">◌ ปล่อยวาง</button>
-    <button id="writeBtn">✦ คำฝาก</button>
-    <button id="philoReset">⊙ รีเซ็ตมุมมอง</button>
+    <button id="moodBtn" data-i18n="philo.mood">◐ ห้วงใจ</button>
+    <button id="echoBtn" data-i18n="philo.echo">✧ เสียงดาววันนี้</button>
+    <button id="bhBtn" data-i18n="philo.bh">◌ ปล่อยวาง</button>
+    <button id="writeBtn" data-i18n="philo.write">✦ คำฝาก</button>
+    <button id="philoReset" data-i18n="philo.reset">⊙ รีเซ็ตมุมมอง</button>
   </div>
   <div id="letterStat"></div>
 </div>
@@ -1142,6 +1148,7 @@
 <div id="starEchoModal">
   <div class="se-card" id="starEchoCard">
     <button class="se-x" id="starEchoClose">×</button>
+    <button class="se-lang" id="starEchoLang">EN</button>
     <div class="se-pre">STAR ECHO · เสียงสะท้อนจากดาว</div>
     <div class="se-date" id="starEchoDate"></div>
 
@@ -1255,7 +1262,7 @@
   <h2 id="i-name"></h2>
   <div class="en" id="i-en"></div>
   <div id="i-body"></div>
-  <button class="focus" id="i-focus">ซูมกล้องไปที่ดาวนี้</button>
+  <button class="focus" id="i-focus" data-i18n="info.focus">ซูมกล้องไปที่ดาวนี้</button>
   <button class="iwrite" id="iResBtn" style="display:none">RESONANCE</button>
 </aside>
 
@@ -1511,6 +1518,30 @@ import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import * as Astronomy from 'https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/+esm';
+
+// ── language (TH primary in HTML; EN additive). Hoisted to top so early code can read LANG without TDZ. ──
+const LANG=(()=>{try{const q=new URLSearchParams(location.search).get('lang');if(q==='en'||q==='th')return q;
+  const s=localStorage.getItem('lang');if(s==='en'||s==='th')return s;}catch(e){}
+  return (navigator.language||'').toLowerCase().startsWith('th')?'th':'en';})();
+// EN overrides for static UI chrome. Keys map to [data-i18n] (text) / [data-i18n-ph] (placeholder) / [data-i18n-title] (title).
+const UI_EN={
+ 'dock.sound':'Ambient sound','dock.play':'Play / pause time','dock.prev':'Back 1 month','dock.next':'Forward 1 month',
+ 'dock.rate':'Time rate','dock.now':'Today','dock.layers':'Layers ▾',
+ 'views.orbits':'Orbits','views.labels':'Names','views.belt':'Asteroid / Kuiper belt','views.zodiac':'Zodiac',
+ 'views.missions':'Mission paths','views.scale':'True scale','views.hideui':'Hide UI','views.reset':'Reset view','views.replay':'✦ Replay guide',
+ 'ui.restore':'⤢ Show UI',
+ 'philo.hint':'✦ Write an “Inner Space” note and watch your star slowly glow',
+ 'philo.mood':'◐ Inner Space','philo.echo':'✧ Star Echo','philo.bh':'◌ Let go','philo.write':'✦ Leave a message','philo.reset':'⊙ Reset view',
+ 'info.focus':'Zoom camera to this body',
+ 'mode.contemplate':'✦ Contemplate',
+ 'lang.toggle':'ไทย'
+};
+function applyUILang(){
+  if(LANG!=='en')return; // TH = HTML stays as authored → zero regression for Thai users
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const v=UI_EN[el.dataset.i18n];if(v!=null)el.textContent=v;});
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{const v=UI_EN[el.dataset.i18nPh];if(v!=null)el.placeholder=v;});
+  document.querySelectorAll('[data-i18n-title]').forEach(el=>{const v=UI_EN[el.dataset.i18nTitle];if(v!=null)el.title=v;});
+}
 
 const D2R=Math.PI/180;
 const TEX='https://cdn.jsdelivr.net/gh/jeromeetienne/threex.planets@master/images/';
@@ -2884,13 +2915,13 @@ addEventListener('pointerdown',e=>{if(viewsPop.classList.contains('open')&&!view
 let hiQuality=!isMobile&&!prefersReduced;   // ปุ่ม manual = เพดานคุณภาพ (สูง/ประหยัด)
 const tQ=document.getElementById('tQuality');
 // ระบบ 3 ระดับ: 2=สูง(DPR2+เงา+DoF) · 1=กลาง(DPR1, บลูมยังอยู่) · 0=ประหยัดสุด(ปิดบลูม)
-const QNAME=['ประหยัด','กลาง','สูง'];
+const QNAME=LANG==='en'?['Eco','Medium','High']:['ประหยัด','กลาง','สูง'];
 let qAuto=hiQuality?2:1,qBokehAllowed=true,_lastShadow=null;   // qAuto = เพดานที่ governor อนุญาต
 function qCeil(){return hiQuality?2:1;}                        // ประหยัด=1 (คงบลูมไว้), สูง=2
 function qLevel(){return Math.min(qAuto,qCeil());}
 function applyQuality(){
   const L=qLevel(),far=_prLite;
-  tQ.textContent='คุณภาพ: '+QNAME[L]+(qAuto<qCeil()?' · อัตโนมัติ':'');tQ.classList.toggle('on',L>=2);
+  tQ.textContent=(LANG==='en'?'Quality: ':'คุณภาพ: ')+QNAME[L]+(qAuto<qCeil()?(LANG==='en'?' · auto':' · อัตโนมัติ'):'');tQ.classList.toggle('on',L>=2);
   // pixel ratio ผูกกับระดับคุณภาพอย่างเดียว ไม่ผูกกับระยะซูม — กัน realloc render target กลางการซูม (ต้นเหตุการกระตุกตอน zoom out)
   const pr=(L>=2)?Math.min(devicePixelRatio,2):1;
   if(renderer.getPixelRatio()!==pr)syncRenderSize(innerWidth,innerHeight,pr);
@@ -2915,6 +2946,9 @@ document.getElementById('restoreUI').onclick=toggleUI;
 addEventListener('keydown',e=>{if(e.key==='h'||e.key==='H')toggleUI();});
 document.getElementById('tReset').onclick=()=>{focusObj=null;setActiveNav(null);controls.target.set(0,0,0);camera.position.set(0,200,440);};
 document.getElementById('tReplayGuide').onclick=()=>{viewsPop.classList.remove('open');layersBtn.classList.remove('on');obGuide(true);};
+// ── global language toggle + apply EN chrome overrides ──
+const _tLang=document.getElementById('tLang');if(_tLang)_tLang.onclick=()=>setAppLang(LANG==='en'?'th':'en');
+applyUILang();
 
 // ============ AMBIENT AUDIO — เสียงอวกาศสังเคราะห์ (Web Audio, ไม่มีไฟล์นอก) ============
 let audioCtx=null,ambient=null,soundOn=false;
@@ -3908,9 +3942,9 @@ function philoHint(show){const el=$p('philoHint');if(!el)return;
   if(show&&Object.keys(readMood()).length<2)el.classList.add('on');else el.classList.remove('on');}// คนใหม่: ชวนเริ่มบันทึก
 function setMode(p){philo=p;document.body.classList.toggle('philo',p);
   modeBreath(p);
-  modeBtn.textContent=p?'✦ สำรวจ':'✦ ใคร่ครวญ';
+  modeBtn.textContent=p?(LANG==='en'?'✦ Explore':'✦ สำรวจ'):(LANG==='en'?'✦ Contemplate':'✦ ใคร่ครวญ');
   brandMk.textContent=p?'Between Stars':MK0;
-  brandSub.innerHTML=p?'<i>—</i> ห้วงว่างระหว่างดวงดาว และระหว่างเรา':SUB0;
+  brandSub.innerHTML=p?(LANG==='en'?'<i>—</i> the void between the stars, and between us':'<i>—</i> ห้วงว่างระหว่างดวงดาว และระหว่างเรา'):SUB0;
   msgGroup.visible=p;
   _bhTarget=0; // หลุมดำจะปรากฏเฉพาะตอนกด "ปล่อยวาง"
   _msTarget=p?1:0; // ดาวของเราปรากฏ/เลือนหายตามโหมด — cross-fade กับดวงอาทิตย์พร้อมกัน
@@ -5333,6 +5367,94 @@ const STAR_ECHO_ASK_TITLES=[
   'เสียงสะท้อนจากดาวที่คุณแตะคืนนี้',
   'ดาวดวงนั้นขยับเข้ามาตอบคุณ'
 ];
+// ============ i18n (นำร่อง: Star Echo) — TH เป็นหลัก, EN เป็นส่วนเสริม ============
+// auto-detect: ?lang= → localStorage → ภาษาเบราว์เซอร์ (ไทย→th, นอกนั้น→en) · สลับภาษา = reload พร้อม ?lang=
+// LANG hoisted to top of module (see import block). setAppLang/seLocale stay here.
+function setAppLang(l){try{localStorage.setItem('lang',l);}catch(e){}const u=new URL(location.href);u.searchParams.set('lang',l);location.assign(u.toString());}
+function seLocale(){return LANG==='en'?'en-US':'th-TH-u-ca-gregory-nu-latn';}
+const SE_ARCH_EN={love:'Love',growth:'Growth',hope:'Hope',healing:'Healing',release:'Release',shadow:'Shadow',return:'Return',seed:'Beginning'};
+const SE_MOOD_EN={radiant:'radiant',calm:'calm',hopeful:'hopeful',faded:'faded',heavy:'heavy',turbulent:'restless'};
+function seArchLabel(a){return LANG==='en'?(SE_ARCH_EN[a]||'Memory'):archLabelTH(a);}
+function seMoodText(m){return LANG==='en'?(SE_MOOD_EN[m]||'quiet'):(moodLabel(m)||'ใจของคุณ');}
+// คลังคำ EN — transcreate ให้ได้อารมณ์กวี ไม่ใช่แปลตรง
+const STAR_ECHO_COPY_EN={
+  love:{
+    power:['A love that needs no rush to prove itself','A warmth quietly finding its way back inside you','A thread that still keeps your heart from feeling alone'],
+    feeling:['Your {mood} heart today wants tenderness more than answers','Part of you longs to be seen without having to explain','Today you belong near whatever makes your heart feel safe'],
+    light:['the need to take care of everyone, always','the fear that you love others — or yourself — not well enough','proving your worth through someone else’s eyes'],
+    symbol:['warm amber light · an inner orbit · a hand not yet let go','a thin ring · the scent of old rain · a message still remembered','a soft red star · a small home · a trusted voice calling your name'],
+    message:['Begin today by not abandoning yourself — then love will slowly find room to stand','If you’ll be kind to someone today, fold yourself into that kindness too','Some bonds need not be loud — staying warm is enough']
+  },
+  growth:{
+    power:['A growth that doesn’t have to hurry','Small steps beginning to carry their own gravity','A courage slowly taking shape'],
+    feeling:['Your {mood} heart today is learning something old from a new angle','A lesson came not to pressure you, but to nudge you out of the same place','Today suits looking at your own effort more fairly'],
+    light:['the belief that everything must succeed at once','comparing your pace to everyone else’s','the guilt of not yet being as good as you hoped'],
+    symbol:['ground after rain · a slightly tilted orbit · a seed of light','a blue-green star · a new path · a steadier pull','cracked earth with a sprout · an outer orbit · a long breath'],
+    message:['You don’t need a great leap today — a step that doesn’t betray yourself is enough','Getting slowly better still counts as a journey, even if no one saw the start','Give yourself room to try again, without making the mistake your name']
+  },
+  hope:{
+    power:['A hope that refuses to go out','A far light, just enough to walk one more step','A possibility that doesn’t have a name yet'],
+    feeling:['Your {mood} heart today doesn’t need every answer — only a small reason to go on','Some light is still shining, even if you can’t quite see it yet','You may not feel fully sure today, but part of you still wants to believe'],
+    light:['the rush to see the whole ending at once','the fear that hope will only disappoint you again','the thought that if it isn’t clear yet, there’s no way through'],
+    symbol:['blue light · a distant star · a door left open','a faint horizon · a wave of indigo · the smallest bright point','a clear cold star · a new breath · the edge of dawn after a long night'],
+    message:['Let hope be a lantern today, not a promise','If you can still walk one more step, the far light still means something','Some good things begin simply by not closing the door on yourself']
+  },
+  healing:{
+    power:['A healing that asks for no hurry','A calm slowly soaking back in','A safe place for the part of you that’s still tired'],
+    feeling:['Your {mood} heart today wants a rest from always being strong','Some wounds don’t need an explanation — only tenderness','Today, soften the voice that scolds you, just a little'],
+    light:['the need to be healed right now','replaying things only to punish yourself again','the “I’m fine” you say when inside you really aren’t'],
+    symbol:['clear ice · soft white light · a thin blanket','a pale blue star · still water · a breath that fills the lungs again','a crack that lets the light through · quiet stardust · a slow pulse'],
+    message:['You don’t have to heal fast today — simply not adding to your own pain is already healing','Rest isn’t falling behind — it’s how the light finds its way back into you','If you’re still weary, that doesn’t mean you’ve failed']
+  },
+  release:{
+    power:['A letting-go that already weighs less than the carrying','A new space as the hand slowly opens','A lightness still thin, but real'],
+    feeling:['Your {mood} heart today is sorting what to keep from what to set down','Some things you don’t have to win — not carrying them is enough','Today, return something to time instead of holding it alone'],
+    light:['the feeling that you must understand everything before you can let go','holding old words just to prove the hurt was real','questions no one can answer for you right now'],
+    symbol:['a faint gold cloud · a half-open door · dust drifting from the hand','a pale cream star · a far black hole · a long exhale','old light slipping past the horizon · an empty orbit · a lighter weight'],
+    message:['Let go of just one sliver today — you needn’t release the whole universe at once','Some things not returning doesn’t mean they never mattered','An emptied hand may still tremble — but one day it will hold something new']
+  },
+  shadow:{
+    power:['A shadow asking to be seen honestly','An inner truth that doesn’t want to be buried','A dark night that still has a horizon'],
+    feeling:['Your {mood} heart today may be telling a truth you’re tired of covering','A part of you doesn’t want to hurt you — it just wants you to turn and listen','You don’t have to brighten right now — just naming where it’s dark is enough'],
+    light:['judging yourself harshly on a day you can barely cope','the thought that your heaviness makes you unlovable','hiding everything just to look strong'],
+    symbol:['basalt stone · a dark star · a thin rim of light','a moonless sky · cold star-debris · an underground door','deep indigo shadow · a slow breath · a small lit flame'],
+    message:['Tonight the shadow didn’t come to drag you down — it came to show you where you need light','You don’t have to be bright to have worth','Some nights are long, but staying with them gently is its own kind of courage']
+  },
+  return:{
+    power:['A return that brings you back to yourself','A memory meant not to trap you, but to be understood','Old roots still lending strength to today'],
+    feeling:['Your {mood} heart today may be remembering something old to find new meaning','Some memory came back not to pull you backward, but to return a piece of you','Today suits looking at the past with kinder eyes'],
+    light:['blaming yourself for what you couldn’t have known back then','the thought that missing something means you haven’t moved on','judging yourself now by the whole weight of the past'],
+    symbol:['a golden-brown star · a far-off home · a curving way back','an old ring · the dust-scent of books · light from a familiar window','a warm storm-banded star · a path that loops home · a name still remembered'],
+    message:['You can look back today — just remember to bring your present self home too','Some pasts don’t ask you to stay — only to understand them','Who you used to be is still here, but it needn’t be your cage']
+  },
+  seed:{
+    power:['A gentle beginning','The first signal from a sky just opening','A first star that needs no name yet'],
+    feeling:['You don’t have to know all of yourself today — just begin to hear the small voice inside','The universe doesn’t hold much of your story yet, but it can still send a first light','Before your real star exists, tonight may simply be lifting your face to listen'],
+    light:['the pressure to answer your whole life at once','the feeling that the first try must be perfect','the doubt that small feelings don’t matter'],
+    symbol:['a first star · a door ajar · light before dawn','pale stardust · a blank page · a first breath','a soft dark horizon · a tiny point of light · a path not yet named'],
+    message:['The universe is in no rush to know you — so you needn’t rush either','If there’s no answer today, just leaving a little of your voice is enough','Your star will slowly form from what you dare to hear in yourself']
+  }
+};
+const STAR_ECHO_ASK_Q_EN=['A star is signaling to you tonight','A few stars are calling to you','Tonight’s sky opens — choose one'];
+const STAR_ECHO_ASK_TITLES_EN=['The star you chose has spoken','The one your heart reached for opens its signal','An echo from the star you touched tonight','That star drifts in to answer you'];
+const STAR_ECHO_TITLE_POOL_EN=['The star “{name}” speaks tonight','Tonight “{name}” opens a signal to you','Light from the star “{name}” has reached you','“{name}” drifts a little closer to your heart','A faint voice from “{name}” begins to rise'];
+const STAR_ECHO_EMPTY_TITLES_EN=['The universe is quiet — but not empty','Before your first star is born, a first signal arrives','Tonight the sky offers you a beginning'];
+const SE_ITEMS_TH=['พลังเด่น','จังหวะของใจ','สิ่งที่ควรเบา','สัญลักษณ์นำทาง','คำฝากจากดาว'];
+const SE_ITEMS_EN=['Strength','Your inner tide','What to set down','Guiding symbol','A word from the star'];
+// bundle ของภาษาปัจจุบัน — เลือกครั้งเดียวตอนโหลด (สลับภาษา = reload)
+const SEL={
+  copy: LANG==='en'?STAR_ECHO_COPY_EN:STAR_ECHO_COPY,
+  askQ: LANG==='en'?STAR_ECHO_ASK_Q_EN:STAR_ECHO_ASK_Q,
+  askTitles: LANG==='en'?STAR_ECHO_ASK_TITLES_EN:STAR_ECHO_ASK_TITLES,
+  titlePool: LANG==='en'?STAR_ECHO_TITLE_POOL_EN:STAR_ECHO_TITLE_POOL,
+  emptyTitles: LANG==='en'?STAR_ECHO_EMPTY_TITLES_EN:STAR_ECHO_EMPTY_TITLES,
+  items: LANG==='en'?SE_ITEMS_EN:SE_ITEMS_TH
+};
+function seReason(note,arch,mood){
+  if(LANG!=='en')return memoryStarReason(note,arch,mood);
+  const w=matchedWords(note,arch);
+  return w.length?('from the words “'+w.join(' · ')+'”'):('from the feeling of “'+seMoodText(mood)+'”');
+}
 // ดูดวงมี mapping ของตัวเอง แยกจากห้วงใจ (ห้วงใจยังใช้ MOOD_TO_ARCH ตายตัว) — แต่ละสีโยงได้หลายธีม
 // สุ่มตามวัน → แตะสีเดิมคนละวันได้คนละธีม กันเดาทาง แต่ยังคุมโทนอารมณ์ให้ใกล้กัน
 const STAR_ECHO_PICK_ARCH={
@@ -5347,17 +5469,18 @@ const STAR_ECHO_PICK_ARCH={
 function buildPickReading(mood,stamp){
   const seed=_strHash(stamp+'|pick|'+mood+(ECHO_DEMO?('|'+Math.random()):''))||1,rng=mulberry32(seed);
   const set=STAR_ECHO_PICK_ARCH[mood]||['hope'];
-  const arch=set[Math.floor(rng()*set.length)]||'hope',copy=STAR_ECHO_COPY[arch]||STAR_ECHO_COPY.hope;
-  const moodText=moodLabel(mood)||'ใจของคุณ';
+  const arch=set[Math.floor(rng()*set.length)]||'hope',copy=SEL.copy[arch]||SEL.copy.hope;
+  const moodText=seMoodText(mood);
+  const source=LANG==='en'?('Star of '+seArchLabel(arch)+' · the one your heart reached for tonight')
+                          :('ดาวแห่ง'+seArchLabel(arch)+' · ดวงที่ใจคุณถูกดึงไปหาคืนนี้');
   return{arch,seed:false,pick:true,pickMood:mood,
-    title:starEchoPick(STAR_ECHO_ASK_TITLES,rng),
-    source:'ดาวแห่ง'+archLabelTH(arch)+' · ดวงที่ใจคุณถูกดึงไปหาคืนนี้',
+    title:starEchoPick(SEL.askTitles,rng),source,
     items:[
-      ['พลังเด่น',starEchoPick(copy.power,rng)],
-      ['จังหวะของใจ',starEchoPick(copy.feeling,rng).replace('{mood}',moodText)],
-      ['สิ่งที่ควรเบา',starEchoPick(copy.light,rng)],
-      ['สัญลักษณ์นำทาง',starEchoPick(copy.symbol,rng)],
-      ['คำฝากจากดาว',starEchoPick(copy.message,rng)]
+      [SEL.items[0],starEchoPick(copy.power,rng)],
+      [SEL.items[1],starEchoPick(copy.feeling,rng).replace('{mood}',moodText)],
+      [SEL.items[2],starEchoPick(copy.light,rng)],
+      [SEL.items[3],starEchoPick(copy.symbol,rng)],
+      [SEL.items[4],starEchoPick(copy.message,rng)]
     ]};
 }
 // คำตอบจากดาวในคลัง — พฤติกรรมเดิม ใช้ตอน "ข้ามคำถาม"
@@ -5365,17 +5488,21 @@ function buildPoolReading(stamp){
   const pool=starEchoPool(),sig=(typeof getSignal==='function'?getSignal():'')||'';
   const seed=_strHash(stamp+'|'+sig+'|'+pool.map(x=>x.pinKey).join('|'))||1,rng=mulberry32(seed);
   const x=pool.length?pool[Math.floor(rng()*pool.length)]:null;
-  const arch=(x&&x.sc&&x.sc.archetype)||'seed',copy=STAR_ECHO_COPY[arch]||STAR_ECHO_COPY.hope;
-  const mood=x&&x.e?x.e.m:null,moodText=moodLabel(mood)||'ใจของคุณ';
-  const title=x?starEchoPick(STAR_ECHO_TITLE_POOL,rng).replace('{name}',starDisplayName(x.pinKey,x.e)):starEchoPick(STAR_ECHO_EMPTY_TITLES,rng);
-  const dlabel=x?new Date(x.ds+'T00:00:00').toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'short',year:'numeric'}):'';
-  const source=x?(x.fallbackMood?('อ่านจากห้วงใจล่าสุด · '+dlabel+' · '+moodText):('ดาวแห่ง'+archLabelTH(arch)+' · บันทึก '+dlabel+' · '+memoryStarReason(x.e.note||'',arch,x.e.m))):'บันทึกห้วงใจสักครั้ง แล้วเสียงสะท้อนนี้จะเริ่มมีดาวของคุณเป็นต้นทาง';
+  const arch=(x&&x.sc&&x.sc.archetype)||'seed',copy=SEL.copy[arch]||SEL.copy.hope;
+  const mood=x&&x.e?x.e.m:null,moodText=seMoodText(mood);
+  const title=x?starEchoPick(SEL.titlePool,rng).replace('{name}',starDisplayName(x.pinKey,x.e)):starEchoPick(SEL.emptyTitles,rng);
+  const dlabel=x?new Date(x.ds+'T00:00:00').toLocaleDateString(seLocale(),{day:'numeric',month:'short',year:'numeric'}):'';
+  const en=LANG==='en';
+  let source;
+  if(!x)source=en?'Record a reflection once, and this echo will begin to carry a star of your own':'บันทึกห้วงใจสักครั้ง แล้วเสียงสะท้อนนี้จะเริ่มมีดาวของคุณเป็นต้นทาง';
+  else if(x.fallbackMood)source=(en?'Read from your latest reflection · ':'อ่านจากห้วงใจล่าสุด · ')+dlabel+' · '+moodText;
+  else source=(en?'Star of '+seArchLabel(arch)+' · recorded '+dlabel+' · ':'ดาวแห่ง'+seArchLabel(arch)+' · บันทึก '+dlabel+' · ')+seReason(x.e.note||'',arch,x.e.m);
   return{arch,seed:!x,title,source,items:[
-    ['พลังเด่น',starEchoPick(copy.power,rng)],
-    ['จังหวะของใจ',starEchoPick(copy.feeling,rng).replace('{mood}',moodText)],
-    ['สิ่งที่ควรเบา',starEchoPick(copy.light,rng)],
-    ['สัญลักษณ์นำทาง',starEchoPick(copy.symbol,rng)],
-    ['คำฝากจากดาว',starEchoPick(copy.message,rng)]
+    [SEL.items[0],starEchoPick(copy.power,rng)],
+    [SEL.items[1],starEchoPick(copy.feeling,rng).replace('{mood}',moodText)],
+    [SEL.items[2],starEchoPick(copy.light,rng)],
+    [SEL.items[3],starEchoPick(copy.symbol,rng)],
+    [SEL.items[4],starEchoPick(copy.message,rng)]
   ]};
 }
 function buildStarEcho(input){
@@ -5397,9 +5524,9 @@ function renderStarEchoResult(r){
     const kk=document.createElement('div');kk.className='se-k';kk.textContent=k;
     const vv=document.createElement('div');vv.className='se-v';vv.textContent=v;
     item.append(kk,vv);box.appendChild(item);});
-  const cta=$p('starEchoMoodCta');
-  if(r.seed){cta.textContent='บันทึกห้วงใจให้ดาวดวงแรก';cta.style.display='inline-block';}
-  else if(r.pick){cta.textContent='เก็บความรู้สึกนี้ไว้ในห้วงใจ';cta.style.display='inline-block';}
+  const cta=$p('starEchoMoodCta'),en=LANG==='en';
+  if(r.seed){cta.textContent=en?'Record a reflection for your first star':'บันทึกห้วงใจให้ดาวดวงแรก';cta.style.display='inline-block';}
+  else if(r.pick){cta.textContent=en?'Keep this feeling in your journal':'เก็บความรู้สึกนี้ไว้ในห้วงใจ';cta.style.display='inline-block';}
   else{cta.style.display='none';}
   $p('starEchoDemoAgain').style.display=ECHO_DEMO?'block':'none';
   card.classList.add('se-answered');
@@ -5429,15 +5556,26 @@ function renderStarEchoSky(){
 function pickStarEcho(mood){renderStarEchoResult(buildStarEcho({pick:mood}));}
 function showStarEchoAsk(){
   const card=$p('starEchoCard');card.classList.remove('se-answered');
-  $p('starEchoAskQ').textContent=STAR_ECHO_ASK_Q[Math.floor(Math.random()*STAR_ECHO_ASK_Q.length)];
+  $p('starEchoAskQ').textContent=SEL.askQ[Math.floor(Math.random()*SEL.askQ.length)];
   renderStarEchoSky();
   card.style.setProperty('--seA','#8fb8e8');card.style.setProperty('--seB','#ffe7b0'); // โทนกลางก่อนดาวตอบ
 }
 function submitStarEcho(){renderStarEchoResult(buildStarEcho(null));} // ให้ดาวเลือกเอง → อ่านจากคลังดาว/ห้วงใจ
+// ตั้งข้อความคงที่ของ modal + ปุ่มสลับภาษา ตามภาษาปัจจุบัน (นำร่อง: เฉพาะ Star Echo)
+function applyStarEchoLang(){
+  const en=LANG==='en',card=$p('starEchoCard');
+  card.querySelector('.se-pre').textContent=en?'STAR ECHO · a reflection from the stars':'STAR ECHO · เสียงสะท้อนจากดาว';
+  card.querySelector('.se-ask-sub').textContent=en?'Tap the one your heart is drawn to':'แตะดวงที่ใจคุณถูกดึงไปหา';
+  card.querySelector('.se-foot').textContent=en?'Read this as a gentle signal for reflection — not a fixed prophecy of your life':'อ่านเป็นสัญญาณสำหรับทบทวนใจ ไม่ใช่คำทำนายตายตัวของชีวิต';
+  $p('starEchoAskSkip').textContent=en?'Don’t feel like choosing? Let the star decide':'ยังไม่อยากเลือก — ให้ดาวเลือกเองก็ได้';
+  $p('starEchoDemoAgain').textContent=en?'↻ Draw again · DEMO':'↻ สุ่มดาวใหม่ · DEMO';
+  const lb=$p('starEchoLang');if(lb)lb.textContent=en?'ไทย':'EN';
+}
 function openStarEcho(){
   msgPanel.classList.remove('open');msgRead.classList.remove('on');closeMoodPanel();closeBlackHolePanel();closeMemoryCard();
   $p('myStarPanel').classList.remove('on');
-  $p('starEchoDate').textContent=new Date().toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  applyStarEchoLang();
+  $p('starEchoDate').textContent=new Date().toLocaleDateString(seLocale(),{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   const locked=readStarEchoDaily();
   if(locked)renderStarEchoResult(locked); // ถามไปแล้ววันนี้ → โชว์คำตอบเดิม
   else showStarEchoAsk();                 // ยังไม่ถาม → ถามก่อน
@@ -5452,6 +5590,8 @@ $p('moodCalToggle').onclick=()=>{
 };
 $p('echoBtn').onclick=openStarEcho;
 $p('starEchoClose').onclick=closeStarEcho;
+$p('starEchoLang').onclick=()=>setAppLang(LANG==='en'?'th':'en');
+applyStarEchoLang(); // ตั้งข้อความคงที่ให้ตรงภาษาตั้งแต่โหลด
 $p('starEchoAskSkip').onclick=()=>submitStarEcho();
 $p('starEchoDemoAgain').onclick=showStarEchoAsk;
 $p('starEchoModal').addEventListener('click',e=>{if(e.target.id==='starEchoModal')closeStarEcho();});
