@@ -1809,22 +1809,18 @@ function updateMeteors(dt){for(const m of meteors){
 // ---- asteroid belt ----
 const beltGroup=new THREE.Group();scene.add(beltGroup);
 (function(){
-  // ก้อนหินจริง (instanced, รูปทรงไม่สม่ำเสมอ)
-  const ROCK_N=560,rockGeo=new THREE.IcosahedronGeometry(0.2,0),
-    rockMat=new THREE.MeshStandardMaterial({color:0x8a7c68,roughness:1,flatShading:true}),
-    rocks=new THREE.InstancedMesh(rockGeo,rockMat,ROCK_N),d=new THREE.Object3D();
-  for(let i=0;i<ROCK_N;i++){const r=53+Math.random()*18,a=Math.random()*Math.PI*2,y=(Math.random()-.5)*4;
-    d.position.set(Math.cos(a)*r,y,Math.sin(a)*r);const s=0.3+Math.random()*1.5;
+  // ก้อนหินจริง (instanced, geometry ทึบ — ไม่จางเหมือนจุดโปร่งแสง) · แน่น+หลากสีให้ดูเป็นฝุ่นหินจริง
+  const ROCK_N=1700,rockGeo=new THREE.IcosahedronGeometry(0.2,0),
+    rockMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:1,flatShading:true}),
+    rocks=new THREE.InstancedMesh(rockGeo,rockMat,ROCK_N),d=new THREE.Object3D(),cc=new THREE.Color();
+  const ROCK_TONES=['#8a7c68','#9a8a70','#746858','#a4895c','#6e6456','#b39a6e','#7d7060'];
+  for(let i=0;i<ROCK_N;i++){const r=52+Math.random()*20,a=Math.random()*Math.PI*2,y=(Math.random()-.5)*4.4;
+    d.position.set(Math.cos(a)*r,y,Math.sin(a)*r);const s=0.18+Math.random()*Math.random()*1.5; // ส่วนใหญ่เล็ก ไม่กี่ก้อนใหญ่
     d.scale.set(s,s*(0.5+Math.random()*0.7),s);d.rotation.set(Math.random()*6,Math.random()*6,Math.random()*6);
-    d.updateMatrix();rocks.setMatrixAt(i,d.matrix);}
-  rocks.instanceMatrix.needsUpdate=true;beltGroup.add(rocks);
-  // ฝุ่นละเอียด (จุดกลม ไม่ใช่สี่เหลี่ยม)
-  const dustTex=radialTex([[0,'rgba(210,195,168,1)'],[.5,'rgba(150,135,112,.5)'],[1,'rgba(0,0,0,0)']]);
-  const N=2000,pos=new Float32Array(N*3);
-  for(let i=0;i<N;i++){const r=52+Math.random()*20,a=Math.random()*Math.PI*2,y=(Math.random()-.5)*4.2;
-    pos[i*3]=Math.cos(a)*r;pos[i*3+1]=y;pos[i*3+2]=Math.sin(a)*r;}
-  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
-  beltGroup.add(new THREE.Points(geo,new THREE.PointsMaterial({map:dustTex,color:0xb6a88e,size:0.95,sizeAttenuation:true,transparent:true,depthWrite:false,alphaTest:0.04})));
+    d.updateMatrix();rocks.setMatrixAt(i,d.matrix);
+    cc.set(ROCK_TONES[(Math.random()*ROCK_TONES.length)|0]).offsetHSL(0,(Math.random()-.5)*0.06,(Math.random()-.5)*0.14);
+    rocks.setColorAt(i,cc);}
+  rocks.instanceMatrix.needsUpdate=true;rocks.instanceColor.needsUpdate=true;beltGroup.add(rocks);
 })();
 
 // ============ KUIPER BELT (แถบไคเปอร์ เลยเนปจูน) ============
@@ -1904,41 +1900,6 @@ function placeBodies(){
   moonMesh.position.set(ep.x+_moonDir.x*MOON_DIST,ep.y+_moonDir.y*MOON_DIST,ep.z+_moonDir.z*MOON_DIST);
 }
 function updateBodies(date){ computeBodies(date); placeBodies(); }
-
-// ============ COMET — หางเส้นเรียวสวย พุ่งออกจากดวงอาทิตย์ ============
-const comet=new THREE.Group();scene.add(comet);
-comet.add(new THREE.Mesh(new THREE.SphereGeometry(0.5,16,16),
-  new THREE.MeshStandardMaterial({color:0xdff0ff,emissive:0x6fa8d8,emissiveIntensity:0.7,roughness:1})));
-const coma=new THREE.Sprite(new THREE.SpriteMaterial({map:radialTex([[0,'rgba(225,242,255,0.95)'],[0.3,'rgba(150,205,255,0.45)'],[1,'rgba(120,180,255,0)']]),
-  blending:THREE.AdditiveBlending,depthWrite:false,transparent:true}));
-coma.scale.set(4,4,1);comet.add(coma);
-// หาง = streak เดียว (หัวสว่าง เรียวจางไปด้าน anti-sun) บิลบอร์ดหันเข้ากล้องเสมอ
-function tailTex(){const c=document.createElement('canvas');c.width=256;c.height=64;const g=c.getContext('2d');
-  const gr=g.createLinearGradient(0,0,256,0);
-  gr.addColorStop(0,'rgba(225,242,255,0.95)');gr.addColorStop(0.32,'rgba(150,205,255,0.5)');gr.addColorStop(1,'rgba(110,170,255,0)');
-  g.fillStyle=gr;g.beginPath();g.moveTo(4,12);g.lineTo(256,30);g.lineTo(256,34);g.lineTo(4,52);g.quadraticCurveTo(-22,32,4,12);g.fill();
-  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return t;}
-const tailSprite=new THREE.Sprite(new THREE.SpriteMaterial({map:tailTex(),blending:THREE.AdditiveBlending,depthWrite:false,transparent:true,opacity:0.8}));
-tailSprite.center.set(0.02,0.5);scene.add(tailSprite);
-const COM={a:175,e:0.83,inc:0.55,rot:0.8,period:1600};
-const _an=new THREE.Vector3(),_head=new THREE.Vector3(),_tip=new THREE.Vector3();
-function updateComet(date){
-  const M=((date.getTime()/86400000)/COM.period)*Math.PI*2;
-  let E=M;for(let k=0;k<6;k++)E=E-(E-COM.e*Math.sin(E)-M)/(1-COM.e*Math.cos(E));
-  let px=COM.a*(Math.cos(E)-COM.e),py=0,pz=COM.a*Math.sqrt(1-COM.e*COM.e)*Math.sin(E);
-  const ci=Math.cos(COM.inc),si=Math.sin(COM.inc);let y2=py*ci-pz*si,z2=py*si+pz*ci;py=y2;pz=z2;
-  const cr=Math.cos(COM.rot),sr=Math.sin(COM.rot);let x3=px*cr-pz*sr,z3=px*sr+pz*cr;px=x3;pz=z3;
-  comet.position.set(px,py,pz);
-  const dist=Math.max(1,comet.position.length()),bright=Math.min(1,140/dist),tailLen=Math.min(110,2400/dist);
-  _an.copy(comet.position).normalize();
-  tailSprite.position.copy(comet.position);
-  tailSprite.scale.set(tailLen,tailLen*0.16+2,1);
-  tailSprite.material.opacity=0.35+0.55*bright;
-  coma.material.opacity=0.45+0.5*bright;const cs=3.5+4*bright;coma.scale.set(cs,cs,1);
-  _head.copy(comet.position).project(camera);
-  _tip.copy(comet.position).addScaledVector(_an,tailLen).project(camera);
-  tailSprite.material.rotation=Math.atan2(_tip.y-_head.y,_tip.x-_head.x);
-}
 
 // ============ SPACECRAFT — เส้นทางยานสำรวจจริง (anchored ที่ตำแหน่งดาวจริงวันที่ flyby) + ตำแหน่งเรียลไทม์ ============
 // มาตราส่วน AU → หน่วยฉาก สร้างจาก anchor วงโคจรดาวเคราะห์ (เส้นทางจึงแตะวงโคจรจริง) แล้ว extrapolate เลยพลูโต
@@ -2838,7 +2799,7 @@ let liveMode=false;
 const tLive=document.getElementById('tLive');
 function exitLive(){if(liveMode){liveMode=false;tLive.classList.remove('on');}}
 tLive.onclick=()=>{liveMode=!liveMode;tLive.classList.toggle('on',liveMode);
-  if(liveMode){running=true;play.innerHTML=ICON_PAUSE;simDate=new Date();updateBodies(simDate);updateClock();updatePhysics(simDate);updateComet(simDate);}};
+  if(liveMode){running=true;play.innerHTML=ICON_PAUSE;simDate=new Date();updateBodies(simDate);updateClock();updatePhysics(simDate);}};
 play.onclick=()=>{exitLive();running=!running;play.innerHTML=running?ICON_PAUSE:ICON_PLAY;};
 document.getElementById('speed').oninput=e=>{exitLive();speedMul=parseFloat(e.target.value);updateClock();};
 document.getElementById('prev').onclick=()=>{exitLive();simDate=new Date(simDate.getTime()-30*864e5);updateBodies(simDate);updateClock();};
@@ -4081,7 +4042,7 @@ function animate(){if(document.hidden)return;requestAnimationFrame(animate);cons
   kuiper.rotation.y+=dt*0.004*(running?Math.max(daysPerSec()*0.02,1):0.2);
   {const tt=performance.now()*0.001;for(const p of prominences){const f=Math.max(0,Math.sin(tt*p.userData.speed+p.userData.phase));
     p.material.opacity=0.15+0.55*f;const s=p.userData.base*(0.8+0.35*f);p.scale.set(s,s,1);}}
-  updateComet(simDate);updateMeteors(dt);updateDrifters(dt);updateBlackHole(dt);updateMyStar(dt);animateMemoryPlanets(dt);
+  updateMeteors(dt);updateDrifters(dt);updateBlackHole(dt);updateMyStar(dt);animateMemoryPlanets(dt);
   {const au=Math.max(0,0.24+0.2*Math.sin(performance.now()*0.002));auroras.forEach((r,i)=>r.material.opacity=au*(0.78+0.22*Math.sin(performance.now()*0.0031+i*2.1)));}
   for(const m of planetMeshes)if(m.material.emissive)m.material.emissive.setRGB(0,0,0);
   const canTint=o=>o&&!(o.userData.__memplanet||o.userData.__mystar||o.userData.__blackhole);
@@ -4123,7 +4084,7 @@ MISSIONS.forEach(m=>{const mk=document.createElement('div');mk.className='tl-mar
   mk.onclick=e=>{e.stopPropagation();tlSet(new Date(new Date(m.launch).getTime()-20*864e5));};tlTicks.appendChild(mk);});
 function tlSync(){const p=tlPct(simDate.getTime());tlHandle.style.left=p*100+'%';tlFill.style.width=p*100+'%';tlYear.textContent=simDate.getUTCFullYear();}
 function tlSet(d){exitLive();simDate=new Date(Math.max(TL_MIN,Math.min(TL_MAX,d.getTime())));
-  updateBodies(simDate);updateClock();updatePhysics(simDate);updateComet(simDate);updateMissionVisual(simDate);updateMissionDash();}
+  updateBodies(simDate);updateClock();updatePhysics(simDate);updateMissionVisual(simDate);updateMissionDash();}
 let tlDragging=false,tlPendingX=null,tlRaf=0;
 function tlFlush(){tlRaf=0;if(tlPendingX==null)return;const r=tlTrack.getBoundingClientRect();
   tlSet(tlDate((tlPendingX-r.left)/r.width));tlPendingX=null;}
@@ -4135,8 +4096,7 @@ tlTrack.addEventListener('pointerup',()=>{tlDragging=false;});
 tlTrack.addEventListener('pointercancel',()=>{tlDragging=false;});
 afterClock=tlSync;tlSync();
 
-updateBodies(simDate);updateMoons(simDate);updateClock();updatePhysics(simDate);updateComet(simDate);
-updateMissionVisual(simDate);updateMissionDash(simDate);
+updateBodies(simDate);updateMoons(simDate);updateClock();updatePhysics(simDate);updateMissionVisual(simDate);updateMissionDash(simDate);
 animate();
 // สลับแท็บ/ย่อหน้าต่าง → หยุด render loop (ประหยัด CPU/GPU/แบต) แล้วต่อเมื่อกลับมา
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){clock.getDelta();animate();}});
