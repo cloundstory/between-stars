@@ -1849,8 +1849,8 @@ function updateMeteors(dt){for(const m of meteors){
 const beltGroup=new THREE.Group();scene.add(beltGroup);
 (function(){
   // ก้อนหินจริง (instanced, geometry ทึบ — ไม่จางเหมือนจุดโปร่งแสง) · แน่น+หลากสีให้ดูเป็นฝุ่นหินจริง
-  const ROCK_N=1700,rockGeo=new THREE.IcosahedronGeometry(0.2,0),
-    rockMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:1,flatShading:true}),
+  const ROCK_N=1200,rockGeo=new THREE.IcosahedronGeometry(0.2,0),
+    rockMat=new THREE.MeshLambertMaterial({color:0xffffff,flatShading:true}), // Lambert = มีแสงเงานุ่ม แต่เบากว่า Standard เยอะ (ลดภาระตอนซูมออกเห็นทั้งแถบ)
     rocks=new THREE.InstancedMesh(rockGeo,rockMat,ROCK_N),d=new THREE.Object3D(),cc=new THREE.Color();
   const ROCK_TONES=['#8a7c68','#9a8a70','#746858','#a4895c','#6e6456','#b39a6e','#7d7060'];
   for(let i=0;i<ROCK_N;i++){const r=52+Math.random()*20,a=Math.random()*Math.PI*2,y=(Math.random()-.5)*4.4;
@@ -2891,7 +2891,8 @@ function qLevel(){return Math.min(qAuto,qCeil());}
 function applyQuality(){
   const L=qLevel(),far=_prLite;
   tQ.textContent='คุณภาพ: '+QNAME[L]+(qAuto<qCeil()?' · อัตโนมัติ':'');tQ.classList.toggle('on',L>=2);
-  const pr=(L>=2&&!far)?Math.min(devicePixelRatio,2):1;
+  // pixel ratio ผูกกับระดับคุณภาพอย่างเดียว ไม่ผูกกับระยะซูม — กัน realloc render target กลางการซูม (ต้นเหตุการกระตุกตอน zoom out)
+  const pr=(L>=2)?Math.min(devicePixelRatio,2):1;
   if(renderer.getPixelRatio()!==pr)syncRenderSize(innerWidth,innerHeight,pr);
   bloom.enabled=(L>=1);
   const sh=(L>=2);renderer.shadowMap.enabled=sh;sunLight.castShadow=sh;
