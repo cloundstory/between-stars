@@ -1217,10 +1217,10 @@
   </div>
   <div class="res-rule"></div>
   <div id="resWrite">
-    <textarea id="resTextarea" maxlength="280" placeholder="บันทึกเสียงสะท้อนของคุณ…"></textarea>
+    <textarea id="resTextarea" maxlength="280" placeholder="บันทึกเสียงสะท้อนของคุณ…" data-i18n-ph="res.ph"></textarea>
     <div id="resWriteRow">
       <span id="resSig"></span>
-      <div style="display:flex;align-items:center;gap:14px"><span id="resWarn"></span><button id="resSubmit">บันทึกเสียงสะท้อน</button></div>
+      <div style="display:flex;align-items:center;gap:14px"><span id="resWarn"></span><button id="resSubmit" data-i18n="res.submit">บันทึกเสียงสะท้อน</button></div>
     </div>
   </div>
   <div class="res-rule"></div>
@@ -1542,6 +1542,7 @@ const UI_EN={
  'msg.ph':'Write a message, up to 200 characters…','msg.send':'✦ Leave it with the stars',
  'msg.replyToggle':'✉ Write back','msg.replyPh':'Write back… your reply will drift toward whoever left this',
  'msg.replySend':'✦ Send your reply',
+ 'res.ph':'Leave your resonance…','res.submit':'Post resonance',
  'lang.toggle':'ไทย'
 };
 function applyUILang(){
@@ -2836,15 +2837,15 @@ function openInfo(o,obj){selected=o;selectedObj=obj;
   document.getElementById('i-dot').style.color=o.color;
   const ph=(typeof philo!=='undefined'&&philo&&typeof PHILO!=='undefined'&&PHILO[o.en]);
   let h='';
-  if(ph){document.getElementById('i-badge').textContent='มุมมองใคร่ครวญ';
-    h='<div class="sec">แนวคิด</div><div class="note"><b>'+ph.c+'</b></div>'
+  if(ph){document.getElementById('i-badge').textContent=L('Contemplative view','มุมมองใคร่ครวญ');
+    h='<div class="sec">'+L('Idea','แนวคิด')+'</div><div class="note"><b>'+ph.c+'</b></div>'
       +ph.t.map(p=>'<div class="note">'+p+'</div>').join('')
-      +'<div class="sec">ชวนใคร่ครวญ</div><div class="note">'+ph.q+'</div>';
+      +'<div class="sec">'+L('To contemplate','ชวนใคร่ครวญ')+'</div><div class="note">'+ph.q+'</div>';
   }else{
-    document.getElementById('i-badge').textContent=o.type||'ดาวเคราะห์';
-    if(o.orbitData)h+='<div class="sec">วงโคจร & การหมุน</div>'+rows(o.orbitData);
-    h+='<div class="sec">ลักษณะทางกายภาพ</div>'+rows(o.phys);
-    h+='<div class="sec">เกร็ดน่ารู้</div>'+(o.facts||[]).map(f=>`<div class="note">${f}</div>`).join('');
+    document.getElementById('i-badge').textContent=o.type||L('Planet','ดาวเคราะห์');
+    if(o.orbitData)h+='<div class="sec">'+L('Orbit & rotation','วงโคจร & การหมุน')+'</div>'+rows(o.orbitData);
+    h+='<div class="sec">'+L('Physical traits','ลักษณะทางกายภาพ')+'</div>'+rows(o.phys);
+    h+='<div class="sec">'+L('Did you know','เกร็ดน่ารู้')+'</div>'+(o.facts||[]).map(f=>`<div class="note">${f}</div>`).join('');
   }
   document.getElementById('i-body').innerHTML=h;
   const irb=document.getElementById('iResBtn');
@@ -4244,7 +4245,7 @@ function renderResonances(en,col){
   const b=readBoard(),items=b[en]||[],likes=readLikes(),reports=readReports(),sig=getSignal();
   const body=$p('resBody');
   const visible=items.filter(r=>!reports.has(r.id));
-  if(!visible.length){body.innerHTML='<div style="text-align:center;padding:70px 0;font-family:var(--eng);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--faint)">ยังไม่มีเสียงสะท้อน<br><br>เป็นคนแรกที่ส่งสัญญาณ</div>';return;}
+  if(!visible.length){body.innerHTML='<div style="text-align:center;padding:70px 0;font-family:var(--eng);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--faint)">'+L('No resonance yet<br><br>Be the first to send a signal','ยังไม่มีเสียงสะท้อน<br><br>เป็นคนแรกที่ส่งสัญญาณ')+'</div>';return;}
   body.innerHTML=visible.map(r=>{
     const mine=r.sig===sig,liked=likes.has(r.id);
     const ts=new Date(r.t).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
@@ -4275,8 +4276,8 @@ window.resReport=function(id,btn){
 $p('resClose').onclick=()=>$p('resonanceModal').classList.remove('on');
 $p('resSubmit').onclick=()=>{
   const t=($p('resTextarea').value||'').trim();
-  if(!t){$p('resWarn').textContent='เขียนก่อนนะ';return;}
-  if(BADWORDS.some(w=>t.toLowerCase().includes(w))){$p('resWarn').textContent='มีคำไม่เหมาะสม';return;}
+  if(!t){$p('resWarn').textContent=L('Write something first','เขียนก่อนนะ');return;}
+  if(BADWORDS.some(w=>t.toLowerCase().includes(w))){$p('resWarn').textContent=L('That has something inappropriate','มีคำไม่เหมาะสม');return;}
   if(!resCurrentPlanet)return;
   postResonance(resCurrentPlanet.en,t.slice(0,280));
   if(window.bsEvent)bsEvent('resonance');
@@ -4337,40 +4338,40 @@ function renderSigIdentity(){
   const cfg=!!(window.BSync&&window.BSync.configured);
   const creator=isCreatorSig();
   $p('sigIdentityInner').innerHTML=`
-    ${creator?'<div class="sig-founder">✦ ผู้ก่อตั้ง · FOUNDER</div>':''}
-    <div class="sig-date">เริ่มส่งสัญญาณ · ${created.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div>
+    ${creator?'<div class="sig-founder">'+L('✦ FOUNDER','✦ ผู้ก่อตั้ง · FOUNDER')+'</div>':''}
+    <div class="sig-date">${L('Broadcasting since','เริ่มส่งสัญญาณ')} · ${created.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div>
     <div class="sig-stats-row">
-      <div class="sig-stat"><b>${pub}</b><span>คำฝาก</span></div>
-      <div class="sig-stat"><b>${priv}</b><span>ปล่อยวาง</span></div>
-      <div class="sig-stat"><b>${found}</b><span>เจอแล้ว</span></div>
+      <div class="sig-stat"><b>${pub}</b><span>${L('messages','คำฝาก')}</span></div>
+      <div class="sig-stat"><b>${priv}</b><span>${L('let go','ปล่อยวาง')}</span></div>
+      <div class="sig-stat"><b>${found}</b><span>${L('found','เจอแล้ว')}</span></div>
       <div class="sig-stat"><b>${totalRes}</b><span>resonance</span></div>
     </div>
-    ${creator?`<a href="dashboard.html" style="display:block;text-align:center;margin:2px 0 18px;padding:11px;border:1px solid rgba(243,201,122,.38);border-radius:11px;color:var(--gold);font-family:var(--eng);font-size:10px;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;background:rgba(243,201,122,.05)">✦ สถิติผู้เข้าชม · Dashboard →</a>`:''}
-    <div class="sig-login-head">เชื่อมต่อ SIGNAL กับ EMAIL</div>
+    ${creator?`<a href="dashboard.html" style="display:block;text-align:center;margin:2px 0 18px;padding:11px;border:1px solid rgba(243,201,122,.38);border-radius:11px;color:var(--gold);font-family:var(--eng);font-size:10px;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;background:rgba(243,201,122,.05)">${L('✦ Visitor stats · Dashboard →','✦ สถิติผู้เข้าชม · Dashboard →')}</a>`:''}
+    <div class="sig-login-head">${L('LINK SIGNAL TO EMAIL','เชื่อมต่อ SIGNAL กับ EMAIL')}</div>
     <div class="sig-login-desc">${linked
-      ?'เข้าสู่ระบบแล้ว · <b style="color:var(--gold)">'+escapeHtml(email)+'</b><br>'+(cfg?'บันทึกของคุณ (อารมณ์ · ดาว · Golden Record) ซิงก์อัตโนมัติทุกเครื่อง':'Signal จะซิงก์ข้ามเครื่องเมื่อ backend พร้อม')
-      :(cfg?'ป้อน email เพื่อรับลิงก์เข้าระบบ — บันทึกของคุณจะถูกเก็บบนคลาวด์ ซิงก์ทุกเครื่อง ไม่หายเมื่อเปลี่ยนเครื่อง':'ป้อน email เพื่อรับ magic link — ยืนยันแล้ว Signal นี้จะผูกกับ account ของคุณ<br>สามารถกู้คืนและใช้ข้ามเครื่องได้')}</div>
+      ?L('Signed in · ','เข้าสู่ระบบแล้ว · ')+'<b style="color:var(--gold)">'+escapeHtml(email)+'</b><br>'+(cfg?L('Your records (moods · stars · Golden Record) sync automatically across every device','บันทึกของคุณ (อารมณ์ · ดาว · Golden Record) ซิงก์อัตโนมัติทุกเครื่อง'):L('Signal will sync across devices once the backend is ready','Signal จะซิงก์ข้ามเครื่องเมื่อ backend พร้อม'))
+      :(cfg?L('Enter your email for a sign-in link — your records are stored in the cloud, synced across devices and kept safe when you switch','ป้อน email เพื่อรับลิงก์เข้าระบบ — บันทึกของคุณจะถูกเก็บบนคลาวด์ ซิงก์ทุกเครื่อง ไม่หายเมื่อเปลี่ยนเครื่อง'):L('Enter your email for a magic link — once confirmed this Signal links to your account<br>and can be recovered and used across devices','ป้อน email เพื่อรับ magic link — ยืนยันแล้ว Signal นี้จะผูกกับ account ของคุณ<br>สามารถกู้คืนและใช้ข้ามเครื่องได้'))}</div>
     ${linked
-      ?`<div style="display:flex;align-items:center;gap:12px"><span style="font-family:var(--eng);font-size:10px;letter-spacing:.12em;color:var(--gold)">● LINKED</span><button onclick="sigUnlink()" style="background:none;border:1px solid var(--line);color:var(--faint);font-family:var(--eng);font-size:9px;letter-spacing:.14em;padding:6px 12px;border-radius:6px;cursor:pointer">ยกเลิก</button></div>`
+      ?`<div style="display:flex;align-items:center;gap:12px"><span style="font-family:var(--eng);font-size:10px;letter-spacing:.12em;color:var(--gold)">● LINKED</span><button onclick="sigUnlink()" style="background:none;border:1px solid var(--line);color:var(--faint);font-family:var(--eng);font-size:9px;letter-spacing:.14em;padding:6px 12px;border-radius:6px;cursor:pointer">${L('Unlink','ยกเลิก')}</button></div>`
       :`<div class="sig-email-row">
         <input id="sigEmailInput" type="email" placeholder="your@email.com" value="">
-        <button id="sigEmailSend">ส่งลิงก์</button>
+        <button id="sigEmailSend">${L('Send link','ส่งลิงก์')}</button>
       </div>
       <div id="sigLoginMsg"></div>`}`;
   if(!linked){
     $p('sigEmailSend').onclick=async()=>{
       const v=($p('sigEmailInput').value||'').trim();
-      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){$p('sigLoginMsg').textContent='รูปแบบ email ไม่ถูกต้อง';return;}
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){$p('sigLoginMsg').textContent=L('Invalid email format','รูปแบบ email ไม่ถูกต้อง');return;}
       if(cfg){
-        $p('sigLoginMsg').textContent='กำลังส่งลิงก์…';
+        $p('sigLoginMsg').textContent=L('Sending link…','กำลังส่งลิงก์…');
         try{const{error}=await window.BSync.sendLink(v);
-          if(error){$p('sigLoginMsg').textContent='ส่งไม่สำเร็จ: '+error.message;return;}
-          $p('sigLoginMsg').innerHTML='ส่งลิงก์เข้าระบบไปที่ <b>'+escapeHtml(v)+'</b> แล้ว<br><span style="opacity:.6;font-size:11px">เปิดเมล แล้วคลิกลิงก์เพื่อเข้าสู่ระบบ</span>';
-        }catch(e){$p('sigLoginMsg').textContent='ส่งไม่สำเร็จ ลองใหม่อีกครั้ง';}
+          if(error){$p('sigLoginMsg').textContent=L('Failed: ','ส่งไม่สำเร็จ: ')+error.message;return;}
+          $p('sigLoginMsg').innerHTML=L('Sign-in link sent to <b>','ส่งลิงก์เข้าระบบไปที่ <b>')+escapeHtml(v)+L('</b><br><span style="opacity:.6;font-size:11px">Open your email and click the link to sign in</span>','</b> แล้ว<br><span style="opacity:.6;font-size:11px">เปิดเมล แล้วคลิกลิงก์เพื่อเข้าสู่ระบบ</span>');
+        }catch(e){$p('sigLoginMsg').textContent=L('Failed, please try again','ส่งไม่สำเร็จ ลองใหม่อีกครั้ง');}
         return;
       }
       localStorage.setItem('sigEmail',v);
-      $p('sigLoginMsg').innerHTML='ส่งลิงก์ไปที่ <b>'+escapeHtml(v)+'</b> แล้ว — กรุณาตรวจ inbox<br><span style="opacity:.5;font-size:11px">(backend ยังไม่ active — บันทึก email ไว้ก่อน)</span>';
+      $p('sigLoginMsg').innerHTML=L('Link sent to <b>','ส่งลิงก์ไปที่ <b>')+escapeHtml(v)+L('</b> — please check your inbox<br><span style="opacity:.5;font-size:11px">(backend not active yet — email saved for now)</span>','</b> แล้ว — กรุณาตรวจ inbox<br><span style="opacity:.5;font-size:11px">(backend ยังไม่ active — บันทึก email ไว้ก่อน)</span>');
       setTimeout(()=>renderSigIdentity(),1800);
     };
   }
@@ -4399,7 +4400,7 @@ function renderSigResonance(){
     const mine=(board[en]||[]).filter(r=>r.sig===sig);
     if(mine.length)entries.push({en,items:mine});
   });
-  if(!entries.length){$p('sigResInner').innerHTML='<div class="stab-empty">RESONANCE<span>ยังไม่มีเสียงสะท้อนที่คุณส่งไป</span></div>';return;}
+  if(!entries.length){$p('sigResInner').innerHTML='<div class="stab-empty">RESONANCE<span>'+L('You haven’t sent any resonance yet','ยังไม่มีเสียงสะท้อนที่คุณส่งไป')+'</span></div>';return;}
   $p('sigResInner').innerHTML=entries.map(e=>`
     <div class="stab-res-planet" style="color:${planetColor(e.en)}">${e.en.toUpperCase()}</div>
     ${e.items.map(r=>`<div class="stab-item">
@@ -4412,30 +4413,30 @@ function renderSigDispatches(){
   const mySig=getSignal(),a=readLocal().filter(l=>l.pub&&l.sig===mySig).reverse();
   const privCount=getDispatchStats().priv||0;
   const now=Date.now(),D3=3*864e5,D7=7*864e5;
-  let html=`<div class="stab-group-head">ปล่อยวาง</div><div class="disp-priv-count">${privCount} ครั้ง<span>ปล่อยไปแล้ว — ไม่มีใครเห็น รวมตัวเอง</span></div>`;
-  html+=`<div class="stab-group-head">ฝากไว้กับดวงดาว</div>`;
-  if(!a.length){html+=`<div class="mempty">ยังไม่มีคำฝาก</div>`;}
+  let html=`<div class="stab-group-head">${L('Let go','ปล่อยวาง')}</div><div class="disp-priv-count">${L(privCount+' times',privCount+' ครั้ง')}<span>${L('released — no one sees them, not even you','ปล่อยไปแล้ว — ไม่มีใครเห็น รวมตัวเอง')}</span></div>`;
+  html+=`<div class="stab-group-head">${L('Left with the stars','ฝากไว้กับดวงดาว')}</div>`;
+  if(!a.length){html+=`<div class="mempty">${L('No messages yet','ยังไม่มีคำฝาก')}</div>`;}
   else a.forEach(l=>{
     const hasReply=l.replies&&l.replies.length>0,reply=hasReply?l.replies[0]:null;
     let badge='',countdown='',replyHtml='',pinBtn='';
     if(hasReply){
-      if(l.pinned){badge='<span class="disp-status pinned">✦ บันทึกไว้</span>';}
+      if(l.pinned){badge='<span class="disp-status pinned">'+L('✦ Saved','✦ บันทึกไว้')+'</span>';}
       else{
         const rem=D3-(now-reply.t);
-        if(rem<=0){badge='<span class="disp-status decay">เสื่อมสลายแล้ว</span>';}
+        if(rem<=0){badge='<span class="disp-status decay">'+L('Faded away','เสื่อมสลายแล้ว')+'</span>';}
         else{
           const d=Math.floor(rem/864e5),h=Math.floor((rem%864e5)/36e5);
-          countdown=`<span class="disp-countdown">เสื่อมสลายใน ${d}ว ${h}ชม.</span>`;
-          pinBtn=`<button class="disp-pin" onclick="pinDispatch('${l.id}')">✦ เก็บใน COLLECTION</button>`;
+          countdown=`<span class="disp-countdown">${L('Fades in '+d+'d '+h+'h','เสื่อมสลายใน '+d+'ว '+h+'ชม.')}</span>`;
+          pinBtn=`<button class="disp-pin" onclick="pinDispatch('${l.id}')">${L('✦ Save to COLLECTION','✦ เก็บใน COLLECTION')}</button>`;
         }
       }
       replyHtml=`<div class="disp-reply">↩ ${escapeHtml(reply.text)}</div>`;
     } else {
       const d=Math.max(0,Math.floor((D7-(now-l.t))/864e5));
-      badge=`<span class="disp-status waiting">รอคนตอบ · เหลือ ${d} วัน</span>`;
+      badge=`<span class="disp-status waiting">${L('Awaiting a reply · '+d+' days left','รอคนตอบ · เหลือ '+d+' วัน')}</span>`;
     }
     html+=`<div class="disp-item${hasReply?' has-reply':''}">
-      <div class="disp-meta">${new Date(l.t).toLocaleDateString('th-TH',{day:'numeric',month:'short'})} ${badge}${countdown}</div>
+      <div class="disp-meta">${new Date(l.t).toLocaleDateString(seLocale(),{day:'numeric',month:'short'})} ${badge}${countdown}</div>
       <div class="disp-text">${escapeHtml(l.text)}</div>${replyHtml}
       ${pinBtn?`<div class="disp-actions">${pinBtn}</div>`:''}
     </div>`;
@@ -4451,13 +4452,13 @@ function renderSigCollection(){
   const mySig=getSignal();
   const pinned=readLocal().filter(l=>l.pub&&l.sig===mySig&&l.pinned&&l.replies&&l.replies.length>0).reverse();
   if(!pinned.length){
-    $p('sigCollInner').innerHTML='<div class="stab-empty">COLLECTION<span>pin คำตอบที่มีคุณค่าไว้จาก DISPATCHES<br>เก็บไว้ได้ตลอดไป</span></div>';return;
+    $p('sigCollInner').innerHTML='<div class="stab-empty">COLLECTION<span>'+L('Pin replies that matter from DISPATCHES<br>keep them forever','pin คำตอบที่มีคุณค่าไว้จาก DISPATCHES<br>เก็บไว้ได้ตลอดไป')+'</span></div>';return;
   }
   const html=pinned.map(l=>`<div class="disp-item has-reply">
-    <div class="disp-meta">${new Date(l.t).toLocaleDateString('th-TH',{day:'numeric',month:'short'})} <span class="disp-status pinned">✦ บันทึกไว้</span></div>
+    <div class="disp-meta">${new Date(l.t).toLocaleDateString(seLocale(),{day:'numeric',month:'short'})} <span class="disp-status pinned">${L('✦ Saved','✦ บันทึกไว้')}</span></div>
     <div class="disp-text">${escapeHtml(l.text)}</div>
     <div class="disp-reply">↩ ${escapeHtml(l.replies[0].text)}</div>
-    <div class="disp-actions"><button class="disp-pin" style="color:var(--muted);border-color:rgba(255,255,255,.1)" onclick="unpinDispatch('${l.id}')">ยกเลิกการบันทึก</button></div>
+    <div class="disp-actions"><button class="disp-pin" style="color:var(--muted);border-color:rgba(255,255,255,.1)" onclick="unpinDispatch('${l.id}')">${L('Unsave','ยกเลิกการบันทึก')}</button></div>
   </div>`).join('');
   $p('sigCollInner').innerHTML=html;
 }
