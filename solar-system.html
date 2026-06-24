@@ -1347,7 +1347,7 @@
 <div id="memCard">
   <button id="memCardClose">×</button>
   <div id="mcName"></div>
-  <div class="mc-pre">ห้วงใจ · <span id="mcDate"></span></div>
+  <div class="mc-pre" data-i18n-html="mem.mcPre">ห้วงใจ · <span id="mcDate"></span></div>
   <div class="mc-mood"><span id="mcMoodDot"></span><span id="mcMoodLabel"></span></div>
   <div id="mcNote"></div>
   <div id="mcArch"></div>
@@ -1355,18 +1355,18 @@
 </div>
 
 <div id="memVault">
-  <div class="vault-pre">คลังดาว · <span id="vaultCount">0/9</span></div>
+  <div class="vault-pre" data-i18n-html="mem.vaultPre">คลังดาว · <span id="vaultCount">0/9</span></div>
   <div id="vaultSlots"></div>
 </div>
 
 <div id="memCandidate">
   <div class="cand-pre">NEW MEMORY STAR</div>
-  <div class="cand-title" id="candTitle">ดาวดวงใหม่กำลังก่อตัว</div>
+  <div class="cand-title" id="candTitle" data-i18n="mem.candTitle">ดาวดวงใหม่กำลังก่อตัว</div>
   <div class="cand-meta" id="candMeta"></div>
   <div class="cand-actions">
-    <button id="candPreview" type="button">ดูดาวดวงนี้</button>
-    <button id="candArchive" type="button">เก็บเข้าคลังดาว</button>
-    <button id="candDismiss" type="button">ปล่อยเป็นละออง</button>
+    <button id="candPreview" type="button" data-i18n="mem.candPreview">ดูดาวดวงนี้</button>
+    <button id="candArchive" type="button" data-i18n="mem.archive">เก็บเข้าคลังดาว</button>
+    <button id="candDismiss" type="button" data-i18n="mem.dismiss">ปล่อยเป็นละออง</button>
   </div>
 </div>
 
@@ -1374,14 +1374,14 @@
   <div class="cand-card">
     <button id="candClose" type="button">×</button>
     <div class="cand-pre">NEW MEMORY STAR</div>
-    <div class="cand-title" id="candModalTitle">ดาวดวงใหม่</div>
+    <div class="cand-title" id="candModalTitle" data-i18n="mem.candModalTitle">ดาวดวงใหม่</div>
     <div class="cand-meta" id="candModalMeta"></div>
     <div class="cand-preview"><canvas id="candCanvas" width="520" height="360"></canvas></div>
-    <div class="cand-slot-title">เลือกวงโคจรที่จะให้ดาวดวงนี้เข้าแทน</div>
+    <div class="cand-slot-title" data-i18n="mem.slotTitle">เลือกวงโคจรที่จะให้ดาวดวงนี้เข้าแทน</div>
     <div id="candSlots"></div>
     <div class="cand-actions">
-      <button id="candModalArchive" type="button">เก็บเข้าคลังดาว</button>
-      <button id="candModalDismiss" type="button">ปล่อยเป็นละออง</button>
+      <button id="candModalArchive" type="button" data-i18n="mem.archive">เก็บเข้าคลังดาว</button>
+      <button id="candModalDismiss" type="button" data-i18n="mem.dismiss">ปล่อยเป็นละออง</button>
     </div>
   </div>
 </div>
@@ -1390,14 +1390,14 @@
 <div id="starNameModal">
   <div class="cand-card">
     <div class="cand-pre">A STAR IS BORN</div>
-    <div class="cand-title">✦ ดาวดวงใหม่ถือกำเนิด</div>
+    <div class="cand-title" data-i18n="mem.starBorn">✦ ดาวดวงใหม่ถือกำเนิด</div>
     <div class="sn-orb"></div>
     <div class="sn-sub" id="starNameSub"></div>
     <input id="starNameInput" type="text" maxlength="24" autocomplete="off" placeholder="">
-    <div class="sn-hint">ปล่อยว่างไว้ก็ได้ — จักรวาลจะตั้งชื่อจากคำในใจคุณ</div>
+    <div class="sn-hint" data-i18n="mem.snHint">ปล่อยว่างไว้ก็ได้ — จักรวาลจะตั้งชื่อจากคำในใจคุณ</div>
     <div class="cand-actions">
-      <button id="starNameSave" type="button">ตั้งชื่อดาวดวงนี้</button>
-      <button id="starNameSkip" type="button">ให้จักรวาลตั้งให้</button>
+      <button id="starNameSave" type="button" data-i18n="mem.nameSave">ตั้งชื่อดาวดวงนี้</button>
+      <button id="starNameSkip" type="button" data-i18n="mem.nameSkip">ให้จักรวาลตั้งให้</button>
     </div>
   </div>
 </div>
@@ -1405,15 +1405,15 @@
 <!-- คลังดาว · เลือกนำกลับมา / ปล่อย -->
 <div id="vaultActionModal">
   <div class="cand-card">
-    <div class="cand-pre">คลังดาว</div>
+    <div class="cand-pre" data-i18n="mem.vaultLabel">คลังดาว</div>
     <div class="cand-title" id="vaultActionName"></div>
     <div class="sn-sub" id="vaultActionSub"></div>
-    <div class="cand-slot-title" id="vaultSlotTitle" style="display:none">เลือกวงโคจรที่จะให้ดาวเข้าแทน</div>
+    <div class="cand-slot-title" id="vaultSlotTitle" style="display:none" data-i18n="mem.vaultSlotTitle">เลือกวงโคจรที่จะให้ดาวเข้าแทน</div>
     <div id="vaultSlots" style="display:none"></div>
     <div class="cand-actions">
-      <button id="vaultBringBack" type="button">นำกลับมาแทนดาว</button>
-      <button id="vaultRelease" type="button">ปล่อยดาว</button>
-      <button id="vaultActionCancel" type="button">ยกเลิก</button>
+      <button id="vaultBringBack" type="button" data-i18n="mem.bringBack">นำกลับมาแทนดาว</button>
+      <button id="vaultRelease" type="button" data-i18n="mem.release">ปล่อยดาว</button>
+      <button id="vaultActionCancel" type="button" data-i18n="mem.cancel">ยกเลิก</button>
     </div>
   </div>
 </div>
@@ -1550,6 +1550,13 @@ const UI_EN={
  'pbd.l5':'Every hero and coward, every creator','pbd.l6':'and destroyer of civilization, every saint and sinner —',
  'pbd.l7':'lived there, on a mote of dust suspended in a sunbeam.','pbd.l8':'The Earth is a very small stage in a vast cosmic arena.',
  'pbd.endQuote':'That’s us. All of us.','pbd.endSub':'In a single pixel · a 640×480 photo · 6 billion km from Earth','pbd.return':'← Back to the cosmos',
+ 'mem.vaultPre':'Star vault · <span id="vaultCount">0/9</span>','mem.mcPre':'Inner Space · <span id="mcDate"></span>',
+ 'mem.candTitle':'A new star is forming','mem.candModalTitle':'A new star','mem.candPreview':'See this star',
+ 'mem.archive':'Keep in vault','mem.dismiss':'Let it scatter','mem.slotTitle':'Choose an orbit for this star to take',
+ 'mem.starBorn':'✦ A new star is born','mem.snHint':'Leave it blank — the universe will name it from the words in your heart',
+ 'mem.nameSave':'Name this star','mem.nameSkip':'Let the universe name it',
+ 'mem.vaultLabel':'Star vault','mem.vaultSlotTitle':'Choose an orbit for the star to take',
+ 'mem.bringBack':'Bring back into orbit','mem.release':'Release the star','mem.cancel':'Cancel',
  'lang.toggle':'ไทย'
 };
 function applyUILang(){
@@ -3399,7 +3406,9 @@ function matchedWords(note,arch,max=3){
 // เหตุผลก่อตัวของดาว 1 ดวง — จากคำ (ถ้ามี) ไม่งั้นจากอารมณ์ที่เลือก
 function memoryStarReason(note,arch,mood){
   const w=matchedWords(note,arch);
-  return w.length?('จากคำว่า “'+w.join(' · ')+'”'):('จากความรู้สึก “'+(moodLabel(mood)||'ในใจคุณ')+'”');
+  return w.length
+    ?L('from the words “'+w.join(' · ')+'”','จากคำว่า “'+w.join(' · ')+'”')
+    :L('from the feeling “'+(moodLabel(mood)||'within you')+'”','จากความรู้สึก “'+(moodLabel(mood)||'ในใจคุณ')+'”');
 }
 // ลายเซ็นห้วงดาว — สัดส่วน archetype ของดาวที่โคจรอยู่ (ตัวตนของทั้งระบบ ไม่ใช่ดวงเดียว)
 function memorySignature(){
@@ -3489,9 +3498,9 @@ function renderMemoryCandidate(scored){
   const box=$p('memCandidate');if(!box)return;
   const cand=readMemoryCandidate(),x=scored.find(v=>v.pinKey===cand);
   if(!philo||!x){box.classList.remove('on');$p('candModal')?.classList.remove('on');return;}
-  const dlabel=new Date(x.ds+'T00:00:00').toLocaleDateString('th-TH',{day:'numeric',month:'short'});
-  $p('candTitle').textContent='ดาว “'+starDisplayName(x.pinKey,x.e)+'” กำลังก่อตัว';
-  $p('candMeta').textContent='ก่อตัวจากบันทึก '+dlabel+' · ดาวแห่ง'+archLabelTH(x.sc.archetype);
+  const dlabel=new Date(x.ds+'T00:00:00').toLocaleDateString(seLocale(),{day:'numeric',month:'short'});
+  $p('candTitle').textContent=L('A star, “'+starDisplayName(x.pinKey,x.e)+'”, is forming','ดาว “'+starDisplayName(x.pinKey,x.e)+'” กำลังก่อตัว');
+  $p('candMeta').textContent=L('Forming from your note on '+dlabel+' · a star of '+seArchLabel(x.sc.archetype),'ก่อตัวจากบันทึก '+dlabel+' · ดาวแห่ง'+archLabelTH(x.sc.archetype));
   box.classList.add('on');
 }
 function disposeTempStar(st){
@@ -3522,14 +3531,14 @@ function drawCandidatePreview(x){
 function openCandidateModal(){
   const cand=readMemoryCandidate();if(!cand)return;
   const scored=allScoredMemoryEntries(),x=scored.find(v=>v.pinKey===cand);if(!x)return;
-  const dlabel=new Date(x.ds+'T00:00:00').toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric'});
-  $p('candModalTitle').textContent='ดาว “'+starDisplayName(x.pinKey,x.e)+'” กำลังก่อตัว';
-  $p('candModalMeta').textContent='ดาวแห่ง'+archLabelTH(x.sc.archetype)+' · ก่อตัวจากบันทึก '+dlabel+' — '+memoryStarReason(x.e.note,x.sc.archetype,x.e.m);
+  const dlabel=new Date(x.ds+'T00:00:00').toLocaleDateString(seLocale(),{day:'numeric',month:'short',year:'numeric'});
+  $p('candModalTitle').textContent=L('A star, “'+starDisplayName(x.pinKey,x.e)+'”, is forming','ดาว “'+starDisplayName(x.pinKey,x.e)+'” กำลังก่อตัว');
+  $p('candModalMeta').textContent=L('A star of '+seArchLabel(x.sc.archetype)+' · forming from your note on '+dlabel+' — '+memoryStarReason(x.e.note,x.sc.archetype,x.e.m),'ดาวแห่ง'+archLabelTH(x.sc.archetype)+' · ก่อตัวจากบันทึก '+dlabel+' — '+memoryStarReason(x.e.note,x.sc.archetype,x.e.m));
   drawCandidatePreview(x);
   const grid=$p('candSlots'),orbit=readMemoryOrbit();grid.innerHTML='';
   for(let i=0;i<MEM_MAX;i++){
     const b=document.createElement('button');b.type='button';b.className='cand-slot';
-    b.textContent=String(i+1).padStart(2,'0');b.title=orbit[i]?('แทนดาวช่อง '+(i+1)):'ช่องว่าง '+(i+1);
+    b.textContent=String(i+1).padStart(2,'0');b.title=orbit[i]?L('Replace slot '+(i+1),'แทนดาวช่อง '+(i+1)):L('Empty slot '+(i+1),'ช่องว่าง '+(i+1));
     b.onclick=()=>replaceOrbitWithCandidate(i);grid.appendChild(b);
   }
   $p('candModal').classList.add('on');
@@ -3565,8 +3574,8 @@ let _vaultActionIdx=-1;
 function openVaultAction(i){
   const k=readMemoryArchive()[i];if(!k)return;
   _vaultActionIdx=i;const e=entryByPinKey(k);
-  $p('vaultActionName').textContent='“'+(e?starDisplayName(k,e):(getStarName(k)||'ดาว'))+'”';
-  $p('vaultActionSub').textContent='นำดาวดวงนี้กลับมาโคจร หรือปล่อยมันสู่ห้วงอวกาศ — บางครั้งเราต้องเลือกปล่อยวาง';
+  $p('vaultActionName').textContent='“'+(e?starDisplayName(k,e):(getStarName(k)||L('a star','ดาว')))+'”';
+  $p('vaultActionSub').textContent=L('Bring this star back into orbit, or let it return to the deep — sometimes we have to choose to let go','นำดาวดวงนี้กลับมาโคจร หรือปล่อยมันสู่ห้วงอวกาศ — บางครั้งเราต้องเลือกปล่อยวาง');
   // reset เป็นหน้าแรก (ปุ่ม 2 ตัว) ทุกครั้งที่เปิด
   $p('vaultSlotTitle').style.display='none';$p('vaultSlots').style.display='none';
   $p('vaultBringBack').style.display='';$p('vaultRelease').style.display='';
@@ -3576,7 +3585,7 @@ function showVaultSlotPicker(){ // เลือกช่องวงโคจร
   const grid=$p('vaultSlots'),orbit=readMemoryOrbit();grid.innerHTML='';
   for(let i=0;i<MEM_MAX;i++){
     const b=document.createElement('button');b.type='button';b.className='cand-slot';
-    b.textContent=String(i+1).padStart(2,'0');b.title=orbit[i]?('แทนดาวช่อง '+(i+1)):('ช่องว่าง '+(i+1));
+    b.textContent=String(i+1).padStart(2,'0');b.title=orbit[i]?L('Replace slot '+(i+1),'แทนดาวช่อง '+(i+1)):L('Empty slot '+(i+1),'ช่องว่าง '+(i+1));
     b.onclick=()=>{if(_vaultActionIdx>=0)swapArchiveToOrbit(_vaultActionIdx,i);closeVaultAction();};
     grid.appendChild(b);
   }
@@ -3606,12 +3615,12 @@ function setStarName(k,name){const o=readMemoryNames();name=(name||'').trim().sl
 function _entryMood(e){return e?(e.m!=null?e.m:e.mood):null;}
 // ชื่ออัตโนมัติ — สุ่มแบบคงที่ (seed=pinKey) จาก "คำมีความหมาย" บนดาว เน้นคำของ archetype หลัก
 function autoStarName(entry,pinKey){
-  if(!entry)return'ดาวไร้นาม';
+  if(!entry)return L('Nameless star','ดาวไร้นาม');
   const sc=scoreEntry(entry.note||'',_entryMood(entry));
   let pool=sc?matchedWords(entry.note,sc.archetype,99):[];
   if(!pool.length){const all=[];for(const a in INNER_POOLS)for(const w of INNER_POOLS[a])if((entry.note||'').includes(w))all.push(w);pool=all;}
   pool=[...new Set(pool)];
-  if(!pool.length)return sc?archLabelTH(sc.archetype):'ดาวไร้นาม';
+  if(!pool.length)return sc?seArchLabel(sc.archetype):L('Nameless star','ดาวไร้นาม');
   const rng=mulberry32(_strHash((pinKey||'')+(entry.t||''))||1);
   return pool[Math.floor(rng()*pool.length)];
 }
@@ -3623,7 +3632,7 @@ function openStarNaming(pinKey,entry){
   _namingKey=pinKey;_namingEntry=entry;
   if(typeof closeMoodPanel==='function')closeMoodPanel();
   const nm=getStarName(pinKey),inp=$p('starNameInput');inp.value='';inp.placeholder=nm;
-  $p('starNameSub').textContent='บันทึกของคุณกลายเป็นดาวดวงใหม่ — อยากตั้งชื่อให้มันไหม? ถ้าไม่ จักรวาลจะเรียกมันว่า “'+nm+'”';
+  $p('starNameSub').textContent=L('Your note has become a new star — would you like to name it? If not, the universe will call it “'+nm+'”','บันทึกของคุณกลายเป็นดาวดวงใหม่ — อยากตั้งชื่อให้มันไหม? ถ้าไม่ จักรวาลจะเรียกมันว่า “'+nm+'”');
   $p('starNameModal').classList.add('on');
   setTimeout(()=>{try{inp.focus();}catch(e){}},80);
 }
@@ -3650,11 +3659,11 @@ function retireStarToVault(key){
   else{const dropped=a.shift();a.push(key);if(dropped){showReleaseToast(starNameForKey(dropped));setStarName(dropped,'');}} // คลังเต็ม → ปล่อยดวงเก่าสุด
   writeMemoryArchive(a);
 }
-function starNameForKey(k){const e=entryByPinKey(k);return e?starDisplayName(k,e):(getStarName(k)||'ดาว');}
+function starNameForKey(k){const e=entryByPinKey(k);return e?starDisplayName(k,e):(getStarName(k)||L('a star','ดาว'));}
 let _relToastT=null;
 function showReleaseToast(name){ // ย้ำโมเมนต์ "ปล่อยวาง" — ดาวกลับคืนสู่ห้วงอวกาศ
   const t=$p('starReleaseToast');if(!t)return;
-  t.textContent='ดาว “'+name+'” กลับคืนสู่ห้วงอวกาศแล้ว';
+  t.textContent=L('The star “'+name+'” has returned to the deep','ดาว “'+name+'” กลับคืนสู่ห้วงอวกาศแล้ว');
   t.classList.add('on');clearTimeout(_relToastT);_relToastT=setTimeout(()=>t.classList.remove('on'),3400);
 }
 function animateMemoryPlanets(dt){
@@ -3676,14 +3685,14 @@ function animateMemoryPlanets(dt){
 }
 function openMemoryCard(data){
   _memCardData=data;
-  const dlabel=new Date(data.dateStr+'T00:00:00').toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'});
+  const dlabel=new Date(data.dateStr+'T00:00:00').toLocaleDateString(seLocale(),{day:'numeric',month:'long',year:'numeric'});
   $p('mcDate').textContent=dlabel;
   $p('mcMoodDot').style.background=moodColor(data.mood);
   $p('mcMoodLabel').textContent=moodLabel(data.mood);
   $p('mcNote').textContent='“'+data.note+'”';
   $p('mcName').textContent='“'+starDisplayName(data.pinKey,data)+'”';
-  $p('mcArch').textContent=archLabelTH(data.archetype)+' · '+String(data.archetype||'memory').toUpperCase();
-  $p('mcWhy').textContent='ดาวดวงนี้ก่อจากใจคุณ — '+memoryStarReason(data.note,data.archetype,data.mood);
+  $p('mcArch').textContent=seArchLabel(data.archetype)+' · '+String(data.archetype||'memory').toUpperCase();
+  $p('mcWhy').textContent=L('This star was born from your heart — ','ดาวดวงนี้ก่อจากใจคุณ — ')+memoryStarReason(data.note,data.archetype,data.mood);
   $p('memCard').classList.add('on');
 }
 function closeMemoryCard(){$p('memCard').classList.remove('on');setMemoryInspect(false);
