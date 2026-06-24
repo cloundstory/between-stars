@@ -1467,32 +1467,32 @@
     <div class="pbd-ring" id="pbdDotRing"></div>
     <div class="pbd-date-tag" id="pbdDateTag">14 February 1990 · Voyager 1 · 40.5 AU</div>
     <div class="pbd-label-line" id="pbdLabelLine" style="position:absolute;top:calc(50% - 30px);left:calc(50% + 6px)"></div>
-    <div class="pbd-earth-label" id="pbdEarthLabel" style="position:absolute;top:calc(50% - 42px);left:calc(50% + 52px)">โลก · Earth</div>
-    <div class="pbd-stripe-note" id="pbdStripeNote">แถบแสงอาทิตย์หักเหในเลนส์กล้อง — ไม่ใช่วงแหวน</div>
+    <div class="pbd-earth-label" id="pbdEarthLabel" style="position:absolute;top:calc(50% - 42px);left:calc(50% + 52px)" data-i18n="pbd.earth">โลก · Earth</div>
+    <div class="pbd-stripe-note" id="pbdStripeNote" data-i18n="pbd.stripe">แถบแสงอาทิตย์หักเหในเลนส์กล้อง — ไม่ใช่วงแหวน</div>
   </div>
   <!-- speech layer -->
   <div id="pbdSpeech">
     <div class="pbd-speech-inner">
-      <div class="pbd-speech-line gold" id="pbdL1">มองอีกครั้งที่จุดนั้น</div>
-      <div class="pbd-speech-line" id="pbdL2">นั่นคือที่นี่ นั่นคือบ้าน นั่นคือเรา</div>
+      <div class="pbd-speech-line gold" id="pbdL1" data-i18n="pbd.l1">มองอีกครั้งที่จุดนั้น</div>
+      <div class="pbd-speech-line" id="pbdL2" data-i18n="pbd.l2">นั่นคือที่นี่ นั่นคือบ้าน นั่นคือเรา</div>
       <div class="pbd-speech-gap"></div>
-      <div class="pbd-speech-line" id="pbdL3">บนจุดนั้น ทุกคนที่คุณรัก ทุกคนที่คุณรู้จัก</div>
-      <div class="pbd-speech-line" id="pbdL4">ทุกมนุษย์ที่เคยมีชีวิตอยู่ — ดำเนินชีวิตอยู่ที่นั่น</div>
+      <div class="pbd-speech-line" id="pbdL3" data-i18n="pbd.l3">บนจุดนั้น ทุกคนที่คุณรัก ทุกคนที่คุณรู้จัก</div>
+      <div class="pbd-speech-line" id="pbdL4" data-i18n="pbd.l4">ทุกมนุษย์ที่เคยมีชีวิตอยู่ — ดำเนินชีวิตอยู่ที่นั่น</div>
       <div class="pbd-speech-gap"></div>
-      <div class="pbd-speech-line" id="pbdL5">ความยิ่งใหญ่ที่คุณจินตนาการ</div>
-      <div class="pbd-speech-line" id="pbdL6">ทุกผู้นำ ทุกวีรบุรุษ ทุกคนบาป</div>
-      <div class="pbd-speech-line" id="pbdL7">เคยอาศัยอยู่บน — เม็ดฝุ่นที่ล่องลอยในลำแสง</div>
+      <div class="pbd-speech-line" id="pbdL5" data-i18n="pbd.l5">ความยิ่งใหญ่ที่คุณจินตนาการ</div>
+      <div class="pbd-speech-line" id="pbdL6" data-i18n="pbd.l6">ทุกผู้นำ ทุกวีรบุรุษ ทุกคนบาป</div>
+      <div class="pbd-speech-line" id="pbdL7" data-i18n="pbd.l7">เคยอาศัยอยู่บน — เม็ดฝุ่นที่ล่องลอยในลำแสง</div>
       <div class="pbd-speech-gap"></div>
-      <div class="pbd-speech-line" id="pbdL8" style="font-size:14px;color:rgba(255,255,255,.45)">โลกของเราคือเวทีเล็กมากในห้วงจักรวาลอันกว้างใหญ่</div>
+      <div class="pbd-speech-line" id="pbdL8" style="font-size:14px;color:rgba(255,255,255,.45)" data-i18n="pbd.l8">โลกของเราคือเวทีเล็กมากในห้วงจักรวาลอันกว้างใหญ่</div>
       <div class="pbd-attr" id="pbdAttr">— Carl Sagan · Pale Blue Dot, 1994</div>
     </div>
   </div>
   <!-- end layer -->
   <div id="pbdEnd">
     <div class="pbd-end-dot"></div>
-    <div class="pbd-end-quote">นั่นคือเรา ทุกคน</div>
-    <div class="pbd-end-sub">ใน 1 pixel · ภาพถ่าย 640×480 · ห่างจากโลก 6 พันล้านกม.</div>
-    <button class="pbd-return" id="pbdReturn">← กลับสู่จักรวาล</button>
+    <div class="pbd-end-quote" data-i18n="pbd.endQuote">นั่นคือเรา ทุกคน</div>
+    <div class="pbd-end-sub" data-i18n="pbd.endSub">ใน 1 pixel · ภาพถ่าย 640×480 · ห่างจากโลก 6 พันล้านกม.</div>
+    <button class="pbd-return" id="pbdReturn" data-i18n="pbd.return">← กลับสู่จักรวาล</button>
   </div>
 </div>
 
@@ -1544,6 +1544,12 @@ const UI_EN={
  'msg.replySend':'✦ Send your reply',
  'res.ph':'Leave your resonance…','res.submit':'Post resonance',
  'intro.over':'An interactive model','intro.title':'The Solar System','intro.sub':'the real sky, alive and in motion','intro.enter':'CLICK TO ENTER',
+ 'pbd.earth':'Earth','pbd.stripe':'Sunlight scattered in the camera’s lens — not a ring',
+ 'pbd.l1':'Look again at that dot.','pbd.l2':'That’s here. That’s home. That’s us.',
+ 'pbd.l3':'On it everyone you love, everyone you know,','pbd.l4':'everyone who ever was, lived out their lives.',
+ 'pbd.l5':'Every hero and coward, every creator','pbd.l6':'and destroyer of civilization, every saint and sinner —',
+ 'pbd.l7':'lived there, on a mote of dust suspended in a sunbeam.','pbd.l8':'The Earth is a very small stage in a vast cosmic arena.',
+ 'pbd.endQuote':'That’s us. All of us.','pbd.endSub':'In a single pixel · a 640×480 photo · 6 billion km from Earth','pbd.return':'← Back to the cosmos',
  'lang.toggle':'ไทย'
 };
 function applyUILang(){
