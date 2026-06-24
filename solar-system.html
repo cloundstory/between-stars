@@ -1315,13 +1315,13 @@
 <div id="craftMsg">
   <div class="cm-card">
     <div class="cm-header">
-      <div class="cm-pre">สัญญาณจากห้วงลึก</div>
+      <div class="cm-pre" data-i18n="cm.pre">สัญญาณจากห้วงลึก</div>
       <div class="cm-sub" id="cmSub"></div>
     </div>
     <div class="cm-text" id="cmText"></div>
     <div class="cm-footer">
       <div class="cm-attr" id="cmAttr"></div>
-      <button class="cm-close" id="cmClose">รับทราบ</button>
+      <button class="cm-close" id="cmClose" data-i18n="cm.close">รับทราบ</button>
     </div>
   </div>
 </div>
@@ -1566,6 +1566,7 @@ const UI_EN={
  'gr.note':'1 Signal, recorded once · it won’t appear when you click the craft — but someone else might receive it',
  'gr.already':'<span class="gr-check">✦</span>Sealed<br><span style="font-size:10px;color:rgba(255,200,80,.35)" id="grAlreadyDate"></span>',
  'gr.ph':'Write in case someone in this universe receives it…','gr.submit':'✦ Seal it onto the record',
+ 'cm.pre':'A signal from the deep','cm.close':'Acknowledged',
  'lang.toggle':'ไทย'
 };
 function applyUILang(){
@@ -1986,18 +1987,18 @@ const kuiper=new THREE.Group();scene.add(kuiper);
 // ============ ZODIAC (กลุ่มดาวจักรราศีตามแนวสุริยวิถี) ============
 const ZR=3600;
 const ZODIAC=[
-  {th:'ราศีเมษ',lon:33,stars:[[27,9],[32,6],[36,3],[41,2]],lines:[[0,1],[1,2],[2,3]]},
-  {th:'ราศีพฤษภ',lon:60,stars:[[52,4],[57,1],[60,-2],[65,5],[70,9]],lines:[[0,1],[1,2],[1,3],[3,4]]},
-  {th:'ราศีเมถุน',lon:90,stars:[[83,7],[86,2],[92,1],[96,6],[88,-3],[94,-4]],lines:[[0,1],[1,4],[2,3],[3,5],[1,2]]},
-  {th:'ราศีกรกฎ',lon:118,stars:[[114,5],[118,1],[121,-3],[122,6]],lines:[[0,1],[1,2],[1,3]]},
-  {th:'ราศีสิงห์',lon:150,stars:[[142,8],[147,4],[151,2],[156,1],[158,-4],[150,-3]],lines:[[0,1],[1,2],[2,3],[3,4],[4,5],[2,5]]},
-  {th:'ราศีกันย์',lon:188,stars:[[180,6],[185,2],[190,-1],[195,3],[198,-5]],lines:[[0,1],[1,2],[2,3],[2,4]]},
-  {th:'ราศีตุลย์',lon:222,stars:[[216,5],[221,1],[225,-2],[228,4]],lines:[[0,1],[1,2],[1,3]]},
-  {th:'ราศีพิจิก',lon:245,stars:[[238,3],[243,0],[247,-3],[251,-7],[255,-10],[240,5]],lines:[[5,0],[0,1],[1,2],[2,3],[3,4]]},
-  {th:'ราศีธนู',lon:270,stars:[[263,5],[268,1],[272,-2],[276,3],[279,-5]],lines:[[0,1],[1,2],[2,3],[2,4]]},
-  {th:'ราศีมังกร',lon:300,stars:[[293,4],[298,0],[303,-3],[307,1],[301,5]],lines:[[0,4],[0,1],[1,2],[2,3],[3,4]]},
-  {th:'ราศีกุมภ์',lon:330,stars:[[323,6],[328,2],[332,-1],[337,4],[340,-3]],lines:[[0,1],[1,2],[2,3],[2,4]]},
-  {th:'ราศีมีน',lon:2,stars:[[352,5],[357,2],[2,-1],[7,3],[12,7]],lines:[[0,1],[1,2],[2,3],[3,4]]},
+  {th:'ราศีเมษ',en:'Aries',lon:33,stars:[[27,9],[32,6],[36,3],[41,2]],lines:[[0,1],[1,2],[2,3]]},
+  {th:'ราศีพฤษภ',en:'Taurus',lon:60,stars:[[52,4],[57,1],[60,-2],[65,5],[70,9]],lines:[[0,1],[1,2],[1,3],[3,4]]},
+  {th:'ราศีเมถุน',en:'Gemini',lon:90,stars:[[83,7],[86,2],[92,1],[96,6],[88,-3],[94,-4]],lines:[[0,1],[1,4],[2,3],[3,5],[1,2]]},
+  {th:'ราศีกรกฎ',en:'Cancer',lon:118,stars:[[114,5],[118,1],[121,-3],[122,6]],lines:[[0,1],[1,2],[1,3]]},
+  {th:'ราศีสิงห์',en:'Leo',lon:150,stars:[[142,8],[147,4],[151,2],[156,1],[158,-4],[150,-3]],lines:[[0,1],[1,2],[2,3],[3,4],[4,5],[2,5]]},
+  {th:'ราศีกันย์',en:'Virgo',lon:188,stars:[[180,6],[185,2],[190,-1],[195,3],[198,-5]],lines:[[0,1],[1,2],[2,3],[2,4]]},
+  {th:'ราศีตุลย์',en:'Libra',lon:222,stars:[[216,5],[221,1],[225,-2],[228,4]],lines:[[0,1],[1,2],[1,3]]},
+  {th:'ราศีพิจิก',en:'Scorpio',lon:245,stars:[[238,3],[243,0],[247,-3],[251,-7],[255,-10],[240,5]],lines:[[5,0],[0,1],[1,2],[2,3],[3,4]]},
+  {th:'ราศีธนู',en:'Sagittarius',lon:270,stars:[[263,5],[268,1],[272,-2],[276,3],[279,-5]],lines:[[0,1],[1,2],[2,3],[2,4]]},
+  {th:'ราศีมังกร',en:'Capricorn',lon:300,stars:[[293,4],[298,0],[303,-3],[307,1],[301,5]],lines:[[0,4],[0,1],[1,2],[2,3],[3,4]]},
+  {th:'ราศีกุมภ์',en:'Aquarius',lon:330,stars:[[323,6],[328,2],[332,-1],[337,4],[340,-3]],lines:[[0,1],[1,2],[2,3],[2,4]]},
+  {th:'ราศีมีน',en:'Pisces',lon:2,stars:[[352,5],[357,2],[2,-1],[7,3],[12,7]],lines:[[0,1],[1,2],[2,3],[3,4]]},
 ];
 const zodiacGroup=new THREE.Group();zodiacGroup.visible=false;scene.add(zodiacGroup);
 const zLabelLayer=document.createElement('div');
@@ -2012,7 +2013,7 @@ ZODIAC.forEach(z=>{
   zodiacGroup.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(lp),
     new THREE.LineBasicMaterial({color:0xf3c97a,transparent:true,opacity:0.45})));
   const cen=new THREE.Vector3();pts.forEach(p=>cen.add(p));cen.multiplyScalar(1/pts.length);
-  const el=document.createElement('div');el.textContent=z.th;el.className='zlbl';zLabelLayer.appendChild(el);
+  const el=document.createElement('div');el.textContent=LANG==='en'?(z.en||z.th):z.th;el.className='zlbl';zLabelLayer.appendChild(el);
   zLabels.push({el,pos:cen});
 });
 const _zv=new THREE.Vector3();
@@ -2825,7 +2826,7 @@ function updateLabels(){for(let i=0;i<labelData.length;i++){const el=labelEls[i]
 const nav=document.getElementById('nav');
 const navItems=[{data:SUN,obj:sunMesh,ix:'☉'}].concat(PLANETS.map((p,i)=>({data:p,obj:p._mesh,ix:String(i+1).padStart(2,'0')})));
 navItems.forEach(it=>{const row=document.createElement('div');row.className='row';
-  row.innerHTML=`<span class="ix">${it.ix}</span><span><div class="nm">${it.data.name}</div><div class="en">${it.data.en}</div></span>`;
+  row.innerHTML=`<span class="ix">${it.ix}</span><span><div class="nm">${LANG==='en'?it.data.en:it.data.name}</div><div class="en">${LANG==='en'?it.data.name:it.data.en}</div></span>`;
   row.onclick=()=>selectBody(it.data,it.obj);it._row=row;nav.appendChild(row);});
 function setActiveNav(data){navItems.forEach(it=>it._row.classList.toggle('active',it.data===data));}
 
@@ -2899,7 +2900,7 @@ const info=document.getElementById('info');
 const rows=a=>a.map(s=>`<div class="stat"><span class="k">${s[0]}</span><span class="v">${s[1]}</span></div>`).join('');
 function openInfo(o,obj){selected=o;selectedObj=obj;
   document.getElementById('i-focus').textContent=L('Zoom camera to this body','ซูมกล้องไปที่ดาวนี้');
-  document.getElementById('i-name').textContent=o.name;document.getElementById('i-en').textContent=o.en;
+  document.getElementById('i-name').textContent=LANG==='en'?o.en:o.name;document.getElementById('i-en').textContent=LANG==='en'?o.name:o.en;
   document.getElementById('i-dot').style.color=o.color;
   const ph=(typeof philo!=='undefined'&&philo&&((LANG==='en'&&typeof PHILO_EN!=='undefined'&&PHILO_EN[o.en])||(typeof PHILO!=='undefined'&&PHILO[o.en])));
   let h='';
@@ -3232,6 +3233,19 @@ const QUOTES=[
   'เราตัวเล็กนิดเดียว แต่เราคือสิ่งเดียวที่รู้ว่าตัวเองตัวเล็ก',
   'ทุกอะตอมในตัวคุณ เคยอยู่ในใจกลางของดาวฤกษ์',
 ];
+const QUOTES_EN=[
+  'We are looking at our own home, in a shoreless ocean of space.',
+  'Everything you love, everyone you know, is on this one small point.',
+  'If the universe is this vast, why do we still quarrel over such small things?',
+  'A whole human life is just one blink to the stars.',
+  'We are the universe’s way of knowing itself.',
+  'Every star you see is light from the past — some may already be gone.',
+  'Does the silence of space mean we are alone, or that we just haven’t found each other yet?',
+  'If tonight were the last night, would you look at the sky any differently?',
+  'We are tiny — yet we are the only thing that knows it is tiny.',
+  'Every atom in you was once inside the heart of a star.',
+];
+const QUOTE_POOL=()=>LANG==='en'?QUOTES_EN:QUOTES;
 const BADWORDS=['เหี้ย','สัส','ควย','หี','เย็ด','แม่ง','ระยำ','ชิบหาย','สถุล','อีดอก','fuck','shit','bitch','asshole','dick','cunt'];
 
 // มุมมองเชิงปรัชญาของแต่ละดวง (โชว์ใน sidebar เฉพาะโหมดใคร่ครวญ)
@@ -3866,6 +3880,38 @@ const SEED_LETTERS=[
   'บางทีการหลงทางก็คือการเริ่มต้นค้นพบสิ่งใหม่ — เหมือนยานที่ออกจากระบบสุริยะ',
   'แม้อยู่คนละมุมโลก เราก็มองดาวดวงเดิมกัน',
 ];
+const SEED_LETTERS_EN=[
+  'To whoever is reading — may today feel a little lighter than yesterday.',
+  'I don’t know who you are, but I’m glad you found this letter.',
+  'Sometimes just knowing someone else is looking at the same star is enough.',
+  'If you’re tired, rest first — the universe is in no hurry.',
+  'That dream you set aside — come back and look at it sometime.',
+  'Thank you for making it all the way to today.',
+  'I send my longing drifting to you on starlight.',
+  'It’s okay if you haven’t found the answer yet — we’re all still looking.',
+  'Maybe one day we’ll meet somewhere out in this universe.',
+  'To my future self — I hope you’re proud of what we chose today.',
+  'This small world is always beautiful, even on the hard days.',
+  'May whoever reads this line receive something good, when they least expect it.',
+  'The light from that star traveled thousands of years to reach our eyes today.',
+  'We are stardust, asking after its own origin.',
+  'In the dark of space, even a small light can be seen from very far away.',
+  'Every atom in our bodies was once part of some star.',
+  'The Earth circles the Sun every day, yet we so often forget to feel the wonder of it.',
+  'Some nights, just looking at the stars makes every problem feel smaller.',
+  'Stars don’t die — they only change form, and become something new.',
+  'The universe expands every moment, so the possibilities never run out.',
+  'The sunlight touching your skin today traveled 8 minutes to reach you.',
+  'The emptiness of space is full of things we don’t yet understand.',
+  'The universe is 13.8 billion years old, and it chose this moment to give us life.',
+  'Gravity binds everything together, even stars a million light-years apart.',
+  'The silence of space isn’t loneliness — it’s a kind of peace.',
+  'We don’t know how much more is out there, yet we dare to open our eyes and look.',
+  'Every star has a birth and a death, just like all of us.',
+  'Space has no sound — but if it did, it would be full of songs we’ve never heard.',
+  'Maybe getting lost is the start of finding something new — like a craft leaving the Solar System.',
+  'Even on opposite sides of the world, we look up at the same stars.',
+];
 function readLocal(){try{return JSON.parse(localStorage.getItem(LKEY)||'[]');}catch(e){return[];}}
 function writeLocal(a){try{localStorage.setItem(LKEY,JSON.stringify(a.slice(-300)));}catch(e){}}
 const DISP_STATS='dispatchStats';
@@ -3886,7 +3932,7 @@ function castLetter(text,pub){
 }
 function letterPool(){
   const mySig=getSignal();
-  const seeds=SEED_LETTERS.map((text,i)=>({id:'seed_'+i,text,t:0,pub:true,sig:null,replies:[]}));
+  const seeds=(LANG==='en'?SEED_LETTERS_EN:SEED_LETTERS).map((text,i)=>({id:'seed_'+i,text,t:0,pub:true,sig:null,replies:[]}));
   const avail=readLocal().filter(l=>l.pub&&l.sig!==mySig&&(!l.replies||l.replies.length===0));
   return seeds.concat(avail);
 }
@@ -4020,8 +4066,8 @@ function updateDrifters(dt){for(let i=drifters.length-1;i>=0;i--){const d=drifte
 // คำคมหมุน
 let qi=0,qTimer=null;const quoteLine=$p('quoteLine');
 function showQuote(){quoteLine.style.opacity=0;
-  setTimeout(()=>{quoteLine.textContent=QUOTES[qi%QUOTES.length];qi++;quoteLine.style.opacity=1;},600);}
-function startQuotes(){qi=Math.floor(Math.random()*QUOTES.length);showQuote();clearInterval(qTimer);qTimer=setInterval(showQuote,11000);}
+  setTimeout(()=>{const q=QUOTE_POOL();quoteLine.textContent=q[qi%q.length];qi++;quoteLine.style.opacity=1;},600);}
+function startQuotes(){qi=Math.floor(Math.random()*QUOTE_POOL().length);showQuote();clearInterval(qTimer);qTimer=setInterval(showQuote,11000);}
 function stopQuotes(){clearInterval(qTimer);quoteLine.style.opacity=0;}
 
 // สลับโหมด
@@ -4714,6 +4760,26 @@ const GR_SEEDS=[
   'สัญญาณวิทยุจากยานจะอ่อนลงเรื่อยๆ แต่ไม่มีวันหายไปจริงๆ — มันแค่เบาลงจนเราฟังไม่ได้ยิน',
   'แผ่นทองคำสามารถอยู่รอดได้นานกว่าพันล้านปี — นานกว่าดวงอาทิตย์จะยังคงส่องแสง',
 ];
+const GR_SEEDS_EN=[
+  '“Hello from the children of planet Earth.” — an English greeting recorded on the real Golden Record',
+  '“Hello to everyone. I am very glad to send my good wishes to you.” — the Thai greeting carried on the record',
+  '“This is a present from a small, distant world — a token of our sounds, our science, our images, our music, our thoughts, and our feelings.” — Jimmy Carter, 1977',
+  '“We are attempting to survive our time so we may live into yours.” — a message from Jimmy Carter sent with the craft',
+  'The sound of ocean waves on this disc was captured on Earth in 1977 — now traveling out of the galaxy.',
+  'Rain falling on Earth, wind passing through, rolling thunder — all recorded on the golden disc now crossing interstellar space.',
+  'The song of whales beneath the ocean is on the Golden Record — Earth’s largest creatures, calling out to the cosmos.',
+  'A beating heart, a baby’s cry, the sound of laughter — the most human things, sent out into the void.',
+  'Bach, Beethoven, Chuck Berry, Louis Armstrong, and Thai music — all on one disc now traveling beyond the Solar System.',
+  'Chuck Berry’s “Johnny B. Goode” is one of 27 tracks on the Golden Record — John Lennon joked, “We should have sent only the blues.”',
+  'Out here, no one can hear you — and that is the most beautiful thing of all.',
+  'The dark between the stars isn’t empty — it’s full of particles from stars that died billions of years ago.',
+  'Voyager transmits on 22 watts — less than a refrigerator bulb — across 24,000,000,000 kilometres.',
+  'Humans have been on Earth for 300,000 years; it took 46 of them to send the first thing beyond the Solar System.',
+  'Ann Druyan recorded her brainwaves while thinking of love — that feeling has already left the Solar System.',
+  'The star Voyager 1 will pass closest to in 40,000 years is Gliese 445 — a star whose secrets no one yet knows.',
+  'The craft’s radio signal grows fainter and fainter, but never truly vanishes — it only fades below what we can hear.',
+  'The golden record can survive more than a billion years — longer than the Sun will keep shining.',
+];
 
 function readGRPool(){try{return JSON.parse(localStorage.getItem(GR_POOL)||'[]');}catch(e){return[];}}
 function writeGRPool(a){try{localStorage.setItem(GR_POOL,JSON.stringify(a));}catch(e){}}
@@ -4791,16 +4857,16 @@ function getCraftMessage(){
   const pool=readGRPool().filter(m=>m.text&&m.id!==ownId);
   if(pool.length>0&&Math.random()<0.55){
     const pick=pool[Math.floor(Math.random()*pool.length)];
-    return{text:pick.text,attr:'สัญญาณจาก Golden Record · ผู้ส่งไม่ทราบชื่อ',fromPool:true};
+    return{text:pick.text,attr:L('A signal from the Golden Record · sender unknown','สัญญาณจาก Golden Record · ผู้ส่งไม่ทราบชื่อ'),fromPool:true};
   }
-  const seed=GR_SEEDS[Math.floor(Math.random()*GR_SEEDS.length)];
-  return{text:seed,attr:'สัญญาณจากห้วงลึก · Voyager Interstellar Mission',fromPool:false};
+  const seedPool=LANG==='en'?GR_SEEDS_EN:GR_SEEDS,seed=seedPool[Math.floor(Math.random()*seedPool.length)];
+  return{text:seed,attr:L('A signal from the deep · Voyager Interstellar Mission','สัญญาณจากห้วงลึก · Voyager Interstellar Mission'),fromPool:false};
 }
 
 function showCraftMessage(m){
   const au=m._curAU||currentAU(m,simDate);
   const hrs=(au*LTSEC_PER_AU/3600).toFixed(1);
-  const sub=m.en+' · '+au.toFixed(1)+' AU · สัญญาณใช้เวลา '+hrs+' ชม.';
+  const sub=m.en+' · '+au.toFixed(1)+' AU · '+L('signal takes '+hrs+' hr','สัญญาณใช้เวลา '+hrs+' ชม.');
   let cached=null;
   try{cached=JSON.parse(localStorage.getItem(CRAFT_MSG_KEY)||'null');}catch(e){}
   if(!cached||cached.date!==todayStr()){
