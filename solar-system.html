@@ -2696,7 +2696,7 @@ function updateMissionDash(){for(const m of MISSIONS){const el=document.getEleme
 function openMissionInfo(m){
   selected=null;selectedMission=m;stopPlanetSound();if(soundOn)startCraftBeeps();
   selectedObj=m.marker.visible?m.marker:null;setActiveNav(null);
-  document.getElementById('i-focus').textContent='ซูมไปที่ยานลำนี้';
+  document.getElementById('i-focus').textContent=L('Zoom to this spacecraft','ซูมไปที่ยานลำนี้');
   document.getElementById('i-badge').textContent=m.badge;
   document.getElementById('i-name').textContent=m.th;
   document.getElementById('i-en').textContent=m.en;
@@ -2831,7 +2831,7 @@ function applyFocus(){if(!focusObj)return;focusObj.getWorldPosition(_v);controls
 const info=document.getElementById('info');
 const rows=a=>a.map(s=>`<div class="stat"><span class="k">${s[0]}</span><span class="v">${s[1]}</span></div>`).join('');
 function openInfo(o,obj){selected=o;selectedObj=obj;
-  document.getElementById('i-focus').textContent='ซูมกล้องไปที่ดาวนี้';
+  document.getElementById('i-focus').textContent=L('Zoom camera to this body','ซูมกล้องไปที่ดาวนี้');
   document.getElementById('i-name').textContent=o.name;document.getElementById('i-en').textContent=o.en;
   document.getElementById('i-dot').style.color=o.color;
   const ph=(typeof philo!=='undefined'&&philo&&typeof PHILO!=='undefined'&&PHILO[o.en]);
