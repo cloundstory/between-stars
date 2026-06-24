@@ -1132,16 +1132,16 @@
 </div>
 <div id="msgPanel">
   <button id="msgClose">×</button>
-  <textarea id="msgInput" maxlength="200" placeholder="เขียนคำฝาก ไม่เกิน 200 ตัวอักษร…"></textarea>
+  <textarea id="msgInput" maxlength="200" placeholder="เขียนคำฝาก ไม่เกิน 200 ตัวอักษร…" data-i18n-ph="msg.ph"></textarea>
   <div class="mrow2"><span id="msgWarn"></span>
-    <span class="mbtns"><button id="sendPub">✦ ฝากไว้กับดวงดาว</button></span>
+    <span class="mbtns"><button id="sendPub" data-i18n="msg.send">✦ ฝากไว้กับดวงดาว</button></span>
   </div>
 </div>
 <div id="msgRead"><button id="msgReadClose">×</button><div id="msgReadText"></div><div class="rk" id="msgReadMeta"></div>
-  <button id="replyToggle">✉ เขียนตอบ</button>
+  <button id="replyToggle" data-i18n="msg.replyToggle">✉ เขียนตอบ</button>
   <div id="replyBox">
-    <textarea id="replyInput" maxlength="200" placeholder="เขียนตอบ… คำตอบของคุณจะลอยเข้าหาเจ้าของคำฝาก"></textarea>
-    <div class="mrow2"><span id="replyWarn"></span><button id="replySend">✦ ปล่อยคำตอบ</button></div>
+    <textarea id="replyInput" maxlength="200" placeholder="เขียนตอบ… คำตอบของคุณจะลอยเข้าหาเจ้าของคำฝาก" data-i18n-ph="msg.replyPh"></textarea>
+    <div class="mrow2"><span id="replyWarn"></span><button id="replySend" data-i18n="msg.replySend">✦ ปล่อยคำตอบ</button></div>
   </div>
 </div>
 
@@ -1175,14 +1175,14 @@
 </div>
 
 
-<div id="bhLabel">หลุมดำ · แตะเพื่อปล่อยวาง</div>
+<div id="bhLabel" data-i18n="bh.label">หลุมดำ · แตะเพื่อปล่อยวาง</div>
 <div id="bhPanel">
   <button id="bhClose">×</button>
   <div class="bh-pre">EVENT HORIZON</div>
-  <div class="bh-title">หลุมดำ</div>
-  <div class="bh-poem">สิ่งที่ตกข้ามขอบฟ้าเหตุการณ์ ไม่มีวันหวนกลับ — แม้แต่แสง<br><span>ที่นี่คือที่ของการปล่อยวาง</span></div>
-  <textarea id="bhInput" maxlength="200" placeholder="มีอะไรที่อยากปล่อยให้หายไป…"></textarea>
-  <div class="bh-row"><span id="bhWarn"></span><button id="bhRelease">ปล่อยลงสู่ห้วงมืด</button></div>
+  <div class="bh-title" data-i18n="bh.title">หลุมดำ</div>
+  <div class="bh-poem" data-i18n-html="bh.poem">สิ่งที่ตกข้ามขอบฟ้าเหตุการณ์ ไม่มีวันหวนกลับ — แม้แต่แสง<br><span>ที่นี่คือที่ของการปล่อยวาง</span></div>
+  <textarea id="bhInput" maxlength="200" placeholder="มีอะไรที่อยากปล่อยให้หายไป…" data-i18n-ph="bh.ph"></textarea>
+  <div class="bh-row"><span id="bhWarn"></span><button id="bhRelease" data-i18n="bh.release">ปล่อยลงสู่ห้วงมืด</button></div>
   <div class="bh-stat" id="bhStat"></div>
 </div>
 
@@ -1536,6 +1536,12 @@ const UI_EN={
  'mode.contemplate':'✦ Contemplate',
  'mood.pre':'INNER SPACE','mood.reroll':'↻ Another question',
  'mood.note':'Anything on your mind? You can leave it here — there’s always space for you.',
+ 'bh.label':'Black hole · tap to let go','bh.title':'Black Hole',
+ 'bh.poem':'What crosses the event horizon never returns — not even light<br><span>this is the place for letting go</span>',
+ 'bh.ph':'Is there something you want to let disappear…','bh.release':'Release into the dark',
+ 'msg.ph':'Write a message, up to 200 characters…','msg.send':'✦ Leave it with the stars',
+ 'msg.replyToggle':'✉ Write back','msg.replyPh':'Write back… your reply will drift toward whoever left this',
+ 'msg.replySend':'✦ Send your reply',
  'lang.toggle':'ไทย'
 };
 function applyUILang(){
@@ -1543,7 +1549,10 @@ function applyUILang(){
   document.querySelectorAll('[data-i18n]').forEach(el=>{const v=UI_EN[el.dataset.i18n];if(v!=null)el.textContent=v;});
   document.querySelectorAll('[data-i18n-ph]').forEach(el=>{const v=UI_EN[el.dataset.i18nPh];if(v!=null)el.placeholder=v;});
   document.querySelectorAll('[data-i18n-title]').forEach(el=>{const v=UI_EN[el.dataset.i18nTitle];if(v!=null)el.title=v;});
+  document.querySelectorAll('[data-i18n-html]').forEach(el=>{const v=UI_EN[el.dataset.i18nHtml];if(v!=null)el.innerHTML=v;}); // only for our own EN strings, never user input
 }
+// shorthand for JS-built strings: pick EN or TH by current LANG
+const L=(en,th)=>LANG==='en'?en:th;
 
 const D2R=Math.PI/180;
 const TEX='https://cdn.jsdelivr.net/gh/jeromeetienne/threex.planets@master/images/';
@@ -3802,7 +3811,7 @@ function updateLetterStat(){const el=document.getElementById('letterStat');if(!e
   const mySig=getSignal(),a=readLocal();
   const pubCount=a.filter(l=>l.pub&&l.sig===mySig).length;
   const privCount=getDispatchStats().priv||0;
-  el.textContent='ปล่อยวาง '+privCount+'  ·  ฝากไว้กับดาว '+pubCount+'  ·  เจอแล้ว '+found;}
+  el.textContent=L('Let go '+privCount+'  ·  Cast '+pubCount+'  ·  Found '+found,'ปล่อยวาง '+privCount+'  ·  ฝากไว้กับดาว '+pubCount+'  ·  เจอแล้ว '+found);}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
 const msgPanel=$p('msgPanel'),msgInput=$p('msgInput'),msgWarn=$p('msgWarn'),msgRead=$p('msgRead');
@@ -3819,17 +3828,17 @@ function showMsg(m){openLetter((m&&m.text)||m,'');}
 $p('msgReadClose').onclick=()=>msgRead.classList.remove('on');
 $p('replyToggle').onclick=()=>{const o=$p('replyBox').classList.toggle('open');$p('replyToggle').style.display=o?'none':'';if(o)$p('replyInput').focus();};
 $p('replySend').onclick=()=>{let t=($p('replyInput').value||'').trim();
-  if(!t){$p('replyWarn').textContent='เขียนคำตอบก่อนนะ';return;}
-  if(BADWORDS.some(w=>t.toLowerCase().includes(w))){$p('replyWarn').textContent='มีคำไม่เหมาะสม ลองใหม่อีกที';return;}
-  if(!currentOpenLetter||!currentOpenLetter.id||currentOpenLetter.id.startsWith('seed_')){$p('replyWarn').textContent='ไม่สามารถตอบได้';return;}
+  if(!t){$p('replyWarn').textContent=L('Write your reply first','เขียนคำตอบก่อนนะ');return;}
+  if(BADWORDS.some(w=>t.toLowerCase().includes(w))){$p('replyWarn').textContent=L('That has something inappropriate — try again','มีคำไม่เหมาะสม ลองใหม่อีกที');return;}
+  if(!currentOpenLetter||!currentOpenLetter.id||currentOpenLetter.id.startsWith('seed_')){$p('replyWarn').textContent=L('Can’t reply to this','ไม่สามารถตอบได้');return;}
   const a=readLocal(),idx=a.findIndex(l=>l.id===currentOpenLetter.id);
-  if(idx===-1){$p('replyWarn').textContent='ไม่พบคำฝากนี้แล้ว';return;}
-  if((a[idx].replies||[]).length>=1){$p('replyWarn').textContent='มีคนตอบไปแล้ว';return;}
+  if(idx===-1){$p('replyWarn').textContent=L('This message no longer exists','ไม่พบคำฝากนี้แล้ว');return;}
+  if((a[idx].replies||[]).length>=1){$p('replyWarn').textContent=L('Someone already replied','มีคนตอบไปแล้ว');return;}
   if(!a[idx].replies)a[idx].replies=[];
   a[idx].replies.push({text:t.slice(0,200),t:Date.now(),sig:getSignal()});
   writeLocal(a);
   try{const r=JSON.parse(localStorage.getItem('repliedIds')||'[]');r.push(currentOpenLetter.id);localStorage.setItem('repliedIds',JSON.stringify(r.slice(-200)));}catch(e){}
-  $p('replyWarn').textContent='ส่งคำตอบแล้ว ✦';$p('replyToggle').style.display='none';
+  $p('replyWarn').textContent=L('Reply sent ✦','ส่งคำตอบแล้ว ✦');$p('replyToggle').style.display='none';
   setTimeout(()=>msgRead.classList.remove('on'),1200);};
 $p('writeBtn').onclick=()=>{msgPanel.classList.toggle('open');msgWarn.textContent='';if(msgPanel.classList.contains('open'))msgInput.focus();};
 $p('msgClose').onclick=()=>{msgPanel.classList.remove('open');msgWarn.textContent='';};
@@ -3842,19 +3851,19 @@ function releaseToBlackHole(text,anchorEl){
   setTimeout(()=>{_bhTarget=0;focusObj=null;following=false;},3200);
 }
 function trySend(pub){let t=(msgInput.value||'').trim();
-  if(!t){msgWarn.textContent='เขียนข้อความก่อนนะ';return;}
-  if(BADWORDS.some(w=>t.toLowerCase().includes(w))){msgWarn.textContent='มีคำไม่เหมาะสม ลองใหม่อีกที';return;}
+  if(!t){msgWarn.textContent=L('Write something first','เขียนข้อความก่อนนะ');return;}
+  if(BADWORDS.some(w=>t.toLowerCase().includes(w))){msgWarn.textContent=L('That has something inappropriate — try again','มีคำไม่เหมาะสม ลองใหม่อีกที');return;}
   if(checkDailyLimit(pub?DISPATCH_PUB_KEY:DISPATCH_PRIV_KEY)){
-    msgWarn.textContent=pub?'วันนี้ฝากไว้แล้ว · รอพรุ่งนี้':'วันนี้ปล่อยวางไปแล้ว · รอพรุ่งนี้';return;}
+    msgWarn.textContent=pub?L('Already left one today · come back tomorrow','วันนี้ฝากไว้แล้ว · รอพรุ่งนี้'):L('Already let go today · come back tomorrow','วันนี้ปล่อยวางไปแล้ว · รอพรุ่งนี้');return;}
   if(!pub)releaseToBlackHole(t,msgPanel);
   castLetter(t.slice(0,200),pub);msgInput.value='';
-  msgWarn.textContent=pub?'ฝากไว้กับดวงดาวแล้ว ✦':'ปล่อยวางแล้ว';
+  msgWarn.textContent=pub?L('Left with the stars ✦','ฝากไว้กับดวงดาวแล้ว ✦'):L('Let go','ปล่อยวางแล้ว');
   setTimeout(()=>{msgPanel.classList.remove('open');msgWarn.textContent='';},1300);}
 $p('sendPub').onclick=()=>trySend(true);
 // ----- หลุมดำ: sidebar ปล่อยวาง -----
 function openBlackHolePanel(){
   const s=getDispatchStats(),n=s.priv||0;
-  $p('bhStat').textContent=n>0?('ปล่อยวางไปแล้ว '+n+' ครั้ง'):'';
+  $p('bhStat').textContent=n>0?L('Let go '+n+(n===1?' time':' times'),'ปล่อยวางไปแล้ว '+n+' ครั้ง'):'';
   $p('bhInput').value='';$p('bhWarn').textContent='';
   msgPanel.classList.remove('open'); // กันชนกับกล่องคำฝาก
   closeMoodPanel();
@@ -3866,12 +3875,12 @@ $p('bhClose').onclick=closeBlackHolePanel;
 $p('bhBtn').onclick=openBlackHolePanel;
 $p('bhRelease').onclick=()=>{
   const t=($p('bhInput').value||'').trim(),warn=$p('bhWarn');
-  if(!t){warn.textContent='เขียนสิ่งที่อยากปล่อยก่อน';return;}
-  if(BADWORDS.some(w=>t.toLowerCase().includes(w))){warn.textContent='มีคำไม่เหมาะสม ลองใหม่';return;}
-  if(checkDailyLimit(DISPATCH_PRIV_KEY)){warn.textContent='วันนี้ปล่อยวางไปแล้ว · รอพรุ่งนี้';return;}
+  if(!t){warn.textContent=L('Write what you want to release first','เขียนสิ่งที่อยากปล่อยก่อน');return;}
+  if(BADWORDS.some(w=>t.toLowerCase().includes(w))){warn.textContent=L('That has something inappropriate — try again','มีคำไม่เหมาะสม ลองใหม่');return;}
+  if(checkDailyLimit(DISPATCH_PRIV_KEY)){warn.textContent=L('Already let go today · come back tomorrow','วันนี้ปล่อยวางไปแล้ว · รอพรุ่งนี้');return;}
   releaseToBlackHole(t,$p('bhPanel'));
   castLetter(t.slice(0,200),false);
-  $p('bhInput').value='';warn.textContent='ปล่อยแล้ว — มันจะไม่กลับมาอีก';
+  $p('bhInput').value='';warn.textContent=L('Released — it won’t come back','ปล่อยแล้ว — มันจะไม่กลับมาอีก');
   setTimeout(closeBlackHolePanel,760);
 };
 
@@ -3892,7 +3901,7 @@ function flyComet(){
   let caught=false;
   el.onclick=()=>{if(caught)return;caught=true;
     const ct=$p('obComet');if(ct)ct.classList.remove('on');markObDone();
-    const m=pickLetter();el.remove();if(m){found++;updateLetterStat();openLetter(m,'— จากใครบางคน ที่ไหนสักแห่งในห้วงอวกาศ');}};
+    const m=pickLetter();el.remove();if(m){found++;updateLetterStat();openLetter(m,L('— from someone, somewhere out in space','— จากใครบางคน ที่ไหนสักแห่งในห้วงอวกาศ'));}};
   document.body.appendChild(el);
   requestAnimationFrame(()=>requestAnimationFrame(()=>{el.style.transform='rotate('+ang+'rad) translateX('+dist+'px)';}));
   setTimeout(()=>{if(!caught){el.classList.add('gone');setTimeout(()=>el.remove(),600);}},dur*1000);
