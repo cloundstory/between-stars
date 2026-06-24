@@ -1632,6 +1632,49 @@ const PLANETS=[
       'มีหัวใจน้ำแข็งไนโตรเจนยักษ์ (Tombaugh Regio) และดวงจันทร์ <b>คารอน</b> ที่ใหญ่เกือบครึ่งของพลูโต'] },
 ];
 
+// EN parallel for the planet encyclopedia (keyed by `en`). openInfo picks this when LANG==='en'; falls back to Thai if a body is missing. Original PLANETS/SUN untouched.
+const PLANET_EN={
+ 'The Sun':{type:'Star · G2V',
+   phys:[['Diameter','1,392,700 km'],['Mass','99.86% of the Solar System'],['Surface temp','~5,500 °C'],['Core temp','~15,000,000 °C'],['Composition','Hydrogen 73% · Helium 25%'],['Age','~4.6 billion years']],
+   facts:['The Sun is vast enough to hold about <b>1.3 million Earths</b>, and its light takes <b>8 min 20 sec</b> to reach us','Every second it turns <b>~600 million tonnes</b> of hydrogen into energy through nuclear fusion']},
+ 'Mercury':{
+   orbitData:[['Distance from Sun','57.9 million km'],['Orbital period','88 Earth days'],['Rotation period','176 Earth days'],['Orbital speed','47.4 km/s']],
+   phys:[['Diameter','4,879 km'],['Gravity','0.38 g'],['Temperature','-180 to 430 °C'],['Moons','None'],['Composition','Rock and iron'],['Atmosphere','Almost none']],
+   facts:['The smallest planet and the closest to the Sun — blazing by day, freezing by night, with almost no atmosphere to hold heat','Its surface is cratered like the Moon, and it has the <b>greatest temperature range</b> in the Solar System']},
+ 'Venus':{
+   orbitData:[['Distance from Sun','108 million km'],['Orbital period','225 Earth days'],['Rotation period','243 days (retrograde)'],['Orbital speed','35 km/s']],
+   phys:[['Diameter','12,104 km'],['Gravity','0.90 g'],['Temperature','~465 °C'],['Moons','None'],['Composition','Rock · iron core'],['Atmosphere','Dense CO₂ · sulfuric-acid clouds']],
+   facts:['The hottest planet, from a runaway greenhouse effect — and it <b>spins slower than it orbits the Sun</b>','It turns the opposite way to the others — on Venus the Sun <b>rises in the west</b>']},
+ 'Earth':{
+   orbitData:[['Distance from Sun','149.6 million km'],['Orbital period','365.25 days'],['Rotation period','23.9 hr'],['Orbital speed','29.8 km/s']],
+   phys:[['Diameter','12,742 km'],['Gravity','1.00 g'],['Avg temperature','15 °C'],['Moons','1'],['Composition','Rock · iron-nickel core'],['Atmosphere','N₂ 78% · O₂ 21%']],
+   facts:['The only planet known to hold <b>life</b>, with liquid water covering over 70% of its surface','Earth’s magnetic field <b>shields us from the solar wind</b> and gives rise to the northern and southern lights']},
+ 'Mars':{
+   orbitData:[['Distance from Sun','228 million km'],['Orbital period','687 Earth days'],['Rotation period','24.6 hr'],['Orbital speed','24.1 km/s']],
+   phys:[['Diameter','6,779 km'],['Gravity','0.38 g'],['Temperature','-140 to 20 °C'],['Moons','2'],['Composition','Volcanic rock · iron oxide'],['Atmosphere','Thin CO₂']],
+   facts:['The “Red Planet,” coloured by iron rust, home to <b>Olympus Mons</b> — the tallest volcano in the Solar System (~22 km)','Its canyon <b>Valles Marineris</b> stretches over 4,000 km, and ice caps sit at both poles']},
+ 'Jupiter':{
+   orbitData:[['Distance from Sun','778 million km'],['Orbital period','11.9 Earth years'],['Rotation period','9.9 hr'],['Orbital speed','13.1 km/s']],
+   phys:[['Diameter','139,820 km'],['Gravity','2.53 g'],['Temperature','~-110 °C'],['Moons','95'],['Composition','Gas giant · hydrogen-helium'],['Atmosphere','Layered ammonia clouds']],
+   facts:['The largest planet — its <b>Great Red Spot</b> is a storm bigger than Earth that has raged for centuries','Its moon <b>Ganymede</b> is the largest in the Solar System — even bigger than Mercury']},
+ 'Saturn':{
+   orbitData:[['Distance from Sun','1,430 million km'],['Orbital period','29.5 Earth years'],['Rotation period','10.7 hr'],['Orbital speed','9.7 km/s']],
+   phys:[['Diameter','116,460 km'],['Gravity','1.07 g'],['Temperature','~-140 °C'],['Moons','146'],['Composition','Gas giant · hydrogen-helium'],['Density','Less than water (it would float)']],
+   facts:['Wears the most beautiful <b>rings</b>, made of millions of ice and rock pieces — hundreds of thousands of km wide yet only tens of metres thick','Its moon <b>Titan</b> has a thick atmosphere and lakes of liquid methane — a target in the search for life']},
+ 'Uranus':{
+   orbitData:[['Distance from Sun','2,870 million km'],['Orbital period','84 Earth years'],['Rotation period','17 hr (retrograde)'],['Orbital speed','6.8 km/s']],
+   phys:[['Diameter','50,724 km'],['Gravity','0.89 g'],['Temperature','~-195 °C'],['Moons','28'],['Composition','Ice giant · water-methane-ammonia'],['Atmosphere','Hydrogen · helium · methane']],
+   facts:['The planet that <b>tips on its side</b> at nearly 98°, rolling along its orbit — giving it extreme, long seasons','Methane in its atmosphere absorbs red light, making it look <b>blue-green</b>']},
+ 'Neptune':{
+   orbitData:[['Distance from Sun','4,500 million km'],['Orbital period','165 Earth years'],['Rotation period','16 hr'],['Orbital speed','5.4 km/s']],
+   phys:[['Diameter','49,244 km'],['Gravity','1.14 g'],['Temperature','~-200 °C'],['Moons','16'],['Composition','Ice giant · water-methane-ammonia'],['Atmosphere','Hydrogen · helium · methane']],
+   facts:['The farthest planet, with the strongest winds in the Solar System — up to <b>2,100 km/h</b>','The first planet found by <b>mathematical prediction</b> before anyone saw it through a telescope (1846)']},
+ 'Pluto':{type:'Dwarf planet',
+   orbitData:[['Distance from Sun','5,900 million km'],['Orbital period','248 Earth years'],['Rotation period','6.4 Earth days'],['Orbital speed','4.7 km/s']],
+   phys:[['Diameter','2,377 km'],['Gravity','0.063 g'],['Temperature','~-230 °C'],['Moons','5 (Charon, etc.)'],['Composition','Rock + nitrogen ice'],['Status','Dwarf planet (2006)']],
+   facts:['A dwarf planet in the Kuiper Belt — once the ninth planet, until it was reclassified in 2006','It has a giant nitrogen-ice heart (Tombaugh Regio) and a moon, <b>Charon</b>, nearly half its own size']},
+};
+
 // ============ TEXTURES ============
 const loadMgr=new THREE.LoadingManager();
 loadMgr.onLoad=()=>{const l=document.getElementById('loading');if(l){l.style.opacity=0;setTimeout(()=>l.remove(),700);}};
@@ -2842,10 +2885,12 @@ function openInfo(o,obj){selected=o;selectedObj=obj;
       +ph.t.map(p=>'<div class="note">'+p+'</div>').join('')
       +'<div class="sec">'+L('To contemplate','ชวนใคร่ครวญ')+'</div><div class="note">'+ph.q+'</div>';
   }else{
-    document.getElementById('i-badge').textContent=o.type||L('Planet','ดาวเคราะห์');
-    if(o.orbitData)h+='<div class="sec">'+L('Orbit & rotation','วงโคจร & การหมุน')+'</div>'+rows(o.orbitData);
-    h+='<div class="sec">'+L('Physical traits','ลักษณะทางกายภาพ')+'</div>'+rows(o.phys);
-    h+='<div class="sec">'+L('Did you know','เกร็ดน่ารู้')+'</div>'+(o.facts||[]).map(f=>`<div class="note">${f}</div>`).join('');
+    const pe=(LANG==='en'&&typeof PLANET_EN!=='undefined')?PLANET_EN[o.en]:null; // EN encyclopedia; null → Thai original
+    const oOrbit=(pe&&pe.orbitData)||o.orbitData,oPhys=(pe&&pe.phys)||o.phys,oFacts=(pe&&pe.facts)||o.facts;
+    document.getElementById('i-badge').textContent=(pe&&pe.type)||o.type||L('Planet','ดาวเคราะห์');
+    if(oOrbit)h+='<div class="sec">'+L('Orbit & rotation','วงโคจร & การหมุน')+'</div>'+rows(oOrbit);
+    h+='<div class="sec">'+L('Physical traits','ลักษณะทางกายภาพ')+'</div>'+rows(oPhys);
+    h+='<div class="sec">'+L('Did you know','เกร็ดน่ารู้')+'</div>'+(oFacts||[]).map(f=>`<div class="note">${f}</div>`).join('');
   }
   document.getElementById('i-body').innerHTML=h;
   const irb=document.getElementById('iResBtn');
