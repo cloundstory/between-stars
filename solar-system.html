@@ -1425,7 +1425,7 @@
   <div class="mood-card">
     <button class="mood-x" id="moodClose">×</button>
     <div class="mood-head">
-      <div class="mood-pre">ห้วงใจ · INNER SPACE</div>
+      <div class="mood-pre" data-i18n="mood.pre">ห้วงใจ · INNER SPACE</div>
       <div class="mood-date" id="moodDate"></div>
     </div>
     <div class="mood-cols">
@@ -1434,9 +1434,9 @@
         <div class="mood-chips" id="moodChips"></div>
         <div class="mood-qwrap empty" id="moodQWrap">
           <div class="mood-q" id="moodQ"></div>
-          <button class="mood-reroll" id="moodReroll">↻ คำถามอื่น</button>
+          <button class="mood-reroll" id="moodReroll" data-i18n="mood.reroll">↻ คำถามอื่น</button>
         </div>
-        <textarea id="moodNote" maxlength="1000" placeholder="มีอะไรอยู่ในใจไหม เขียนทิ้งไว้ได้นะ ที่นี่มีพื้นที่ให้คุณเสมอ"></textarea>
+        <textarea id="moodNote" maxlength="1000" placeholder="มีอะไรอยู่ในใจไหม เขียนทิ้งไว้ได้นะ ที่นี่มีพื้นที่ให้คุณเสมอ" data-i18n-ph="mood.note"></textarea>
         <div class="mood-foot">
           <span id="moodStreak"></span>
           <button id="moodSave">บันทึกห้วงใจ</button>
@@ -1534,6 +1534,8 @@ const UI_EN={
  'philo.mood':'◐ Inner Space','philo.echo':'✧ Star Echo','philo.bh':'◌ Let go','philo.write':'✦ Leave a message','philo.reset':'⊙ Reset view',
  'info.focus':'Zoom camera to this body',
  'mode.contemplate':'✦ Contemplate',
+ 'mood.pre':'INNER SPACE','mood.reroll':'↻ Another question',
+ 'mood.note':'Anything on your mind? You can leave it here — there’s always space for you.',
  'lang.toggle':'ไทย'
 };
 function applyUILang(){
@@ -4788,15 +4790,15 @@ function maybeShowCosmicDaily(){
 // ============ ห้วงใจ · MOOD JOURNAL ============
 const MOOD_KEY='moodJournal';
 const MOODS=[
-  {k:'radiant',  label:'สว่าง',     c:'#f3c97a'},
-  {k:'calm',     label:'สงบ',       c:'#8fb8e8'},
-  {k:'hopeful',  label:'เปี่ยมหวัง', c:'#7fd6b8'},
-  {k:'faded',    label:'เลือนราง',   c:'#b3a4e6'},
-  {k:'heavy',    label:'หม่น',       c:'#7d8aa3'},
-  {k:'turbulent',label:'คุกรุ่น',    c:'#e0895a'},
+  {k:'radiant',  label:'สว่าง',     en:'Radiant',  c:'#f3c97a'},
+  {k:'calm',     label:'สงบ',       en:'Calm',     c:'#8fb8e8'},
+  {k:'hopeful',  label:'เปี่ยมหวัง', en:'Hopeful',  c:'#7fd6b8'},
+  {k:'faded',    label:'เลือนราง',   en:'Faded',    c:'#b3a4e6'},
+  {k:'heavy',    label:'หม่น',       en:'Heavy',    c:'#7d8aa3'},
+  {k:'turbulent',label:'คุกรุ่น',    en:'Restless', c:'#e0895a'},
 ];
 const moodColor=k=>{const m=MOODS.find(x=>x.k===k);return m?m.c:'#888';};
-const moodLabel=k=>{const m=MOODS.find(x=>x.k===k);return m?m.label:'';};
+const moodLabel=k=>{const m=MOODS.find(x=>x.k===k);return m?(LANG==='en'?m.en:m.label):'';};
 const MOOD_QBANK={
   radiant:[
     'วันนี้อะไรที่ทำให้ใจคุณสว่างขึ้น?',
@@ -4841,8 +4843,54 @@ const MOOD_QBANK={
     'ตอนนี้สิ่งใด ที่จะช่วยให้คลื่นในใจสงบลง?',
   ],
 };
+// EN journaling prompts — transcreated for feeling, not machine-translated (gentle, second person, present)
+const MOOD_QBANK_EN={
+  radiant:[
+    'What lit you up today?',
+    'When did today feel its best?',
+    'If you could keep this feeling, what would you hold onto?',
+    'Who or what are you grateful for today?',
+    'Your light today — who would you share it with?',
+  ],
+  calm:[
+    "Where did today's calm come from?",
+    'What helped your mind grow still?',
+    'In this quiet, what do you hear in yourself?',
+    'To keep this calm, what could you set down?',
+    'Have your body and mind had enough rest?',
+  ],
+  hopeful:[
+    'What does your hope look like today?',
+    'What do you want tomorrow to feel like?',
+    'What are you quietly waiting for right now?',
+    'What small step would bring you closer to what you dream of?',
+    'If you could reach your future self, what would you say to keep them going?',
+  ],
+  faded:[
+    'What is this loneliness trying to tell you?',
+    'Is there someone you wish were here with you?',
+    'If you could speak to someone right now, what would you say?',
+    'Have you been kind enough to yourself today?',
+    'What small thing still holds your heart steady?',
+  ],
+  heavy:[
+    'What feels heaviest in you right now?',
+    'If you could set it down for a moment, how would that feel?',
+    'What thought has circled all day — and how true is it really?',
+    'What do you need most right now?',
+    'Did you let yourself breathe deeply today?',
+  ],
+  turbulent:[
+    "What's stirring inside you?",
+    'This feeling — what is it trying to tell you?',
+    'If this storm were weather, when would it pass?',
+    "What's beyond your control — and could you let it go?",
+    'What would help the waves in you settle?',
+  ],
+};
+const QBANK=()=>LANG==='en'?MOOD_QBANK_EN:MOOD_QBANK;
 function moodLocalStr(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
-function pickMoodQ(k){const a=MOOD_QBANK[k]||[];if(!a.length)return '';
+function pickMoodQ(k){const a=QBANK()[k]||[];if(!a.length)return '';
   if(a.length<2||!_moodQText)return a[Math.floor(Math.random()*a.length)];
   let q;do{q=a[Math.floor(Math.random()*a.length)];}while(q===_moodQText);return q;}
 function readMood(){try{return JSON.parse(localStorage.getItem(MOOD_KEY)||'{}');}catch(e){return{};}}
@@ -5129,36 +5177,36 @@ function renderMoodChips(){
   MOODS.forEach(m=>{
     const el=document.createElement('div');el.className='mood-chip'+(_moodSel===m.k?' sel':'');
     el.style.setProperty('--mc',m.c);
-    el.innerHTML='<span class="dot"></span>'+m.label;
+    el.innerHTML='<span class="dot"></span>'+moodLabel(m.k);
     el.onclick=()=>{_moodSel=m.k;_moodQText=pickMoodQ(m.k);renderMoodChips();renderMoodHero();renderMoodQ();$p('moodSave').disabled=false;};
     wrap.appendChild(el);
   });
 }
 function renderMoodHero(){
   const hero=$p('moodHero'),lab=$p('moodHeroLab');
-  if(_moodSel){const m=MOODS.find(x=>x.k===_moodSel);hero.classList.remove('empty');hero.style.setProperty('--hc',m.c);lab.textContent=m.label;}
-  else{hero.classList.add('empty');lab.textContent='วันนี้ใจคุณเป็นแบบไหน?';}
+  if(_moodSel){const m=MOODS.find(x=>x.k===_moodSel);hero.classList.remove('empty');hero.style.setProperty('--hc',m.c);lab.textContent=moodLabel(m.k);}
+  else{hero.classList.add('empty');lab.textContent=LANG==='en'?'How is your heart today?':'วันนี้ใจคุณเป็นแบบไหน?';}
 }
 function renderMoodQ(){
   const wrap=$p('moodQWrap');
-  if(!_moodSel){wrap.classList.add('empty');$p('moodQ').textContent='เลือกอารมณ์ด้านบน เพื่อรับคำถามชวนใคร่ครวญ';return;}
+  if(!_moodSel){wrap.classList.add('empty');$p('moodQ').textContent=LANG==='en'?'Choose a feeling above to receive a prompt to reflect on':'เลือกอารมณ์ด้านบน เพื่อรับคำถามชวนใคร่ครวญ';return;}
   wrap.classList.remove('empty');$p('moodQ').textContent=_moodQText;
 }
 function renderMoodLegend(){
   const l=$p('moodLegend');l.innerHTML='';
-  MOODS.forEach(m=>{const s=document.createElement('span');s.style.setProperty('--mc',m.c);s.innerHTML='<i></i>'+m.label;l.appendChild(s);});
+  MOODS.forEach(m=>{const s=document.createElement('span');s.style.setProperty('--mc',m.c);s.innerHTML='<i></i>'+moodLabel(m.k);l.appendChild(s);});
 }
 function showMoodDay(ds){
   const e=readMood()[ds];const v=$p('moodDayView');if(!e){v.textContent='';return;}
-  const dlabel=new Date(ds+'T00:00:00').toLocaleDateString('th-TH',{day:'numeric',month:'long'});
+  const dlabel=new Date(ds+'T00:00:00').toLocaleDateString(seLocale(),{day:'numeric',month:'long'});
   v.style.setProperty('--mc',moodColor(e.m));
   v.innerHTML=dlabel+' — <span class="mdv-mood">'+moodLabel(e.m)+'</span>'+(e.note?'<div class="mdv-note">"'+escapeHtml(e.note)+'"</div>':'');
 }
 function renderMoodCal(){
   const y=_moodCalRef.getFullYear(),mo=_moodCalRef.getMonth();
-  $p('moodCalTitle').textContent=new Date(y,mo,1).toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{month:'long',year:'numeric'});
+  $p('moodCalTitle').textContent=new Date(y,mo,1).toLocaleDateString(seLocale(),{month:'long',year:'numeric'});
   const grid=$p('moodCal');grid.innerHTML='';
-  ['อา','จ','อ','พ','พฤ','ศ','ส'].forEach(d=>{const h=document.createElement('div');h.className='mcal-dow';h.textContent=d;grid.appendChild(h);});
+  (LANG==='en'?['Su','Mo','Tu','We','Th','Fr','Sa']:['อา','จ','อ','พ','พฤ','ศ','ส']).forEach(d=>{const h=document.createElement('div');h.className='mcal-dow';h.textContent=d;grid.appendChild(h);});
   const first=new Date(y,mo,1).getDay(),days=new Date(y,mo+1,0).getDate();
   const j=readMood(),todayS=moodLocalStr();
   for(let i=0;i<first;i++){const c=document.createElement('div');c.className='mcal-cell empty';grid.appendChild(c);}
@@ -5170,21 +5218,21 @@ function renderMoodCal(){
     if(ds===_moodDaySel)c.classList.add('sel');
     grid.appendChild(c);
   }
-  $p('moodStreak').textContent='บันทึกต่อเนื่อง '+moodStreak()+' วัน';
+  $p('moodStreak').textContent=LANG==='en'?(moodStreak()+'-day streak'):('บันทึกต่อเนื่อง '+moodStreak()+' วัน');
 }
 function openMoodPanel(){
   const today=moodLocalStr(),e=readMood()[today];
   _moodSel=e?e.m:null;
   _moodQText=e?(e.q||''):'';
-  $p('moodDate').textContent=new Date().toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  $p('moodDate').textContent=new Date().toLocaleDateString(seLocale(),{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   $p('moodNote').value=e?(e.note||''):'';
   $p('moodSave').disabled=!_moodSel;
-  $p('moodSave').textContent=e?'อัปเดตห้วงใจ':'บันทึกห้วงใจ';
+  $p('moodSave').textContent=e?(LANG==='en'?'Update note':'อัปเดตห้วงใจ'):(LANG==='en'?'Save note':'บันทึกห้วงใจ');
   renderMoodChips();renderMoodHero();renderMoodQ();renderMoodLegend();
   _moodCalRef=new Date();_moodDaySel=null;$p('moodDayView').textContent='';
   renderMoodCal();
   document.querySelector('.mood-card').classList.remove('show-cal'); // เปิดมาเน้นเขียนก่อน (มือถือ)
-  $p('moodCalToggle').textContent='📅 ดูปฏิทินย้อนหลัง';
+  $p('moodCalToggle').textContent=LANG==='en'?'📅 Past entries':'📅 ดูปฏิทินย้อนหลัง';
   $p('moodModal').classList.add('on');
 }
 function closeMoodPanel(){$p('moodModal').classList.remove('on');}
@@ -5201,8 +5249,8 @@ function saveMood(){
   if(window.bsEvent)bsEvent('mood_save');
   if(window.BSync&&window.BSync.push)window.BSync.push();
   const afterStage=myStarSummary().stageIdx;
-  const st=moodStreak();const btn=$p('moodSave');btn.textContent=st>1?('บันทึกแล้ว ✦ ต่อเนื่อง '+st+' วัน'):'บันทึกแล้ว ✦';btn.disabled=true;
-  setTimeout(()=>{btn.textContent='อัปเดตห้วงใจ';btn.disabled=false;},1800);
+  const st=moodStreak();const btn=$p('moodSave');btn.textContent=st>1?(LANG==='en'?('Saved ✦ '+st+'-day streak'):('บันทึกแล้ว ✦ ต่อเนื่อง '+st+' วัน')):(LANG==='en'?'Saved ✦':'บันทึกแล้ว ✦');btn.disabled=true;
+  setTimeout(()=>{btn.textContent=LANG==='en'?'Update note':'อัปเดตห้วงใจ';btn.disabled=false;},1800);
   if(afterStage>beforeStage)setTimeout(()=>celebrateStageUp(STAR_STAGES[afterStage]),650); // เลื่อนระดับ → ฉลอง
 }
 // ============ เสียงสะท้อนจากดาว — daily-style reading จากดาวของผู้ใช้ ============
@@ -5585,7 +5633,7 @@ function closeStarEcho(){$p('starEchoModal').classList.remove('on');}
 $p('moodReroll').onclick=()=>{if(!_moodSel)return;_moodQText=pickMoodQ(_moodSel);renderMoodQ();};
 $p('moodCalToggle').onclick=()=>{
   const c=document.querySelector('.mood-card'),on=c.classList.toggle('show-cal');
-  $p('moodCalToggle').textContent=on?'▲ ซ่อนปฏิทิน':'📅 ดูปฏิทินย้อนหลัง';
+  $p('moodCalToggle').textContent=on?(LANG==='en'?'▲ Hide calendar':'▲ ซ่อนปฏิทิน'):(LANG==='en'?'📅 Past entries':'📅 ดูปฏิทินย้อนหลัง');
   if(on)setTimeout(()=>$p('moodCalToggle').scrollIntoView({behavior:'smooth',block:'center'}),80);
 };
 $p('echoBtn').onclick=openStarEcho;
