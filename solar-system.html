@@ -2878,7 +2878,7 @@ function openInfo(o,obj){selected=o;selectedObj=obj;
   document.getElementById('i-focus').textContent=L('Zoom camera to this body','ซูมกล้องไปที่ดาวนี้');
   document.getElementById('i-name').textContent=o.name;document.getElementById('i-en').textContent=o.en;
   document.getElementById('i-dot').style.color=o.color;
-  const ph=(typeof philo!=='undefined'&&philo&&typeof PHILO!=='undefined'&&PHILO[o.en]);
+  const ph=(typeof philo!=='undefined'&&philo&&((LANG==='en'&&typeof PHILO_EN!=='undefined'&&PHILO_EN[o.en])||(typeof PHILO!=='undefined'&&PHILO[o.en])));
   let h='';
   if(ph){document.getElementById('i-badge').textContent=L('Contemplative view','มุมมองใคร่ครวญ');
     h='<div class="sec">'+L('Idea','แนวคิด')+'</div><div class="note"><b>'+ph.c+'</b></div>'
@@ -3223,6 +3223,19 @@ const PHILO={
  'Uranus':{c:'ยูเรนัส · การพลิกมุม',t:['ดาวที่เอียงตะแคงเกือบ 90° หมุนคนละแบบกับใคร ตั้งชื่อตามเทพท้องฟ้า','บางครั้งการมองโลกจากมุมที่ต่างสุดขั้ว ก็เผยสิ่งที่คนอื่นมองไม่เห็น'],q:'มีเรื่องไหนที่ถ้าลองพลิกมุมมอง อาจเปลี่ยนไปเลย?'},
  'Neptune':{c:'โพไซดอน · สิ่งที่อยู่ลึก',t:['ดาวสีน้ำเงินไกลโพ้น ตั้งชื่อตามเทพสมุทร ถูกค้นพบด้วยการคำนวณก่อนจะมีใครเห็นจริง','บางสิ่งเรารู้ว่ามีอยู่ก่อนจะมองเห็น เหมือนความรู้สึกลึก ๆ ที่อธิบายไม่ได้แต่จริง'],q:'มีอะไรที่ใจคุณรู้อยู่แล้ว แม้ตายังไม่เห็น?'},
  'Pluto':{c:'ฮาเดส · สิ่งที่ถูกนิยามใหม่',t:['เคยเป็นดาวเคราะห์ดวงที่เก้า จนถูกปลดเป็น "ดาวเคราะห์แคระ" ในปี 2006','คุณค่าของมันไม่ได้เปลี่ยน เปลี่ยนแค่ชื่อที่เราตั้งให้ — คำนิยามของคนอื่นไม่ใช่ความจริงของเราเสมอไป'],q:'มีอะไรที่ถูกคนอื่นตีค่า แต่คุณรู้ว่ามันมีความหมาย?'},
+};
+// EN contemplative essays — transcreated for feeling (myth + philosophy + a reflective question), not machine-translated. openInfo picks this when LANG==='en'.
+const PHILO_EN={
+ 'The Sun':{c:'Apollo · the centre and the light',t:['Almost every civilization made the Sun a symbol of truth and beginnings. Plato likened it to the source of wisdom — the thing that lets us truly “see”.','Everything here orbits it — a reminder that each of us keeps some centre that holds a life in place.'],q:'What is the “sun” that everything in your life orbits around?'},
+ 'Mercury':{c:'Hermes · the messenger',t:['The fastest planet, named for the god of messages and travel — a figure of quick thought and connection.','Yet it swings from scorching to freezing, like a mind so fast it outruns its own feelings.'],q:'What did you rush past today without letting yourself feel?'},
+ 'Venus':{c:'Aphrodite · beauty that deceives',t:['The brightest, loveliest light in the morning and evening sky, named for the goddess of love and beauty.','But beneath the beautiful clouds lie acid vapour and searing heat — what is most beautiful is not always what is safest.'],q:'What kind of beauty do you draw close to, even knowing it burns?'},
+ 'Earth':{c:'Home · the pale blue dot',t:['The only world we know that holds life — a blue mote of dust in boundless dark.','Every love, every war, everyone who ever lived — all on this single point. We have nowhere else to go.'],q:'If this is the only home we all share, how might we care for one another?'},
+ 'Mars':{c:'Ares · the next frontier',t:['The blood-red star of the god of war — yet in our age it has become a symbol of human hope and ambition.','The longing to cross our own limits and settle somewhere new is part of our nature.'],q:'What is the next frontier in your life?'},
+ 'Jupiter':{c:'Zeus · the protector',t:['King of the planets, named for the highest god; its immense gravity pulls in many comets that might otherwise have struck Earth.','A greatness that sometimes shields us quietly, without our ever knowing.'],q:'Who is the “Jupiter” that protects you without ever saying so?'},
+ 'Saturn':{c:'Cronus · time',t:['The god of time who devours all things; its gorgeous rings are, in truth, the debris of what has shattered.','Beauty and impermanence live side by side — everything has its beginning and its end.'],q:'If time is limited, what would you spend today on?'},
+ 'Uranus':{c:'Uranus · a shift in perspective',t:['Tilted almost 90°, turning unlike any other, named for the god of the sky.','Sometimes seeing the world from a radically different angle reveals what no one else can.'],q:'Is there something that, seen from another angle, might change completely?'},
+ 'Neptune':{c:'Poseidon · what lies deep',t:['A blue world far out, named for the god of the sea — found by calculation before anyone laid eyes on it.','Some things we know are there before we can see them, like a deep feeling that defies explanation yet is true.'],q:'What does your heart already know, even before your eyes can see it?'},
+ 'Pluto':{c:'Hades · what gets redefined',t:['Once the ninth planet, until it was reclassified as a “dwarf planet” in 2006.','Its worth never changed — only the name we gave it. Other people’s definitions are not always your truth.'],q:'What has been dismissed by others that you know still holds meaning?'},
 };
 
 const msgGroup=new THREE.Group();scene.add(msgGroup);msgGroup.visible=false;
