@@ -1272,10 +1272,10 @@
   <div class="gr-inner">
     <div class="gr-pre">Voyager Golden Record · 1977</div>
     <div class="gr-title">GOLDEN RECORD</div>
-    <div class="gr-sub">แผ่นเสียงทองคำบรรจุเสียงและภาพของมนุษยชาติ ส่งออกไปกับ Voyager 1<br>เผื่อว่าใครสักคนในจักรวาลจะได้พบ</div>
+    <div class="gr-sub" data-i18n-html="gr.sub">แผ่นเสียงทองคำบรรจุเสียงและภาพของมนุษยชาติ ส่งออกไปกับ Voyager 1<br>เผื่อว่าใครสักคนในจักรวาลจะได้พบ</div>
     <div class="gr-context">
-      <div class="gr-context-title">สิ่งที่บันทึกไว้แล้ว</div>
-      <div class="gr-context-row">
+      <div class="gr-context-title" data-i18n="gr.contextTitle">สิ่งที่บันทึกไว้แล้ว</div>
+      <div class="gr-context-row" data-i18n-html="gr.contextRow">
         <span>115 ภาพ</span> — โลก มนุษย์ ชีวิต วิทยาศาสตร์<br>
         <span>27 ชิ้นดนตรี</span> — Bach · Beethoven · Chuck Berry · ดนตรีไทย<br>
         <span>55 ภาษา</span> — คำทักทายจากทุกมุมโลก<br>
@@ -1286,25 +1286,25 @@
     <!-- voice box: แสดงเสมอ -->
     <div class="gr-voice-box" id="grVoiceBox">
       <div class="gr-voice-header">
-        <span class="gr-voice-label">เสียงจากโลก</span>
+        <span class="gr-voice-label" data-i18n="gr.voiceLabel">เสียงจากโลก</span>
         <span class="gr-voice-n" id="grVoiceN"></span>
       </div>
       <div class="gr-voice-travel" id="grVoiceTravel"></div>
       <div class="gr-voice-msg" id="grVoiceMsg" style="display:none"></div>
       <div class="gr-voice-days" id="grVoiceDays" style="display:none"></div>
-      <div class="gr-voice-you" id="grVoiceYou" style="display:none">— เสียงของคุณอยู่ในนั้นด้วย</div>
-      <div class="gr-voice-note" id="grVoiceNote" style="display:none">1 Signal บันทึกได้ครั้งเดียว · ข้อความนี้จะไม่ปรากฏเมื่อคุณคลิกที่ยาน — แต่คนอื่นอาจได้รับ</div>
+      <div class="gr-voice-you" id="grVoiceYou" style="display:none" data-i18n="gr.you">— เสียงของคุณอยู่ในนั้นด้วย</div>
+      <div class="gr-voice-note" id="grVoiceNote" style="display:none" data-i18n="gr.note">1 Signal บันทึกได้ครั้งเดียว · ข้อความนี้จะไม่ปรากฏเมื่อคุณคลิกที่ยาน — แต่คนอื่นอาจได้รับ</div>
     </div>
     <div id="grAlready" style="display:none">
-      <div class="gr-already"><span class="gr-check">✦</span>บรรจุไว้แล้ว<br><span style="font-size:10px;color:rgba(255,200,80,.35)" id="grAlreadyDate"></span></div>
+      <div class="gr-already" data-i18n-html="gr.already"><span class="gr-check">✦</span>บรรจุไว้แล้ว<br><span style="font-size:10px;color:rgba(255,200,80,.35)" id="grAlreadyDate"></span></div>
     </div>
     <div id="grForm">
-      <textarea id="grTextarea" maxlength="200" placeholder="เขียนเผื่อว่าใครสักคนในจักรวาลนี้จะได้รับ…"></textarea>
+      <textarea id="grTextarea" maxlength="200" placeholder="เขียนเผื่อว่าใครสักคนในจักรวาลนี้จะได้รับ…" data-i18n-ph="gr.ph"></textarea>
       <div class="gr-row">
         <span id="grWarn"></span>
         <div style="display:flex;align-items:center;gap:10px">
           <span class="gr-hint" id="grCount">200</span>
-          <button id="grSubmit">✦ บรรจุลงแผ่นเสียง</button>
+          <button id="grSubmit" data-i18n="gr.submit">✦ บรรจุลงแผ่นเสียง</button>
         </div>
       </div>
     </div>
@@ -1559,6 +1559,13 @@ const UI_EN={
  'mem.bringBack':'Bring back into orbit','mem.release':'Release the star','mem.cancel':'Cancel',
  'star.label':'Your star','star.growth':'Growth level','star.addBtn':'✦ Write today’s Inner Space','star.stageUp':'STAGE UP',
  'star.poem':'A star that floats free, orbiting no one — turning around your own heart<br><span>its colour and light are born from the Inner Space you write</span>',
+ 'gr.sub':'A golden record holding the sounds and images of humankind, sent out aboard Voyager 1<br>in case someone, somewhere in the universe, ever finds it',
+ 'gr.contextTitle':'What is already recorded',
+ 'gr.contextRow':'<span>115 images</span> — Earth, humankind, life, science<br><span>27 pieces of music</span> — Bach · Beethoven · Chuck Berry · Thai music<br><span>55 languages</span> — greetings from every corner of the world<br><span>Sounds of nature</span> — waves, rain, wind, whales, a beating heart<br><span>Ann Druyan’s brainwaves</span> — recorded while thinking of love',
+ 'gr.voiceLabel':'A voice from Earth','gr.you':'— your voice is in there too',
+ 'gr.note':'1 Signal, recorded once · it won’t appear when you click the craft — but someone else might receive it',
+ 'gr.already':'<span class="gr-check">✦</span>Sealed<br><span style="font-size:10px;color:rgba(255,200,80,.35)" id="grAlreadyDate"></span>',
+ 'gr.ph':'Write in case someone in this universe receives it…','gr.submit':'✦ Seal it onto the record',
  'lang.toggle':'ไทย'
 };
 function applyUILang(){
@@ -4720,8 +4727,8 @@ function openGoldenRecord(){
   const v1=MISSIONS.find(m=>m.id==='voyager1');
   const au=v1?(v1._curAU||currentAU(v1,simDate)).toFixed(1):'167.0';
   // voice box — แสดงเสมอ
-  document.getElementById('grVoiceN').textContent='+'+(n>0?n:'0')+' ข้อความ';
-  document.getElementById('grVoiceTravel').textContent='ถูกแนบไปกับ Voyager 1 · กำลังเดินทางอยู่ห่างออกไป '+au+' AU';
+  document.getElementById('grVoiceN').textContent=L('+'+(n>0?n:'0')+' messages','+'+(n>0?n:'0')+' ข้อความ');
+  document.getElementById('grVoiceTravel').textContent=L('Aboard Voyager 1 · now traveling '+au+' AU away','ถูกแนบไปกับ Voyager 1 · กำลังเดินทางอยู่ห่างออกไป '+au+' AU');
   // fallback: ถ้า already.text หายไป (บันทึกก่อนอัปเดต) ให้หาจาก pool
   const ownText=already&&(already.text||(pool.find(e=>e.id===already.ownId)||{}).text);
   if(already&&ownText){
@@ -4732,7 +4739,7 @@ function openGoldenRecord(){
     const days=Math.floor((Date.now()-new Date(already.date).getTime())/864e5);
     const kmExtra=Math.round(days*3.58*KM_AU/365.25).toLocaleString();
     const daysEl=document.getElementById('grVoiceDays');
-    daysEl.textContent=(days===0?'บันทึกวันนี้':'เดินทางมาแล้ว '+days+' วัน')+' · ยานเดินทางไปอีก '+kmExtra+' กม. นับจากวันที่คุณบันทึก';
+    daysEl.textContent=L((days===0?'Sealed today':days+' days on its way')+' · the craft has traveled '+kmExtra+' km farther since you sealed it',(days===0?'บันทึกวันนี้':'เดินทางมาแล้ว '+days+' วัน')+' · ยานเดินทางไปอีก '+kmExtra+' กม. นับจากวันที่คุณบันทึก');
     daysEl.style.display='';
     document.getElementById('grVoiceYou').style.display='';
     document.getElementById('grVoiceNote').style.display='';
@@ -4744,7 +4751,7 @@ function openGoldenRecord(){
   document.getElementById('grForm').style.display=already?'none':'';
   if(already){
     const d=new Date(already.date);
-    document.getElementById('grAlreadyDate').textContent='บันทึกเมื่อ '+d.toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{year:'numeric',month:'long',day:'numeric'});
+    document.getElementById('grAlreadyDate').textContent=L('Sealed on ','บันทึกเมื่อ ')+d.toLocaleDateString(seLocale(),{year:'numeric',month:'long',day:'numeric'});
   }
   document.getElementById('grTextarea').value='';
   document.getElementById('grWarn').textContent='';
@@ -4759,8 +4766,8 @@ document.getElementById('grTextarea').addEventListener('input',()=>{
 });
 document.getElementById('grSubmit').onclick=()=>{
   const t=(document.getElementById('grTextarea').value||'').trim();
-  if(!t){document.getElementById('grWarn').textContent='เขียนอะไรสักอย่างก่อนนะ';return;}
-  if(BADWORDS&&BADWORDS.some(w=>t.toLowerCase().includes(w))){document.getElementById('grWarn').textContent='มีคำไม่เหมาะสม ลองใหม่';return;}
+  if(!t){document.getElementById('grWarn').textContent=L('Write something first','เขียนอะไรสักอย่างก่อนนะ');return;}
+  if(BADWORDS&&BADWORDS.some(w=>t.toLowerCase().includes(w))){document.getElementById('grWarn').textContent=L('That has something inappropriate — try again','มีคำไม่เหมาะสม ลองใหม่');return;}
   // add to pool (anonymous — no sig)
   const pool=readGRPool();
   const ownId=Date.now().toString(36)+Math.random().toString(36).slice(2,4);
@@ -4774,7 +4781,7 @@ document.getElementById('grSubmit').onclick=()=>{
   // show confirmation then close
   document.getElementById('grForm').style.display='none';
   document.getElementById('grAlready').style.display='';
-  document.getElementById('grAlreadyDate').textContent='บันทึกเมื่อกี้นี้ · กำลังเดินทางออกจากระบบสุริยะ';
+  document.getElementById('grAlreadyDate').textContent=L('Just sealed · now leaving the Solar System','บันทึกเมื่อกี้นี้ · กำลังเดินทางออกจากระบบสุริยะ');
   setTimeout(()=>document.getElementById('grOverlay').classList.remove('on'),2200);
 };
 
