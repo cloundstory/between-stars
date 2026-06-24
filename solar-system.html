@@ -1024,10 +1024,10 @@
 <div id="restoreUI" data-i18n="ui.restore">⤢ แสดง UI</div>
 
 <div id="intro"><div>
-  <div class="over">An interactive model · แบบจำลองเชิงโต้ตอบ</div>
-  <h1>ระบบสุริยะ</h1>
-  <div class="en2">The Solar System</div>
-  <div class="ld">คลิกเพื่อข้าม · CLICK TO ENTER</div>
+  <div class="over" data-i18n="intro.over">An interactive model · แบบจำลองเชิงโต้ตอบ</div>
+  <h1 data-i18n="intro.title">ระบบสุริยะ</h1>
+  <div class="en2" data-i18n="intro.sub">The Solar System</div>
+  <div class="ld" data-i18n="intro.enter">คลิกเพื่อข้าม · CLICK TO ENTER</div>
   <div class="ld2" id="introHint">◖ เพื่อรับสัญญาณได้ชัดที่สุด · แนะนำรับชมบนเดสก์ท็อปพร้อมหูฟัง</div>
 </div></div>
 
@@ -1543,6 +1543,7 @@ const UI_EN={
  'msg.replyToggle':'✉ Write back','msg.replyPh':'Write back… your reply will drift toward whoever left this',
  'msg.replySend':'✦ Send your reply',
  'res.ph':'Leave your resonance…','res.submit':'Post resonance',
+ 'intro.over':'An interactive model','intro.title':'The Solar System','intro.sub':'the real sky, alive and in motion','intro.enter':'CLICK TO ENTER',
  'lang.toggle':'ไทย'
 };
 function applyUILang(){
@@ -4599,8 +4600,8 @@ function obGuide(force){
   const el=$p('obGuide');if(!el)return;
   const dn=$p('dailyNudge');if(dn&&dn.classList.contains('on')){dn.classList.remove('on');setTimeout(()=>{dn.style.display='none';},300);}  // กันการ์ดรายวันซ้อน
   const steps=[
-    {s:'01 · ลองเลื่อนดู',t:'นี่คือห้วงดาว',d:'ระบบสุริยะที่เห็น เคลื่อนตามตำแหน่งดาวจริง ณ ตอนนี้ — ลากเพื่อมองรอบ ๆ เลื่อนเพื่อซูมเข้า/ออก',go:'ถัดไป',act:'next'},
-    {s:'02 · เก็บภาพ',t:'จักรวาลในวันเกิดคุณ',d:'พิมพ์วันเกิด แล้วเก็บภาพระบบสุริยะของวันนั้นไว้เป็นที่ระลึก · แชร์ให้คนที่คุณรักได้',go:'✦ เปิดเลย',act:'chronos'}
+    {s:L('01 · Take a look','01 · ลองเลื่อนดู'),t:L('This is your sky','นี่คือห้วงดาว'),d:L('What you see moves with the planets’ real positions, right now — drag to look around, scroll to zoom in and out','ระบบสุริยะที่เห็น เคลื่อนตามตำแหน่งดาวจริง ณ ตอนนี้ — ลากเพื่อมองรอบ ๆ เลื่อนเพื่อซูมเข้า/ออก'),go:L('Next','ถัดไป'),act:'next'},
+    {s:L('02 · Keep a moment','02 · เก็บภาพ'),t:L('The universe on your birthday','จักรวาลในวันเกิดคุณ'),d:L('Enter your birthday and keep a portrait of the sky as it was that day · share it with someone you love','พิมพ์วันเกิด แล้วเก็บภาพระบบสุริยะของวันนั้นไว้เป็นที่ระลึก · แชร์ให้คนที่คุณรักได้'),go:L('✦ Open it','✦ เปิดเลย'),act:'chronos'}
   ];
   let i=0;
   function finish(){markObDone();el.classList.remove('on');setTimeout(()=>{el.style.display='none';},700);}
@@ -4608,7 +4609,7 @@ function obGuide(force){
     const st=steps[i];
     el.innerHTML=`<div class="ob-step">${st.s}</div><div class="ob-t">${st.t}</div><div class="ob-d">${st.d}</div>`
       +`<div class="ob-row"><button class="ob-b ob-go" id="obGo">${st.go}</button>`
-      +`<button class="ob-b ob-skip" id="obSkip">${i<steps.length-1?'ข้าม':'ปิด'}</button></div>`
+      +`<button class="ob-b ob-skip" id="obSkip">${i<steps.length-1?L('Skip','ข้าม'):L('Close','ปิด')}</button></div>`
       +`<div class="ob-dots">${steps.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('')}</div>`;
     $p('obGo').onclick=()=>{
       if(st.act==='chronos'){_obClosingPending=true;finish();openChronosLens();return;}
@@ -4629,9 +4630,11 @@ function dailyReturnNudge(){
   localStorage.setItem('dnSeen',todayStr());
   // นับ streak ที่ต่อเนื่องถึง "เมื่อวาน" (วันนี้ยังไม่บันทึก) → ใช้กระตุ้นไม่ให้ขาดช่วง
   const j=readMood();let s=0,_d=new Date();_d.setDate(_d.getDate()-1);while(j[moodLocalStr(_d)]){s++;_d.setDate(_d.getDate()-1);}
-  const line=s>0?`✦ คุณบันทึกห้วงใจต่อเนื่อง <b>${s} วัน</b> — วันนี้อย่าให้ขาดช่วงนะ`:'วันนี้คุณรู้สึกยังไง? ลองฝากไว้กับห้วงดาวสักครู่';
-  el.innerHTML=`<div class="dn-x" id="dnX">×</div><div class="dn-pre">ห้วงใจวันนี้</div><div class="dn-t">${line}</div>`
-    +`<div class="dn-row"><button class="ob-b ob-go" id="dnMood">◐ บันทึกห้วงใจ</button><button class="ob-b ob-skip" id="dnEcho">เสียงดาววันนี้</button></div>`;
+  const line=s>0
+    ?L(`✦ You’ve kept your Inner Space <b>${s} days</b> in a row — don’t let the thread break today`,`✦ คุณบันทึกห้วงใจต่อเนื่อง <b>${s} วัน</b> — วันนี้อย่าให้ขาดช่วงนะ`)
+    :L('How are you feeling today? Leave it with the stars for a little while','วันนี้คุณรู้สึกยังไง? ลองฝากไว้กับห้วงดาวสักครู่');
+  el.innerHTML=`<div class="dn-x" id="dnX">×</div><div class="dn-pre">${L('Today’s Inner Space','ห้วงใจวันนี้')}</div><div class="dn-t">${line}</div>`
+    +`<div class="dn-row"><button class="ob-b ob-go" id="dnMood">${L('◐ Write Inner Space','◐ บันทึกห้วงใจ')}</button><button class="ob-b ob-skip" id="dnEcho">${L('Star Echo','เสียงดาววันนี้')}</button></div>`;
   const close=()=>{el.classList.remove('on');setTimeout(()=>{el.style.display='none';},600);};
   el.style.display='';setTimeout(()=>el.classList.add('on'),300);
   $p('dnX').onclick=close;
