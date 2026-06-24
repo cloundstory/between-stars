@@ -1186,23 +1186,23 @@
   <div class="bh-stat" id="bhStat"></div>
 </div>
 
-<div id="myStarLabel">ดาวของคุณ</div>
+<div id="myStarLabel" data-i18n="star.label">ดาวของคุณ</div>
 <div id="myStarPanel">
   <button id="msClose">×</button>
   <div class="ms-pre">YOUR STAR</div>
-  <div class="ms-title" id="msName">ดาวของคุณ</div>
-  <div class="ms-poem">ดาวที่ลอยอิสระ ไม่โคจรรอบใคร หมุนอยู่รอบใจของคุณเอง<br><span>สีและแสงของมัน เกิดจากห้วงใจที่คุณบันทึกไว้</span></div>
-  <div class="ms-meter"><div class="ms-meter-top"><span>ระดับการเติบโต</span><span id="msScoreVal">—</span></div><div class="ms-bar"><div class="ms-bar-fill" id="msBarFill"></div></div></div>
+  <div class="ms-title" id="msName" data-i18n="star.label">ดาวของคุณ</div>
+  <div class="ms-poem" data-i18n-html="star.poem">ดาวที่ลอยอิสระ ไม่โคจรรอบใคร หมุนอยู่รอบใจของคุณเอง<br><span>สีและแสงของมัน เกิดจากห้วงใจที่คุณบันทึกไว้</span></div>
+  <div class="ms-meter"><div class="ms-meter-top"><span data-i18n="star.growth">ระดับการเติบโต</span><span id="msScoreVal">—</span></div><div class="ms-bar"><div class="ms-bar-fill" id="msBarFill"></div></div></div>
   <div class="ms-dom" id="msDom"></div>
   <div class="ms-sig" id="msSignature"></div>
   <div class="ms-desc" id="msDesc"></div>
   <div class="ms-meta" id="msMeta"></div>
-  <button id="msAddBtn">✦ บันทึกห้วงใจวันนี้</button>
+  <button id="msAddBtn" data-i18n="star.addBtn">✦ บันทึกห้วงใจวันนี้</button>
 </div>
 
 <div id="starLevelUp">
   <div class="slu-glyph">✦</div>
-  <div class="slu-pre">STAGE UP · เลื่อนระดับ</div>
+  <div class="slu-pre" data-i18n="star.stageUp">STAGE UP · เลื่อนระดับ</div>
   <div class="slu-name" id="sluName"></div>
   <div class="slu-sub" id="sluSub"></div>
 </div>
@@ -1557,6 +1557,8 @@ const UI_EN={
  'mem.nameSave':'Name this star','mem.nameSkip':'Let the universe name it',
  'mem.vaultLabel':'Star vault','mem.vaultSlotTitle':'Choose an orbit for the star to take',
  'mem.bringBack':'Bring back into orbit','mem.release':'Release the star','mem.cancel':'Cancel',
+ 'star.label':'Your star','star.growth':'Growth level','star.addBtn':'✦ Write today’s Inner Space','star.stageUp':'STAGE UP',
+ 'star.poem':'A star that floats free, orbiting no one — turning around your own heart<br><span>its colour and light are born from the Inner Space you write</span>',
  'lang.toggle':'ไทย'
 };
 function applyUILang(){
@@ -3311,12 +3313,13 @@ function updateBlackHole(dt){
 const MOOD_SCORE={radiant:1.0,hopeful:0.82,calm:0.66,faded:0.42,turbulent:0.48,heavy:0.26};
 // ระยะวิวัฒนาการตามแต้มสะสม (xp): size=ตัวคูณขนาด, glow=ความสว่างพื้นฐาน, rings=วงแหวน, sat=ความอิ่มสี (0=ขาวจาง)
 const STAR_STAGES=[
-  {key:'protostar', name:'ดาวก่อตัว',    min:0,  size:0.5,  glow:0.32, rings:0, sat:0.0},
-  {key:'dwarf',     name:'ดาวแคระ',      min:1,  size:0.7,  glow:0.55, rings:0, sat:0.55},
-  {key:'main',      name:'ดาวฤกษ์',      min:6,  size:0.92, glow:0.85, rings:1, sat:1.0},
-  {key:'giant',     name:'ดาวยักษ์',     min:16, size:1.18, glow:1.1,  rings:2, sat:1.0},
-  {key:'supergiant',name:'ดาวมหายักษ์',  min:34, size:1.5,  glow:1.4,  rings:3, sat:1.0},
+  {key:'protostar', name:'ดาวก่อตัว',    en:'Protostar', min:0,  size:0.5,  glow:0.32, rings:0, sat:0.0},
+  {key:'dwarf',     name:'ดาวแคระ',      en:'Dwarf star',min:1,  size:0.7,  glow:0.55, rings:0, sat:0.55},
+  {key:'main',      name:'ดาวฤกษ์',      en:'Main-sequence star',min:6,  size:0.92, glow:0.85, rings:1, sat:1.0},
+  {key:'giant',     name:'ดาวยักษ์',     en:'Giant',     min:16, size:1.18, glow:1.1,  rings:2, sat:1.0},
+  {key:'supergiant',name:'ดาวมหายักษ์',  en:'Supergiant',min:34, size:1.5,  glow:1.4,  rings:3, sat:1.0},
 ];
+const stageName=st=>st?(LANG==='en'?(st.en||st.name):st.name):'';
 const myStarGroup=new THREE.Group();
 myStarGroup.position.set(0,0,0);myStarGroup.visible=false;myStarGroup.scale.setScalar(0.001); // ซ้อนทับดวงอาทิตย์ — fade in/out ด้วย scale
 scene.add(myStarGroup);
@@ -3740,7 +3743,7 @@ function refreshMyStar(){
     const ringMesh=new THREE.Mesh(rg,rm);ringMesh.renderOrder=0;msRings.add(ringMesh);
   }
   const lbl=document.getElementById('myStarLabel');
-  if(lbl){const sig=(getSignal()||'').split('·')[0].trim();lbl.textContent='ดาวของคุณ'+(sig?' · '+sig:'')+(sum.stageIdx>=4?' ✦':'');}
+  if(lbl){const sig=(getSignal()||'').split('·')[0].trim();lbl.textContent=L('Your star','ดาวของคุณ')+(sig?' · '+sig:'')+(sum.stageIdx>=4?' ✦':'');}
 }
 function updateMyStar(dt){
   _msScale+=(_msTarget-_msScale)*0.06;
@@ -3789,26 +3792,34 @@ const MS_STAGE_DESC={
   giant:'ดาวเติบโตเป็นดาวยักษ์ — แสงและวงแหวนที่เห็นคือผลของการกลับมาอยู่กับใจตัวเองอย่างต่อเนื่อง',
   supergiant:'ดาวมหายักษ์ที่เปล่งประกายเต็มที่ — นี่คือผลของการเดินทางอยู่กับใจตัวเองมายาวนาน',
 };
+const MS_STAGE_DESC_EN={
+  protostar:'Your star is still a faint wisp of light, just beginning to form — each time you return to write your Inner Space, it grows a little, and takes on a colour of its own.',
+  dwarf:'Your star is taking shape, with soft colours drawn from your heart — keep writing, and it will brighten and grow.',
+  main:'Your star now shines on its own and has earned its first ring — born from the steadiness of tending to your own heart.',
+  giant:'Your star has grown into a giant — the light and rings you see are the fruit of returning to yourself, again and again.',
+  supergiant:'A supergiant in full radiance — this is what a long journey of staying close to your own heart becomes.',
+};
+const msStageDesc=k=>LANG==='en'?(MS_STAGE_DESC_EN[k]||''):(MS_STAGE_DESC[k]||'');
 function openMyStarPanel(){
   const s=myStarSummary();
-  document.getElementById('msScoreVal').textContent=s.stage.name;
+  document.getElementById('msScoreVal').textContent=stageName(s.stage);
   document.getElementById('msBarFill').style.width=Math.round(s.prog*100)+'%';
   const sig=(getSignal()||'').split('·')[0].trim();
-  document.getElementById('msName').textContent=sig||'ดาวของคุณ';
-  document.getElementById('msDesc').textContent=MS_STAGE_DESC[s.stage.key];
-  document.getElementById('msDom').textContent=s.dom?('สีของดาวสะท้อนห้วงใจล่าสุด — ช่วงนี้มัก “'+MS_MOOD_TH[s.dom]+'”'):'ยังไม่มีบันทึก สีจะปรากฏเมื่อคุณเริ่มบันทึก';
+  document.getElementById('msName').textContent=sig||L('Your star','ดาวของคุณ');
+  document.getElementById('msDesc').textContent=msStageDesc(s.stage.key);
+  document.getElementById('msDom').textContent=s.dom?L('Your star’s colour reflects your recent Inner Space — lately, often “'+moodLabel(s.dom)+'”','สีของดาวสะท้อนห้วงใจล่าสุด — ช่วงนี้มัก “'+moodLabel(s.dom)+'”'):L('No entries yet — your colour will appear once you start writing','ยังไม่มีบันทึก สีจะปรากฏเมื่อคุณเริ่มบันทึก');
   const archSig=memorySignature();
-  document.getElementById('msSignature').textContent=archSig.length?('ห้วงดาวของคุณ: '+archSig.map(([a,n])=>archLabelTH(a)+' ×'+n).join(' · ')):'';
-  const nextTxt=s.next?(' · ระยะต่อไป: '+s.next.name):' · เติบโตเต็มที่แล้ว';
-  document.getElementById('msMeta').textContent='บันทึก '+s.count+' วัน · ต่อเนื่องสูงสุด '+s.longest+' วัน · วงแหวน '+s.rings+'/3'+nextTxt;
+  document.getElementById('msSignature').textContent=archSig.length?(L('Your constellation: ','ห้วงดาวของคุณ: ')+archSig.map(([a,n])=>seArchLabel(a)+' ×'+n).join(' · ')):'';
+  const nextTxt=s.next?L(' · next stage: '+stageName(s.next),' · ระยะต่อไป: '+s.next.name):L(' · fully grown',' · เติบโตเต็มที่แล้ว');
+  document.getElementById('msMeta').textContent=L(s.count+' days written · longest streak '+s.longest+' days · '+s.rings+'/3 rings'+nextTxt,'บันทึก '+s.count+' วัน · ต่อเนื่องสูงสุด '+s.longest+' วัน · วงแหวน '+s.rings+'/3'+nextTxt);
   document.getElementById('myStarPanel').classList.add('on');
 }
 function closeMyStarPanel(){document.getElementById('myStarPanel').classList.remove('on');setMemoryInspect(false);}
 let _sluTimer=null;
 function celebrateStageUp(stage){
   closeMoodPanel(); // เผยฉากให้เห็นดาวเติบโต
-  document.getElementById('sluName').textContent=stage.name;
-  document.getElementById('sluSub').textContent='ดาวของคุณเติบโตขึ้นอีกขั้น จากการกลับมาดูแลใจตัวเองอย่างต่อเนื่อง';
+  document.getElementById('sluName').textContent=stageName(stage);
+  document.getElementById('sluSub').textContent=L('Your star has grown another stage — from returning, again and again, to care for your own heart','ดาวของคุณเติบโตขึ้นอีกขั้น จากการกลับมาดูแลใจตัวเองอย่างต่อเนื่อง');
   const el=document.getElementById('starLevelUp');el.classList.remove('on');void el.offsetWidth;el.classList.add('on');
   _msFlare=1;
   clearTimeout(_sluTimer);_sluTimer=setTimeout(()=>el.classList.remove('on'),4200);
