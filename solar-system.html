@@ -1109,7 +1109,7 @@
   <nav class="nav" id="nav"></nav>
   <div class="leftnav-sep"></div>
   <div class="missions" id="missionPanel">
-    <div class="mh"><b>DEEP SPACE</b><span>ยานสำรวจห้วงอวกาศ · ระยะจากดวงอาทิตย์เรียลไทม์</span></div>
+    <div class="mh"><b>DEEP SPACE</b><span data-i18n="ds.sub">ยานสำรวจห้วงอวกาศ · ระยะจากดวงอาทิตย์เรียลไทม์</span></div>
     <div id="missionRows"></div>
   </div>
 </div>
@@ -1571,6 +1571,7 @@ const UI_EN={
  'gr.already':'<span class="gr-check">✦</span>Sealed<br><span style="font-size:10px;color:rgba(255,200,80,.35)" id="grAlreadyDate"></span>',
  'gr.ph':'Write in case someone in this universe receives it…','gr.submit':'✦ Seal it onto the record',
  'cm.pre':'A signal from the deep','cm.close':'Acknowledged',
+ 'ds.sub':'Deep-space probes · real-time distance from the Sun',
  'lang.toggle':'ไทย'
 };
 function applyUILang(){
@@ -2137,7 +2138,24 @@ const MISSIONS=[
       'ข้อมูลทั้งหมดจากการบินผ่านพลูโตใช้เวลา 16 เดือนจึงส่งกลับมาถึงโลกครบ'
     ],decayLabel:'SIGNAL FADE'}},
 ];
-
+// EN parallel for mission badge/timeline/facts/philo (keyed by id). openMissionInfo picks this when LANG==='en'.
+const MISSION_EN={
+ voyager1:{badge:'Interstellar probe · 1977',
+   timeline:[['Launch','5 Sep 1977'],['Jupiter flyby','5 Mar 1979'],['Saturn flyby','12 Nov 1980'],['Entered interstellar space','25 Aug 2012']],
+   facts:['<b>The most distant human-made object</b> — now in interstellar space, beyond the reach of the Sun’s wind.','Carries the <b>Golden Record</b>, holding Earth’s sounds and images, in case another civilization finds it.'],
+   philo:{quote:'24,000,000,000 kilometres from home — and still sending signals back',
+     facts:['Its remaining RTG power is under 5 watts — less than a fridge bulb — yet it still crosses the void.','Humanity recorded waves, rain, whale song, a heartbeat, and music from 27 cultures onto the golden disc — in case someone finds it.','Ann Druyan recorded her own brainwaves while thinking of love — that feeling has already left the Solar System.','The sunlight it receives is 900× fainter than on Earth — still just enough to send word home.']}},
+ voyager2:{badge:'Grand Tour · 1977',
+   timeline:[['Launch','20 Aug 1977'],['Jupiter','9 Jul 1979'],['Saturn','25 Aug 1981'],['Uranus','24 Jan 1986'],['Neptune','25 Aug 1989']],
+   facts:['The only craft in history to visit <b>both Uranus and Neptune</b> — the “Grand Tour” rode a planetary alignment that recurs only every ~175 years.','Entered interstellar space in 2018, the second to do so after Voyager 1.'],
+   philo:{quote:'The only craft to touch all four giant planets — a chance that comes once every 175 years',
+     facts:['The alignment that made the Grand Tour possible last occurred in Thomas Jefferson’s era, and returns in 2153.','Voyager 2 launched sixteen days before Voyager 1 — they’re now in different directions, over 40 AU apart.','Its images revealed a storm on Neptune larger than Earth, over 4,500,000,000 kilometres away.','Its returning signal is weaker than a wristwatch bulb, yet we built 70-metre antennas to catch it.']}},
+ newhorizons:{badge:'Mission to Pluto · 2006',
+   timeline:[['Launch','19 Jan 2006'],['Jupiter gravity assist','28 Feb 2007'],['Pluto flyby','14 Jul 2015'],['Kuiper object Arrokoth flyby','1 Jan 2019']],
+   facts:['The first craft to explore <b>Pluto</b> up close, revealing its famous nitrogen-ice “heart.”','Left Earth at the highest launch speed ever, ~16 km/s — passing the Moon’s orbit in just 9 hours.'],
+   philo:{quote:'It carries the ashes of Clyde Tombaugh — he got to visit the world he discovered',
+     facts:['Clyde Tombaugh discovered Pluto in 1930, died in 1997, and in 2006 part of him set off to visit it.','Pluto’s “heart” — Tombaugh Regio — is a nitrogen-ice plain the size of Texas, found by this craft.','New Horizons took 9.5 years to reach Pluto, but only 22 minutes to fly past it.','All the data from the Pluto flyby took 16 months to fully return to Earth.']}},
+};
 const missionGroup=new THREE.Group();scene.add(missionGroup);
 let showPaths=false;
 const missLabelLayer=document.createElement('div');missLabelLayer.id='missLabels';
@@ -2760,7 +2778,7 @@ function updateMissionVisual(date){for(const m of MISSIONS){
   m._curAU=sceneToAU(st.pos.length());
   m._trav.visible=showPaths;m._travGlow.visible=showPaths;
   if(showPaths&&Math.abs(st.gt-m._travGt)>0.003){m._travGt=st.gt;setTraveled(m,st.gt,st.pos);}}}
-function missionStatText(m){return (m._curAU==null)?'ยังไม่ปล่อย':m._curAU.toFixed(1)+' AU';}
+function missionStatText(m){return (m._curAU==null)?L('Not launched','ยังไม่ปล่อย'):m._curAU.toFixed(1)+' AU';}
 const _mv=new THREE.Vector3();
 function updateMissionLabels(){const t=performance.now()*0.002;
   for(const m of MISSIONS){const el=m._label;
@@ -2775,7 +2793,7 @@ function updateMissionLabels(){const t=performance.now()*0.002;
 const missionRows=document.getElementById('missionRows');
 MISSIONS.forEach(m=>{const b=document.createElement('button');b.className='mrow';
   b.innerHTML=`<span class="mc" style="color:${mkColor(m.color)};background:${mkColor(m.color)}"></span>`+
-    `<span class="mn">${m.th}<i>${m.en}</i></span><span class="md" id="md-${m.id}"></span>`;
+    `<span class="mn">${LANG==='en'?m.en:m.th}<i>${LANG==='en'?m.th:m.en}</i></span><span class="md" id="md-${m.id}"></span>`;
   b.onclick=()=>openMissionInfo(m);missionRows.appendChild(b);});
 function updateMissionDash(){for(const m of MISSIONS){const el=document.getElementById('md-'+m.id);if(el)el.textContent=missionStatText(m);}}
 
@@ -2783,27 +2801,29 @@ function openMissionInfo(m){
   selected=null;selectedMission=m;stopPlanetSound();if(soundOn)startCraftBeeps();
   selectedObj=m.marker.visible?m.marker:null;setActiveNav(null);
   document.getElementById('i-focus').textContent=L('Zoom to this spacecraft','ซูมไปที่ยานลำนี้');
-  document.getElementById('i-badge').textContent=m.badge;
-  document.getElementById('i-name').textContent=m.th;
-  document.getElementById('i-en').textContent=m.en;
+  const me=(LANG==='en'&&typeof MISSION_EN!=='undefined')?MISSION_EN[m.id]:null; // EN mission content; null → Thai original
+  document.getElementById('i-badge').textContent=(me&&me.badge)||m.badge;
+  document.getElementById('i-name').textContent=LANG==='en'?m.en:m.th;
+  document.getElementById('i-en').textContent=LANG==='en'?m.th:m.en;
   document.getElementById('i-dot').style.color=mkColor(m.color);
   const rws=a=>a.map(s=>`<div class="stat"><span class="k">${s[0]}</span><span class="v">${s[1]}</span></div>`).join('');
+  const mPhilo=(me&&me.philo)||m.philo,mTimeline=(me&&me.timeline)||m.timeline,mFacts=(me&&me.facts)||m.facts;
   let h='';
   if(philo&&m.philo){
-    h+=`<div class="craft-philo-quote">${m.philo.quote}</div>`;
-    h+=m.philo.facts.map(f=>`<div class="craft-philo-fact">${f}</div>`).join('');
+    h+=`<div class="craft-philo-quote">${mPhilo.quote}</div>`;
+    h+=mPhilo.facts.map(f=>`<div class="craft-philo-fact">${f}</div>`).join('');
   }else{
     if(simDate.getTime()<m._launchMs){
-      h+='<div class="sec">สถานะ</div>'+rws([['สถานะ','ยังไม่ปล่อยตัว'],['กำหนดปล่อย',m.timeline[0][1]]]);
+      h+='<div class="sec">'+L('Status','สถานะ')+'</div>'+rws([[L('Status','สถานะ'),L('Not launched yet','ยังไม่ปล่อยตัว')],[L('Launch date','กำหนดปล่อย'),mTimeline[0][1]]]);
     }else{const au=m._curAU||currentAU(m,simDate);
-      h+='<div class="sec">ตำแหน่งปัจจุบัน · LIVE</div>'+rws([
-        ['ระยะจากดวงอาทิตย์',au.toFixed(1)+' AU'],
-        ['','≈ '+Math.round(au*KM_AU).toLocaleString()+' กม.'],
-        ['เวลาที่แสงเดินทางถึง',(au*LTSEC_PER_AU/3600).toFixed(1)+' ชม.'],
-        ['ความเร็ว',(m.rate*KMS_PER_AUYR).toFixed(1)+' กม./วิ'],
-        ['เดินทางมาแล้ว',((simDate-new Date(m.launch))/YR_MS).toFixed(1)+' ปี']]);}
-    h+='<div class="sec">ไทม์ไลน์ภารกิจ</div>'+rws(m.timeline);
-    h+='<div class="sec">เกร็ดน่ารู้</div>'+m.facts.map(f=>`<div class="note">${f}</div>`).join('');
+      h+='<div class="sec">'+L('Current position · LIVE','ตำแหน่งปัจจุบัน · LIVE')+'</div>'+rws([
+        [L('Distance from Sun','ระยะจากดวงอาทิตย์'),au.toFixed(1)+' AU'],
+        ['','≈ '+Math.round(au*KM_AU).toLocaleString()+L(' km',' กม.')],
+        [L('Light travel time','เวลาที่แสงเดินทางถึง'),(au*LTSEC_PER_AU/3600).toFixed(1)+L(' hr',' ชม.')],
+        [L('Speed','ความเร็ว'),(m.rate*KMS_PER_AUYR).toFixed(1)+L(' km/s',' กม./วิ')],
+        [L('Traveling for','เดินทางมาแล้ว'),((simDate-new Date(m.launch))/YR_MS).toFixed(1)+L(' yr',' ปี')]]);}
+    h+='<div class="sec">'+L('Mission timeline','ไทม์ไลน์ภารกิจ')+'</div>'+rws(mTimeline);
+    h+='<div class="sec">'+L('Did you know','เกร็ดน่ารู้')+'</div>'+mFacts.map(f=>`<div class="note">${f}</div>`).join('');
   }
   if(m.id==='voyager1')h+=`<button class="pbd-trigger-btn" id="pbdTriggerBtn">⊙ ภาพจากขอบระบบสุริยะ · 14 ก.พ. 1990</button>`;
   document.getElementById('i-body').innerHTML=h;
@@ -2951,9 +2971,9 @@ let simDate=new Date();let running=true,speedMul=1;let afterClock=null;
 let showOrbits=true,showLabels=true,showBelt=true;
 const cDate=document.getElementById('cDate'),cTime=document.getElementById('cTime'),rate=document.getElementById('rate');
 function daysPerSec(){return speedMul*speedMul*3;}
-function fmtRate(){const d=daysPerSec();if(d<1)return Math.round(d*24)+' ชม./วิ';if(d<60)return d.toFixed(0)+' วัน/วิ';return (d/365).toFixed(1)+' ปี/วิ';}
-function updateClock(){cDate.textContent=simDate.toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
-  cTime.textContent=simDate.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit',timeZone:'UTC'})+' UTC';rate.textContent=fmtRate();
+function fmtRate(){const d=daysPerSec();if(d<1)return Math.round(d*24)+L(' hr/s',' ชม./วิ');if(d<60)return d.toFixed(0)+L(' d/s',' วัน/วิ');return (d/365).toFixed(1)+L(' yr/s',' ปี/วิ');}
+function updateClock(){cDate.textContent=simDate.toLocaleDateString(seLocale(),{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
+  cTime.textContent=simDate.toLocaleTimeString(LANG==='en'?'en-GB':'th-TH',{hour:'2-digit',minute:'2-digit',timeZone:'UTC'})+' UTC';rate.textContent=fmtRate();
   if(afterClock)afterClock();}
 let clockUiAcc=0;
 function queueClockUpdate(dt,force){
