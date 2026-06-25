@@ -16,6 +16,10 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="th_TH">
+<meta property="og:locale:alternate" content="en_US">
+<link rel="alternate" hreflang="th" href="https://between-stars.vercel.app/">
+<link rel="alternate" hreflang="en" href="https://between-stars.vercel.app/?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://between-stars.vercel.app/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="ห้วงดาว · Between Stars">
 <meta name="twitter:description" content="ให้หัวใจทุกดวงได้มีที่พัก — ไม่ว่ายังไง เอกภพก็จะโอบกอดคุณเสมอ">
@@ -116,58 +120,64 @@
     text-transform:uppercase;color:var(--gold);background:rgba(243,201,122,.08);border:1px solid rgba(243,201,122,.28);
     border-radius:14px;padding:6px 13px;backdrop-filter:blur(6px)}
   #betaBadge b{font-weight:600}
+  #langToggle{position:fixed;top:18px;left:18px;z-index:5;font-family:var(--eng);font-size:9px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--gold);background:rgba(243,201,122,.08);border:1px solid rgba(243,201,122,.28);
+    border-radius:14px;padding:6px 13px;backdrop-filter:blur(6px);cursor:pointer;transition:.2s}
+  #langToggle:hover{background:rgba(243,201,122,.16)}
   @media(max-width:720px){.cards{grid-template-columns:1fr}.card{min-height:0}}
+  @media(max-width:520px){#langToggle{top:12px;left:12px;font-size:8px;padding:5px 10px}}
   @media(max-width:520px){#betaBadge{top:12px;right:12px;font-size:8px;padding:5px 10px}}
 </style>
 </head>
 <body>
-<div id="betaBadge"><b>BETA</b> · เวอร์ชันทดลอง</div>
+<div id="betaBadge"><b>BETA</b> · <span data-i18n="beta">เวอร์ชันทดลอง</span></div>
+<button id="langToggle" data-i18n="langToggle">EN</button>
 <canvas id="stars"></canvas>
 
 <div class="wrap">
   <header class="hero">
-    <div class="over">An interactive journey · การเดินทางเชิงโต้ตอบ</div>
-    <h1>ห้วงดาว</h1>
-    <div class="en">Between Stars</div>
-    <p class="tag">ให้หัวใจทุกดวงได้มีที่พัก<br>ไม่ว่าคืนนี้คุณจะเป็นอย่างไร เอกภพก็จะโอบกอดคุณไว้เสมอ</p>
-    <div class="scroll-cue">เลื่อนลงเพื่อเริ่ม ↓</div>
+    <div class="over" data-i18n="over">An interactive journey · การเดินทางเชิงโต้ตอบ</div>
+    <h1 data-i18n="h1">ห้วงดาว</h1>
+    <div class="en" data-i18n="h1sub">Between Stars</div>
+    <p class="tag" data-i18n-html="tag">ให้หัวใจทุกดวงได้มีที่พัก<br>ไม่ว่าคืนนี้คุณจะเป็นอย่างไร เอกภพก็จะโอบกอดคุณไว้เสมอ</p>
+    <div class="scroll-cue" data-i18n="cue">เลื่อนลงเพื่อเริ่ม ↓</div>
   </header>
 
-  <div class="section-label">เลือกการเดินทาง</div>
+  <div class="section-label" data-i18n="choose">เลือกการเดินทาง</div>
   <main class="cards">
     <a class="card" href="solar-system.html">
       <div class="halo"></div>
       <div class="glyph">☉</div>
-      <h3>การสำรวจ</h3>
-      <div class="ce">Explore</div>
-      <p>ออกเดินทางในระบบสุริยะที่อิงตำแหน่งดาวจริง · ค้นหาสุริยุปราคา · ตามรอยยานสู่ห้วงดาว · เก็บภาพจักรวาลในวันเกิดคุณ</p>
-      <div class="go">เริ่มสำรวจ →</div>
+      <h3 data-i18n="c1h">การสำรวจ</h3>
+      <div class="ce" data-i18n="c1e">Explore</div>
+      <p data-i18n="c1p">ออกเดินทางในระบบสุริยะที่อิงตำแหน่งดาวจริง · ค้นหาสุริยุปราคา · ตามรอยยานสู่ห้วงดาว · เก็บภาพจักรวาลในวันเกิดคุณ</p>
+      <div class="go" data-i18n="c1g">เริ่มสำรวจ →</div>
     </a>
     <a class="card" href="solar-system.html?mode=contemplate">
       <div class="halo"></div>
       <div class="glyph">✦</div>
-      <h3>การใคร่ครวญ</h3>
-      <div class="ce">Contemplation</div>
-      <p>พื้นที่เงียบสงบที่มีเพียงคุณกับดาวของตัวเอง · บันทึกห้วงใจในแต่ละวัน แล้วเฝ้าดูดาวค่อย ๆ เปล่งแสงและเติบโต</p>
-      <div class="go">เข้าสู่ความสงบ →</div>
+      <h3 data-i18n="c2h">การใคร่ครวญ</h3>
+      <div class="ce" data-i18n="c2e">Contemplation</div>
+      <p data-i18n="c2p">พื้นที่เงียบสงบที่มีเพียงคุณกับดาวของตัวเอง · บันทึกห้วงใจในแต่ละวัน แล้วเฝ้าดูดาวค่อย ๆ เปล่งแสงและเติบโต</p>
+      <div class="go" data-i18n="c2g">เข้าสู่ความสงบ →</div>
     </a>
   </main>
 
   <section class="about" id="about">
-    <div class="q">"เราตัวเล็กนิดเดียว<br>แต่เราคือสิ่งเดียวที่รู้ว่าตัวเองตัวเล็ก"</div>
-    <p class="sub">ห้วงดาวสร้างขึ้นเพื่อให้คุณได้เงยหน้ามองดาว แล้วรู้สึกว่าตัวเองเป็นส่วนหนึ่งของบางสิ่งที่ใหญ่กว่า — และมีพื้นที่ให้คุณฝากความรู้สึกไว้กับห้วงอวกาศ เผื่อสักวันมันจะลอยไปถึงใครสักคน</p>
-    <span class="more" onclick="document.getElementById('aboutModal').classList.add('on')">เกี่ยวกับเรา</span>
+    <div class="q" data-i18n-html="aboutQ">"เราตัวเล็กนิดเดียว<br>แต่เราคือสิ่งเดียวที่รู้ว่าตัวเองตัวเล็ก"</div>
+    <p class="sub" data-i18n="aboutSub">ห้วงดาวสร้างขึ้นเพื่อให้คุณได้เงยหน้ามองดาว แล้วรู้สึกว่าตัวเองเป็นส่วนหนึ่งของบางสิ่งที่ใหญ่กว่า — และมีพื้นที่ให้คุณฝากความรู้สึกไว้กับห้วงอวกาศ เผื่อสักวันมันจะลอยไปถึงใครสักคน</p>
+    <span class="more" data-i18n="aboutMore" onclick="document.getElementById('aboutModal').classList.add('on')">เกี่ยวกับเรา</span>
   </section>
 
   <footer>
     <nav class="flinks">
-      <a onclick="document.getElementById('aboutModal').classList.add('on')" style="cursor:pointer">เกี่ยวกับ</a>
-      <a href="credits.html">อ้างอิง &amp; เครดิต</a>
-      <a href="privacy.html">ความเป็นส่วนตัว</a>
-      <a href="privacy.html#content">แนวปฏิบัติเนื้อหา</a>
-      <a href="mailto:cloundstory@gmail.com">ติดต่อ</a>
+      <a onclick="document.getElementById('aboutModal').classList.add('on')" style="cursor:pointer" data-i18n="fAbout">เกี่ยวกับ</a>
+      <a href="credits.html" data-i18n="fCredits">อ้างอิง &amp; เครดิต</a>
+      <a href="privacy.html" data-i18n="fPrivacy">ความเป็นส่วนตัว</a>
+      <a href="privacy.html#content" data-i18n="fGuide">แนวปฏิบัติเนื้อหา</a>
+      <a href="mailto:cloundstory@gmail.com" data-i18n="fContact">ติดต่อ</a>
     </nav>
-    <div class="fcredit">ห้วงดาว · Between Stars · 2026<br>เรียบเรียงโดย Golf · เขียนโค้ดโดย Claude Code</div>
+    <div class="fcredit" data-i18n-html="fcredit">ห้วงดาว · Between Stars · 2026<br>เรียบเรียงโดย Golf · เขียนโค้ดโดย Claude Code</div>
   </footer>
 </div>
 
@@ -175,12 +185,12 @@
 <div id="aboutModal">
   <div class="am-card">
     <button class="am-x" onclick="document.getElementById('aboutModal').classList.remove('on')">×</button>
-    <div class="am-pre">เกี่ยวกับ</div>
-    <div class="am-title">ห้วงดาว · Between Stars</div>
-    <p>ห้วงดาวสร้างขึ้นเพื่อให้หัวใจทุกดวงได้มีที่พัก</p>
-    <p>ไม่ว่าคืนนี้คุณจะเป็นอย่างไร — เหนื่อย เศร้า หรือเพียงอยากเงียบ ๆ เอกภพก็จะโอบกอดคุณไว้เสมอ</p>
-    <p>ที่นี่มี<span class="em">ระบบสุริยะ</span>ที่เคลื่อนตามตำแหน่งดาวจริง · เรื่องราว<span class="em">70 ปี</span>ที่มนุษย์เอื้อมไปหาดวงดาว · และพื้นที่ให้คุณ<span class="em">ฝากความรู้สึก</span>ไว้กับห้วงอวกาศ</p>
-    <div class="am-meta">
+    <div class="am-pre" data-i18n="amPre">เกี่ยวกับ</div>
+    <div class="am-title" data-i18n="amTitle">ห้วงดาว · Between Stars</div>
+    <p data-i18n="amP1">ห้วงดาวสร้างขึ้นเพื่อให้หัวใจทุกดวงได้มีที่พัก</p>
+    <p data-i18n="amP2">ไม่ว่าคืนนี้คุณจะเป็นอย่างไร — เหนื่อย เศร้า หรือเพียงอยากเงียบ ๆ เอกภพก็จะโอบกอดคุณไว้เสมอ</p>
+    <p data-i18n-html="amP3">ที่นี่มี<span class="em">ระบบสุริยะ</span>ที่เคลื่อนตามตำแหน่งดาวจริง · เรื่องราว<span class="em">70 ปี</span>ที่มนุษย์เอื้อมไปหาดวงดาว · และพื้นที่ให้คุณ<span class="em">ฝากความรู้สึก</span>ไว้กับห้วงอวกาศ</p>
+    <div class="am-meta" data-i18n-html="amMeta">
       เรียบเรียงโดย <b>Golf</b><br>
       เขียนโค้ดโดย <b>Claude Code</b><br>
       ติดต่อ · ข้อเสนอแนะ: <a href="mailto:cloundstory@gmail.com">cloundstory@gmail.com</a><br>
@@ -190,6 +200,43 @@
 </div>
 
 <script>
+// ── language: TH primary, EN additive (mirrors solar-system.html) ──
+(function(){
+  var LANG=(function(){try{var q=new URLSearchParams(location.search).get('lang');if(q==='en'||q==='th')return q;var s=localStorage.getItem('lang');if(s==='en'||s==='th')return s;}catch(e){}return (navigator.language||'').toLowerCase().indexOf('th')===0?'th':'en';})();
+  var EN={
+    beta:'experimental',langToggle:'ไทย',
+    over:'An interactive journey',
+    h1:'Between Stars',h1sub:'ห้วงดาว',
+    tag:'A place of rest for every heart<br>However tonight finds you, the universe will always hold you',
+    cue:'Scroll to begin ↓',choose:'Choose your journey',
+    c1h:'Explore',c1e:'การสำรวจ',c1p:'Set out through a Solar System that follows the planets’ real positions · find eclipses · follow the craft into the deep · capture the universe on your birthday',c1g:'Start exploring →',
+    c2h:'Contemplation',c2e:'การใคร่ครวญ',c2p:'A quiet space with only you and your own star · write your Inner Space each day, and watch it slowly glow and grow',c2g:'Enter the stillness →',
+    aboutQ:'“We are tiny —<br>yet we are the only thing that knows it is tiny.”',
+    aboutSub:'Between Stars was made so you could look up at the stars and feel part of something larger — with space to leave your feelings with the cosmos, in case one day they drift to someone.',
+    aboutMore:'About',
+    fAbout:'About',fCredits:'Sources & credits',fPrivacy:'Privacy',fGuide:'Content guidelines',fContact:'Contact',
+    fcredit:'Between Stars · 2026<br>Curated by Golf · Coded with Claude Code',
+    amPre:'About',amTitle:'Between Stars · ห้วงดาว',
+    amP1:'Between Stars was made to be a place of rest for every heart.',
+    amP2:'However tonight finds you — tired, sad, or just wanting quiet — the universe will always hold you.',
+    amP3:'Here is a <span class="em">Solar System</span> that moves with the real positions of the stars · the story of <span class="em">70 years</span> of humanity reaching for the stars · and space to <span class="em">leave your feelings</span> with the deep.',
+    amMeta:'Curated by <b>Golf</b><br>Coded with <b>Claude Code</b><br>Contact · feedback: <a href="mailto:cloundstory@gmail.com">cloundstory@gmail.com</a><br><a href="credits.html">Sources &amp; credits</a> · <a href="privacy.html">Privacy</a>'
+  };
+  if(LANG==='en'){
+    document.querySelectorAll('[data-i18n]').forEach(function(el){var v=EN[el.getAttribute('data-i18n')];if(v!=null)el.textContent=v;});
+    document.querySelectorAll('[data-i18n-html]').forEach(function(el){var v=EN[el.getAttribute('data-i18n-html')];if(v!=null)el.innerHTML=v;});
+    document.documentElement.lang='en';
+    document.title='Between Stars';
+    var sd=function(sel,val){var m=document.querySelector(sel);if(m)m.setAttribute('content',val);};
+    sd('meta[name="description"]','Between Stars takes you out to touch space — a Solar System on the real positions of the stars, the story of humanity’s journey, and a place of rest for every heart.');
+    sd('meta[property="og:title"]','Between Stars');
+    sd('meta[property="og:description"]','A place of rest for every heart — however tonight finds you, the universe will always hold you.');
+    sd('meta[property="og:locale"]','en_US');
+    document.querySelectorAll('a.card').forEach(function(a){var h=a.getAttribute('href');if(h&&h.indexOf('solar-system')===0)a.setAttribute('href',h+(h.indexOf('?')>=0?'&':'?')+'lang=en');});
+  }
+  var lt=document.getElementById('langToggle');
+  if(lt)lt.onclick=function(){var nl=LANG==='en'?'th':'en';try{localStorage.setItem('lang',nl);}catch(e){}var u=new URL(location.href);u.searchParams.set('lang',nl);location.assign(u.toString());};
+})();
 // starfield เบาๆ
 (function(){
   var c=document.getElementById('stars'),x=c.getContext('2d'),st=[],W,H;
