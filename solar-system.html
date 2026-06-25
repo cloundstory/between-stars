@@ -244,7 +244,13 @@
     border-radius:20px;padding:9px 18px;cursor:pointer;backdrop-filter:blur(10px);transition:.25s}
   #modeBtn:hover{border-color:var(--gold);background:var(--gold-dim)}
   body.cinematic #modeBtn{opacity:0;pointer-events:none}
-  #sigBtn{position:fixed;top:22px;right:24px;z-index:12;display:flex;align-items:center;gap:8px;
+  #topActions{position:fixed;top:22px;right:24px;z-index:12;display:flex;align-items:center;gap:10px}
+  body.cinematic #topActions{opacity:0;pointer-events:none}
+  #tLang{font-family:var(--eng);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+    background:rgba(8,11,20,.72);border:1px solid var(--line);border-radius:20px;padding:8px 14px;cursor:pointer;
+    transition:border-color .2s,background .2s,color .2s;backdrop-filter:blur(12px);white-space:nowrap}
+  #tLang:hover{border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.06);color:var(--ink)}
+  #sigBtn{display:flex;align-items:center;gap:8px;
     background:rgba(8,11,20,.72);border:1px solid var(--line);border-radius:20px;
     padding:7px 16px 7px 12px;cursor:pointer;transition:border-color .2s,background .2s;backdrop-filter:blur(12px)}
   #sigBtn:hover{border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.06)}
@@ -369,7 +375,7 @@
   #starLevelUp .slu-name{font-family:var(--th);font-weight:300;font-size:34px;color:#fbeccf;text-shadow:0 0 34px rgba(243,201,122,.6)}
   #starLevelUp .slu-sub{font-family:var(--th);font-size:13px;color:rgba(228,220,205,.78);max-width:300px;line-height:1.7}
   @media(max-width:520px){#starLevelUp .slu-name{font-size:28px}}
-  @media(max-width:860px){#sigBtn{top:14px;right:14px;padding:6px 12px 6px 10px}}
+  @media(max-width:860px){#topActions{top:14px;right:14px;gap:8px}#sigBtn{padding:6px 12px 6px 10px}#tLang{padding:6px 11px;font-size:9px}}
   #philoTint{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity 1.4s;
     background:radial-gradient(1200px 800px at 50% 120%,rgba(243,201,122,.10),transparent 60%),radial-gradient(900px 700px at 50% -10%,rgba(120,90,180,.10),transparent 60%)}
   body.philo #philoTint{opacity:1}
@@ -1056,7 +1062,6 @@
   <span class="tog" id="tLive">● LIVE</span>
   <div class="sep"></div>
   <span class="tog" id="layersBtn" data-i18n="dock.layers">เลเยอร์ ▾</span>
-  <span class="tog" id="tLang" title="ภาษา / Language" data-i18n="lang.toggle">EN</span>
 </div>
 
 <div class="timeline" id="timeline">
@@ -1115,7 +1120,10 @@
 </div>
 
 <button id="modeBtn" data-i18n="mode.contemplate">✦ ใคร่ครวญ</button>
-<button id="sigBtn"><span id="sigBtnDot"></span><span id="sigBtnLabel">SIGNAL</span><span id="sigBadge"></span></button>
+<div id="topActions">
+  <button id="tLang" type="button" title="ภาษา / Language" data-i18n="lang.toggle">EN</button>
+  <button id="sigBtn"><span id="sigBtnDot"></span><span id="sigBtnLabel">SIGNAL</span><span id="sigBadge"></span></button>
+</div>
 <div id="obSignal" class="ob-tip">ตัวตนของคุณในห้วงอวกาศ</div>
 <div id="obComet" class="ob-tip">✦ แตะดาวตกเพื่อรับสาร</div>
 <div id="obGuide" style="display:none"></div>
