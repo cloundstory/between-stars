@@ -15,6 +15,10 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="th_TH">
+<meta property="og:locale:alternate" content="en_US">
+<link rel="alternate" hreflang="th" href="https://between-stars.vercel.app/privacy.html">
+<link rel="alternate" hreflang="en" href="https://between-stars.vercel.app/privacy.html?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://between-stars.vercel.app/privacy.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://between-stars.vercel.app/og-image.png">
 <meta name="theme-color" content="#04060d">
@@ -49,59 +53,101 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="index.html">← ห้วงดาว</a>
-  <h1>ความเป็นส่วนตัว &amp; แนวปฏิบัติ</h1>
-  <div class="upd">ปรับปรุงล่าสุด · มิถุนายน 2026</div>
-  <p class="lead">ห้วงดาวให้ความสำคัญกับความเป็นส่วนตัวของคุณ หน้านี้อธิบายว่าเราเก็บอะไร เก็บที่ไหน และคุณควบคุมมันได้อย่างไร ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล 2019 (PDPA)</p>
+  <a class="back" href="index.html" data-i18n="back">← ห้วงดาว</a>
+  <h1 data-i18n="h1">ความเป็นส่วนตัว &amp; แนวปฏิบัติ</h1>
+  <div class="upd" data-i18n="upd">ปรับปรุงล่าสุด · มิถุนายน 2026</div>
+  <p class="lead" data-i18n="lead">ห้วงดาวให้ความสำคัญกับความเป็นส่วนตัวของคุณ หน้านี้อธิบายว่าเราเก็บอะไร เก็บที่ไหน และคุณควบคุมมันได้อย่างไร ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล 2019 (PDPA)</p>
 
-  <h2>ข้อมูลที่เราเก็บ</h2>
-  <p>ห้วงดาวเก็บข้อมูลส่วนใหญ่ไว้ใน <b>localStorage บนเครื่องและเบราว์เซอร์ของคุณ</b> เป็นค่าเริ่มต้น หากคุณเลือกเชื่อมต่ออีเมลเพื่อเล่นต่อบนเครื่องอื่น เราจะใช้ Supabase สำหรับการล็อกอินและซิงก์ข้อมูลส่วนตัวบางส่วนข้ามอุปกรณ์ ได้แก่:</p>
+  <h2 data-i18n="h2_1">ข้อมูลที่เราเก็บ</h2>
+  <p data-i18n-html="p1">ห้วงดาวเก็บข้อมูลส่วนใหญ่ไว้ใน <b>localStorage บนเครื่องและเบราว์เซอร์ของคุณ</b> เป็นค่าเริ่มต้น หากคุณเลือกเชื่อมต่ออีเมลเพื่อเล่นต่อบนเครื่องอื่น เราจะใช้ Supabase สำหรับการล็อกอินและซิงก์ข้อมูลส่วนตัวบางส่วนข้ามอุปกรณ์ ได้แก่:</p>
   <ul>
-    <li>ข้อความหรือบันทึกส่วนตัวที่คุณเขียนในบางส่วนของระบบ เช่น บันทึกห้วงใจ Golden Record และเสียงสะท้อน/Resonance</li>
-    <li>ดาวความทรงจำที่เกิดจากบันทึกของคุณ ชื่อที่คุณตั้งให้ดาว และการจัดเรียงในวงโคจร/คลังดาว</li>
-    <li>รหัสประจำตัวสุ่ม (Signal ID) และเวลาที่สร้าง เพื่อให้ตัวตนในเว็บของคุณต่อเนื่องระหว่างเครื่อง</li>
-    <li>ข้อมูลอารมณ์หรือสถานะการใช้งานบางอย่างที่จำเป็นต่อประสบการณ์ส่วนตัวในเว็บ</li>
-    <li>อีเมล เฉพาะกรณีที่คุณเลือกเชื่อมต่อบัญชี เพื่อส่งลิงก์ล็อกอินและยืนยันตัวตนผ่าน Supabase</li>
+    <li data-i18n="li1a">ข้อความหรือบันทึกส่วนตัวที่คุณเขียนในบางส่วนของระบบ เช่น บันทึกห้วงใจ Golden Record และเสียงสะท้อน/Resonance</li>
+    <li data-i18n="li1b">ดาวความทรงจำที่เกิดจากบันทึกของคุณ ชื่อที่คุณตั้งให้ดาว และการจัดเรียงในวงโคจร/คลังดาว</li>
+    <li data-i18n="li1c">รหัสประจำตัวสุ่ม (Signal ID) และเวลาที่สร้าง เพื่อให้ตัวตนในเว็บของคุณต่อเนื่องระหว่างเครื่อง</li>
+    <li data-i18n="li1d">ข้อมูลอารมณ์หรือสถานะการใช้งานบางอย่างที่จำเป็นต่อประสบการณ์ส่วนตัวในเว็บ</li>
+    <li data-i18n="li1e">อีเมล เฉพาะกรณีที่คุณเลือกเชื่อมต่อบัญชี เพื่อส่งลิงก์ล็อกอินและยืนยันตัวตนผ่าน Supabase</li>
   </ul>
 
-  <h2>สิ่งที่เราไม่ทำ</h2>
+  <h2 data-i18n="h2_2">สิ่งที่เราไม่ทำ</h2>
   <ul>
-    <li>ไม่ใช้คุกกี้เพื่อการติดตาม (tracking cookies)</li>
-    <li>ไม่มีเครื่องมือวิเคราะห์ของบุคคลที่สาม (third-party analytics)</li>
-    <li>ไม่ขาย ไม่แลกเปลี่ยน และไม่ใช้ข้อมูลของคุณเพื่อโฆษณา</li>
+    <li data-i18n="li2a">ไม่ใช้คุกกี้เพื่อการติดตาม (tracking cookies)</li>
+    <li data-i18n="li2b">ไม่มีเครื่องมือวิเคราะห์ของบุคคลที่สาม (third-party analytics)</li>
+    <li data-i18n="li2c">ไม่ขาย ไม่แลกเปลี่ยน และไม่ใช้ข้อมูลของคุณเพื่อโฆษณา</li>
   </ul>
 
-  <h2>การวัดผลการใช้งาน</h2>
-  <p>ห้วงดาวนับจำนวนการเข้าชมและการใช้งานแบบรวม ด้วย<b>ตัวนับของเราเอง (first-party)</b> ที่เก็บบน Supabase ของเราเท่านั้น ไม่ผ่านบริการวิเคราะห์ของบุคคลที่สาม เราเก็บเพียงเหตุการณ์แบบนับรวม เช่น การเปิดหน้าเว็บหรือการเปิดใช้ฟีเจอร์ <b>โดยไม่ส่งและไม่เก็บข้อความที่คุณเขียน</b> — บันทึกห้วงใจ ชื่อดาว และข้อความส่วนตัวอื่น ๆ จะไม่ถูกส่งไปกับการวัดผลนี้ (ข้อความจะออกจากเครื่องคุณก็ต่อเมื่อคุณเลือกล็อกอินเพื่อซิงก์ หรือเลือกเผยแพร่เองเท่านั้น)</p>
-  <div class="box">หมายเหตุทางเทคนิค: ห้วงดาวใช้ Supabase สำหรับระบบล็อกอินและซิงก์ข้อมูลเมื่อคุณเลือกเชื่อมต่ออีเมล และโหลดแบบอักษร ไลบรารี หรือภาพบางส่วนจากผู้ให้บริการภายนอก (Google Fonts, jsDelivr CDN, Wikimedia) ซึ่งอาจเห็นเลข IP ของคุณตามปกติของการเรียกไฟล์บนอินเทอร์เน็ต ดูรายการได้ที่หน้า <a href="credits.html">อ้างอิง &amp; เครดิต</a></div>
+  <h2 data-i18n="h2_3">การวัดผลการใช้งาน</h2>
+  <p data-i18n-html="p3">ห้วงดาวนับจำนวนการเข้าชมและการใช้งานแบบรวม ด้วย<b>ตัวนับของเราเอง (first-party)</b> ที่เก็บบน Supabase ของเราเท่านั้น ไม่ผ่านบริการวิเคราะห์ของบุคคลที่สาม เราเก็บเพียงเหตุการณ์แบบนับรวม เช่น การเปิดหน้าเว็บหรือการเปิดใช้ฟีเจอร์ <b>โดยไม่ส่งและไม่เก็บข้อความที่คุณเขียน</b> — บันทึกห้วงใจ ชื่อดาว และข้อความส่วนตัวอื่น ๆ จะไม่ถูกส่งไปกับการวัดผลนี้ (ข้อความจะออกจากเครื่องคุณก็ต่อเมื่อคุณเลือกล็อกอินเพื่อซิงก์ หรือเลือกเผยแพร่เองเท่านั้น)</p>
+  <div class="box" data-i18n-html="box">หมายเหตุทางเทคนิค: ห้วงดาวใช้ Supabase สำหรับระบบล็อกอินและซิงก์ข้อมูลเมื่อคุณเลือกเชื่อมต่ออีเมล และโหลดแบบอักษร ไลบรารี หรือภาพบางส่วนจากผู้ให้บริการภายนอก (Google Fonts, jsDelivr CDN, Wikimedia) ซึ่งอาจเห็นเลข IP ของคุณตามปกติของการเรียกไฟล์บนอินเทอร์เน็ต ดูรายการได้ที่หน้า <a href="credits.html">อ้างอิง &amp; เครดิต</a></div>
 
-  <h2>คุณควบคุมข้อมูลของคุณ</h2>
-  <p>ข้อมูลที่อยู่ในเครื่องคุณสามารถลบได้ด้วยตัวเองทุกเมื่อ โดยล้างข้อมูลเว็บไซต์ (Clear site data / ล้างข้อมูลการเรียกดู) ในเบราว์เซอร์ ข้อมูล localStorage บนเครื่องนั้นจะหายไปทันที</p>
-  <p>หากคุณเชื่อมต่ออีเมล ข้อมูลบางส่วนจะถูกเก็บใน Supabase เพื่อให้เรียกคืนและเล่นต่อบนเครื่องอื่นได้ คุณสามารถออกจากระบบ หยุดใช้การซิงก์ หรือติดต่อเราเพื่อขอลบข้อมูลบัญชีและข้อมูลที่ซิงก์ไว้ได้</p>
+  <h2 data-i18n="h2_4">คุณควบคุมข้อมูลของคุณ</h2>
+  <p data-i18n="p4a">ข้อมูลที่อยู่ในเครื่องคุณสามารถลบได้ด้วยตัวเองทุกเมื่อ โดยล้างข้อมูลเว็บไซต์ (Clear site data / ล้างข้อมูลการเรียกดู) ในเบราว์เซอร์ ข้อมูล localStorage บนเครื่องนั้นจะหายไปทันที</p>
+  <p data-i18n="p4b">หากคุณเชื่อมต่ออีเมล ข้อมูลบางส่วนจะถูกเก็บใน Supabase เพื่อให้เรียกคืนและเล่นต่อบนเครื่องอื่นได้ คุณสามารถออกจากระบบ หยุดใช้การซิงก์ หรือติดต่อเราเพื่อขอลบข้อมูลบัญชีและข้อมูลที่ซิงก์ไว้ได้</p>
 
-  <h2 id="content">แนวปฏิบัติเนื้อหาที่คุณเขียน</h2>
-  <p>พื้นที่ในห้วงดาวออกแบบให้คุณฝากความรู้สึก ข้อความส่วนตัวมีไว้เพื่อประสบการณ์ของคุณและการซิงก์ข้ามเครื่องเมื่อคุณล็อกอิน หากในอนาคตมีส่วนที่แชร์ข้ามผู้ใช้ ข้อความบางส่วนอาจถูกสุ่มแสดงให้ผู้อื่นเห็น <b>แบบไม่ระบุตัวตน</b> ดังนั้นโปรด:</p>
+  <h2 id="content" data-i18n="h2_5">แนวปฏิบัติเนื้อหาที่คุณเขียน</h2>
+  <p data-i18n-html="p5">พื้นที่ในห้วงดาวออกแบบให้คุณฝากความรู้สึก ข้อความส่วนตัวมีไว้เพื่อประสบการณ์ของคุณและการซิงก์ข้ามเครื่องเมื่อคุณล็อกอิน หากในอนาคตมีส่วนที่แชร์ข้ามผู้ใช้ ข้อความบางส่วนอาจถูกสุ่มแสดงให้ผู้อื่นเห็น <b>แบบไม่ระบุตัวตน</b> ดังนั้นโปรด:</p>
   <ul>
-    <li>ไม่เขียนข้อมูลส่วนตัวที่ระบุตัวคุณหรือผู้อื่น (ชื่อจริง เบอร์ ที่อยู่ ฯลฯ)</li>
-    <li>ไม่เขียนเนื้อหาผิดกฎหมาย ความรุนแรง เกลียดชัง คุกคาม ลามกอนาจาร หรือสแปม</li>
-    <li>เคารพผู้อื่น — ที่นี่เป็นที่พักใจ ไม่ใช่ที่ทำร้ายกัน</li>
+    <li data-i18n="li5a">ไม่เขียนข้อมูลส่วนตัวที่ระบุตัวคุณหรือผู้อื่น (ชื่อจริง เบอร์ ที่อยู่ ฯลฯ)</li>
+    <li data-i18n="li5b">ไม่เขียนเนื้อหาผิดกฎหมาย ความรุนแรง เกลียดชัง คุกคาม ลามกอนาจาร หรือสแปม</li>
+    <li data-i18n="li5c">เคารพผู้อื่น — ที่นี่เป็นที่พักใจ ไม่ใช่ที่ทำร้ายกัน</li>
   </ul>
-  <p>เรามีปุ่มรายงาน (report) และขอสงวนสิทธิ์ในการซ่อนหรือลบเนื้อหาที่ละเมิดแนวปฏิบัติ หากพบเนื้อหาไม่เหมาะสม แจ้งได้ที่ <a href="mailto:cloundstory@gmail.com">cloundstory@gmail.com</a></p>
+  <p data-i18n-html="p5b">เรามีปุ่มรายงาน (report) และขอสงวนสิทธิ์ในการซ่อนหรือลบเนื้อหาที่ละเมิดแนวปฏิบัติ หากพบเนื้อหาไม่เหมาะสม แจ้งได้ที่ <a href="mailto:cloundstory@gmail.com">cloundstory@gmail.com</a></p>
 
-  <h2>เนื้อหาเชิงโหราศาสตร์</h2>
-  <p>ตำแหน่งดาวและราศีในห้วงดาวคำนวณจากข้อมูลดาราศาสตร์จริง แต่การตีความเชิงโหราศาสตร์ ราศี หรือคำทำนาย จัดทำขึ้น<b>เพื่อความบันเทิงและการใคร่ครวญเท่านั้น</b> ไม่ใช่คำแนะนำทางการแพทย์ การเงิน กฎหมาย หรือการตัดสินใจสำคัญในชีวิต</p>
+  <h2 data-i18n="h2_6">เนื้อหาเชิงโหราศาสตร์</h2>
+  <p data-i18n-html="p6">ตำแหน่งดาวและราศีในห้วงดาวคำนวณจากข้อมูลดาราศาสตร์จริง แต่การตีความเชิงโหราศาสตร์ ราศี หรือคำทำนาย จัดทำขึ้น<b>เพื่อความบันเทิงและการใคร่ครวญเท่านั้น</b> ไม่ใช่คำแนะนำทางการแพทย์ การเงิน กฎหมาย หรือการตัดสินใจสำคัญในชีวิต</p>
 
-  <h2>ข้อจำกัดความรับผิด</h2>
-  <p>ห้วงดาวให้บริการ "ตามสภาพที่เป็น" (as is) โดยไม่มีการรับประกัน เราพยายามให้ข้อมูลถูกต้องที่สุด แต่ไม่รับผิดต่อความเสียหายที่เกิดจากการใช้งาน</p>
+  <h2 data-i18n="h2_7">ข้อจำกัดความรับผิด</h2>
+  <p data-i18n="p7">ห้วงดาวให้บริการ "ตามสภาพที่เป็น" (as is) โดยไม่มีการรับประกัน เราพยายามให้ข้อมูลถูกต้องที่สุด แต่ไม่รับผิดต่อความเสียหายที่เกิดจากการใช้งาน</p>
 
-  <h2>ติดต่อ</h2>
-  <p>ข้อสงสัยเรื่องความเป็นส่วนตัว การใช้สิทธิ์ตาม PDPA หรือเรื่องเนื้อหา ติดต่อ: <a href="mailto:cloundstory@gmail.com">cloundstory@gmail.com</a></p>
+  <h2 data-i18n="h2_8">ติดต่อ</h2>
+  <p data-i18n-html="p8">ข้อสงสัยเรื่องความเป็นส่วนตัว การใช้สิทธิ์ตาม PDPA หรือเรื่องเนื้อหา ติดต่อ: <a href="mailto:cloundstory@gmail.com">cloundstory@gmail.com</a></p>
 
-  <footer>
+  <footer data-i18n-html="footer">
     ห้วงดาว · Between Stars · เรียบเรียงโดย Golf · เขียนโค้ดโดย Claude Code<br>
     <a href="index.html">หน้าแรก</a> · <a href="credits.html">อ้างอิง &amp; เครดิต</a>
   </footer>
 </div>
+<script>
+(function(){
+  var LANG=(function(){try{var q=new URLSearchParams(location.search).get('lang');if(q==='en'||q==='th')return q;var s=localStorage.getItem('lang');if(s==='en'||s==='th')return s;}catch(e){}return (navigator.language||'').toLowerCase().indexOf('th')===0?'th':'en';})();
+  if(LANG!=='en')return;
+  var EN={
+    back:'← Between Stars',h1:'Privacy & guidelines',upd:'Last updated · June 2026',
+    lead:'Between Stars takes your privacy seriously. This page explains what we store, where, and how you control it — in line with Thailand’s Personal Data Protection Act 2019 (PDPA).',
+    h2_1:'What we store',
+    p1:'By default, Between Stars keeps most data in <b>localStorage, on your own device and browser</b>. If you choose to link an email to continue on another device, we use Supabase for sign-in and to sync some personal data across devices, namely:',
+    li1a:'Personal notes or messages you write in parts of the app — Inner Space entries, Golden Record, and Resonance.',
+    li1b:'Memory stars born from your notes, the names you give them, and how they’re arranged in orbit / the vault.',
+    li1c:'A random identifier (Signal ID) and its creation time, so your on-site identity stays consistent across devices.',
+    li1d:'Mood or session state needed for your personal experience on the site.',
+    li1e:'Your email — only if you choose to link an account, to send a sign-in link and verify you via Supabase.',
+    h2_2:'What we don’t do',
+    li2a:'No tracking cookies.',li2b:'No third-party analytics.',li2c:'We never sell, trade, or use your data for advertising.',
+    h2_3:'Usage measurement',
+    p3:'Between Stars counts aggregate visits and usage with <b>our own first-party counter</b>, stored only on our Supabase — no third-party analytics service. We record only aggregate events, such as a page open or a feature being used, <b>without sending or storing anything you write</b> — Inner Space entries, star names, and other personal messages are never sent with this measurement. (Your writing only leaves your device if you choose to sign in to sync, or choose to publish it yourself.)',
+    box:'Technical note: Between Stars uses Supabase for sign-in and data sync when you choose to link an email, and loads some fonts, libraries, or images from third-party providers (Google Fonts, jsDelivr CDN, Wikimedia), which may see your IP address as is normal for any file request on the internet. See the list on the <a href="credits.html">Sources &amp; credits</a> page.',
+    h2_4:'You control your data',
+    p4a:'Data on your device can be deleted by you at any time by clearing site data (Clear site data / clear browsing data) in your browser — the localStorage on that device disappears immediately.',
+    p4b:'If you’ve linked an email, some data is stored in Supabase so it can be restored and continued on another device. You can sign out, stop using sync, or contact us to request deletion of your account and synced data.',
+    h2_5:'Guidelines for what you write',
+    p5:'The spaces in Between Stars are designed for you to leave your feelings. Personal messages are for your own experience and for cross-device sync when you sign in. If a cross-user shared feature exists in the future, some messages may be shown to others at random, <b>anonymously</b> — so please:',
+    li5a:'Don’t write personal information that identifies you or others (real names, phone numbers, addresses, etc.).',
+    li5b:'Don’t write anything illegal, violent, hateful, harassing, obscene, or spam.',
+    li5c:'Respect others — this is a place of rest, not a place to harm one another.',
+    p5b:'We provide a report button and reserve the right to hide or remove content that breaks these guidelines. If you find inappropriate content, report it to <a href="mailto:cloundstory@gmail.com">cloundstory@gmail.com</a>.',
+    h2_6:'Astrological content',
+    p6:'Star and zodiac positions in Between Stars are computed from real astronomical data, but astrological interpretations, signs, or readings are made <b>for entertainment and reflection only</b> — not medical, financial, legal, or major life-decision advice.',
+    h2_7:'Disclaimer',
+    p7:'Between Stars is provided “as is,” without warranty. We try to keep information as accurate as possible, but we are not liable for damages arising from its use.',
+    h2_8:'Contact',
+    p8:'Questions about privacy, exercising your PDPA rights, or content — contact: <a href="mailto:cloundstory@gmail.com">cloundstory@gmail.com</a>',
+    footer:'Between Stars · 2026 · Curated by Golf · Coded with Claude Code<br><a href="index.html">Home</a> · <a href="credits.html">Sources &amp; credits</a>'
+  };
+  document.querySelectorAll('[data-i18n]').forEach(function(el){var v=EN[el.getAttribute('data-i18n')];if(v!=null)el.textContent=v;});
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el){var v=EN[el.getAttribute('data-i18n-html')];if(v!=null)el.innerHTML=v;});
+  document.documentElement.lang='en';
+  document.title='Privacy & guidelines · Between Stars';
+})();
+</script>
 <script src="track.js"></script>
 </body>
 </html>
