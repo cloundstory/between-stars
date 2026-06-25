@@ -19,6 +19,10 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="th_TH">
+<meta property="og:locale:alternate" content="en_US">
+<link rel="alternate" hreflang="th" href="https://between-stars.vercel.app/solar-system.html">
+<link rel="alternate" hreflang="en" href="https://between-stars.vercel.app/solar-system.html?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://between-stars.vercel.app/solar-system.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://between-stars.vercel.app/og-image.png">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -1578,6 +1582,20 @@ function applyUILang(){
 }
 // shorthand for JS-built strings: pick EN or TH by current LANG
 const L=(en,th)=>LANG==='en'?en:th;
+// EN document metadata (tab title, description, <html lang>, OG) — helps bookmarks, screen readers,
+// and JS-aware preview tools. NOTE: static crawlers fetching ?lang=en still see the Thai OG (no SSR).
+(function(){if(LANG!=='en')return;try{
+  document.documentElement.lang='en';
+  document.title='The Solar System · Between Stars';
+  const desc='An interactive Solar System — planets moving with today’s real positions. Find eclipses and follow Voyager into the deep between stars.';
+  const set=(sel,val)=>{const m=document.querySelector(sel);if(m)m.setAttribute('content',val);};
+  set('meta[name="description"]',desc);
+  set('meta[property="og:title"]','The Solar System · Between Stars');
+  set('meta[property="og:description"]','Planets moving with today’s real positions · follow Voyager into the deep between stars');
+  set('meta[property="og:site_name"]','Between Stars · ห้วงดาว');
+  set('meta[property="og:locale"]','en_US');
+  set('meta[property="og:url"]','https://between-stars.vercel.app/solar-system.html?lang=en');
+}catch(e){}})();
 
 const D2R=Math.PI/180;
 const TEX='https://cdn.jsdelivr.net/gh/jeromeetienne/threex.planets@master/images/';
