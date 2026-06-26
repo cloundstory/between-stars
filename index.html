@@ -202,7 +202,7 @@
 <script>
 // ── language: TH primary, EN additive (mirrors solar-system.html) ──
 (function(){
-  var LANG=(function(){try{var q=new URLSearchParams(location.search).get('lang');if(q==='en'||q==='th')return q;var s=localStorage.getItem('lang');if(s==='en'||s==='th')return s;}catch(e){}return (navigator.language||'').toLowerCase().indexOf('th')===0?'th':'en';})();
+  var LANG=(function(){try{var q=new URLSearchParams(location.search).get('lang');if(q==='en'||q==='th'){localStorage.setItem('lang',q);return q;}var s=localStorage.getItem('lang');if(s==='en'||s==='th')return s;}catch(e){}return (navigator.language||'').toLowerCase().indexOf('th')===0?'th':'en';})();
   var EN={
     beta:'experimental',langToggle:'ไทย',
     over:'An interactive journey',

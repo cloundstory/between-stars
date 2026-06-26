@@ -1044,7 +1044,7 @@
 <div class="brand">
   <div class="mk">SOLAR SYSTEM</div>
   <div class="sub"><i>n.</i> the Sun and the eight worlds bound to it by gravity</div>
-  <div class="bnav"><a href="index.html">← ห้วงดาว</a><span>·</span><a href="credits.html">อ้างอิง</a><span>·</span><a href="privacy.html">ความเป็นส่วนตัว</a></div>
+  <div class="bnav"><a href="index.html" data-i18n="bnav.home">← ห้วงดาว</a><span>·</span><a href="credits.html" data-i18n="bnav.credits">อ้างอิง</a><span>·</span><a href="privacy.html" data-i18n="bnav.privacy">ความเป็นส่วนตัว</a></div>
 </div>
 
 
@@ -1532,7 +1532,7 @@ import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import * as Astronomy from 'https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/+esm';
 
 // ── language (TH primary in HTML; EN additive). Hoisted to top so early code can read LANG without TDZ. ──
-const LANG=(()=>{try{const q=new URLSearchParams(location.search).get('lang');if(q==='en'||q==='th')return q;
+const LANG=(()=>{try{const q=new URLSearchParams(location.search).get('lang');if(q==='en'||q==='th'){localStorage.setItem('lang',q);return q;} // persist ?lang so sub-page links (credits/privacy) inherit it
   const s=localStorage.getItem('lang');if(s==='en'||s==='th')return s;}catch(e){}
   return (navigator.language||'').toLowerCase().startsWith('th')?'th':'en';})();
 // EN overrides for static UI chrome. Keys map to [data-i18n] (text) / [data-i18n-ph] (placeholder) / [data-i18n-title] (title).
@@ -1580,6 +1580,7 @@ const UI_EN={
  'gr.ph':'Write in case someone in this universe receives it…','gr.submit':'✦ Seal it onto the record',
  'cm.pre':'A signal from the deep','cm.close':'Acknowledged',
  'ds.sub':'Deep-space probes · real-time distance from the Sun',
+ 'bnav.home':'← Between Stars','bnav.credits':'Credits','bnav.privacy':'Privacy',
  'lang.toggle':'ไทย'
 };
 function applyUILang(){
