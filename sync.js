@@ -17,6 +17,9 @@ window.BSync = {
   async sendLink(){ return {error:{message:'sync ยังไม่ถูกตั้งค่า'}}; },
   async logout(){},
   push(){},
+  // social คำฝาก — no-op fallback จนกว่า SDK จะพร้อม (โค้ดหลักเรียกได้เสมอ ไม่พัง)
+  letters:{ async fetchPublic(){return null;}, async fetchMine(){return null;},
+            async post(){return false;}, async reply(){return false;}, async report(){} },
 };
 
 if (SUPABASE_URL && SUPABASE_ANON) boot();
@@ -37,6 +40,22 @@ async function boot(){
   api.sendLink = (email)=> sb.auth.signInWithOtp({ email, options:{ emailRedirectTo: location.origin + location.pathname } });
   api.logout   = async ()=>{ try{ await sb.auth.signOut(); }catch(e){} };
   api.push     = ()=>{ if(!uid) return; clearTimeout(pushTimer); pushTimer=setTimeout(()=>doPush(sb,uid), 1500); };
+
+  // ---- social คำฝาก (cross-user) — ตาราง letters + RLS (ดู supabase_social.sql) ----
+  api.letters = {
+    async fetchPublic(limit=150){ try{ const { data, error } = await sb.from('letters')
+        .select('id,text,sig,replies,ts').eq('pub',true).order('ts',{ascending:false}).limit(limit);
+        return error ? null : (data||[]); }catch(e){ return null; } },
+    async fetchMine(sig){ try{ if(!sig) return null; const { data, error } = await sb.from('letters')
+        .select('id,text,sig,replies,ts').eq('sig',sig).order('ts',{ascending:false}).limit(100);
+        return error ? null : (data||[]); }catch(e){ return null; } },
+    async post(o){ try{ const { data, error } = await sb.from('letters')
+        .insert({ cid:o.cid, text:o.text, sig:o.sig, pub:true }).select('id').single();
+        return error ? false : (data ? data.id : true); }catch(e){ return false; } },
+    async reply(id,text,sig){ try{ const { data, error } = await sb.rpc('letter_reply',{ p_id:id, p_text:text, p_sig:sig });
+        return error ? false : (data===true); }catch(e){ return false; } },
+    async report(id){ try{ await sb.rpc('letter_report',{ p_id:id }); }catch(e){} },
+  };
 
   function setSession(s){
     api.session=s; uid = s ? s.user.id : null;

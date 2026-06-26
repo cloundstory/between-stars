@@ -522,6 +522,9 @@
   #replyToggle{margin-top:18px;font-family:var(--eng);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);
     background:var(--gold-dim);border:1px solid var(--gold);border-radius:9px;padding:9px 16px;cursor:pointer;transition:.2s}
   #replyToggle:hover{background:rgba(243,201,122,.22)}
+  #msgReport{display:block;margin:14px auto 0;background:none;border:none;cursor:pointer;font-family:var(--th);
+    font-size:11px;color:rgba(255,255,255,.28);transition:color .2s}
+  #msgReport:hover{color:rgba(255,150,150,.7)}
   #replyBox{display:none;flex-direction:column;gap:10px;margin-top:16px;text-align:left}
   #replyBox.open{display:flex}
   #replyInput{width:100%;height:70px;resize:none;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:9px;
@@ -1155,6 +1158,7 @@
     <textarea id="replyInput" maxlength="200" placeholder="เขียนตอบ… คำตอบของคุณจะลอยเข้าหาเจ้าของคำฝาก" data-i18n-ph="msg.replyPh"></textarea>
     <div class="mrow2"><span id="replyWarn"></span><button id="replySend" data-i18n="msg.replySend">✦ ปล่อยคำตอบ</button></div>
   </div>
+  <button id="msgReport" type="button" style="display:none" data-i18n="msg.report">⚐ รายงานว่าไม่เหมาะสม</button>
 </div>
 
 <div id="starEchoModal">
@@ -1553,7 +1557,7 @@ const UI_EN={
  'bh.ph':'Is there something you want to let disappear…','bh.release':'Release into the dark',
  'msg.ph':'Write a message, up to 200 characters…','msg.send':'✦ Leave it with the stars',
  'msg.replyToggle':'✉ Write back','msg.replyPh':'Write back… your reply will drift toward whoever left this',
- 'msg.replySend':'✦ Send your reply',
+ 'msg.replySend':'✦ Send your reply','msg.report':'⚐ Report as inappropriate',
  'res.ph':'Leave your resonance…','res.submit':'Post resonance',
  'intro.over':'An interactive model','intro.title':'The Solar System','intro.sub':'the real sky, alive and in motion','intro.enter':'CLICK TO ENTER',
  'pbd.earth':'Earth','pbd.stripe':'Sunlight scattered in the camera’s lens — not a ring',
@@ -3961,6 +3965,18 @@ const SEED_LETTERS_EN=[
 ];
 function readLocal(){try{return JSON.parse(localStorage.getItem(LKEY)||'[]');}catch(e){return[];}}
 function writeLocal(a){try{localStorage.setItem(LKEY,JSON.stringify(a.slice(-300)));}catch(e){}}
+// ---- social คำฝาก: cloud cache (null = ยังไม่โหลด → ใช้ local/seed เดิม; graceful ถ้า backend ไม่พร้อม) ----
+let _cloudLetters=null,_cloudMine=null;
+function _mapCloudLetter(r){return {id:'c'+r.id,cid:r.id,text:r.text,sig:r.sig,t:r.ts?Date.parse(r.ts):0,pub:true,replies:r.replies||[],cloud:true};}
+async function refreshCloudLetters(){
+  if(!(window.BSync&&window.BSync.configured&&window.BSync.letters))return;
+  try{
+    const pub=await window.BSync.letters.fetchPublic();if(Array.isArray(pub))_cloudLetters=pub.map(_mapCloudLetter);
+    const mine=await window.BSync.letters.fetchMine(getSignal());if(Array.isArray(mine))_cloudMine=mine.map(_mapCloudLetter);
+    updateLetterStat();
+    if($p('sigModal')&&$p('sigModal').classList.contains('on'))renderSigDispatches();
+  }catch(e){}
+}
 const DISP_STATS='dispatchStats';
 const DISPATCH_PUB_KEY='dispatchDate_pub';
 const DISPATCH_PRIV_KEY='dispatchDate_priv';
@@ -3973,14 +3989,19 @@ function incPrivCount(){const s=getDispatchStats();s.priv=(s.priv||0)+1;localSto
 function castLetter(text,pub){
   if(!pub){setDailyLimit(DISPATCH_PRIV_KEY);incPrivCount();updateLetterStat();return;} // ปล่อยวาง — ไม่ spawnDrift (ใช้ ritual ดูดเข้าหลุมดำแทน)
   setDailyLimit(DISPATCH_PUB_KEY);
-  const a=readLocal();
-  a.push({id:genId(),text,t:Date.now(),pub:true,sig:getSignal(),replies:[],pinned:false});
+  const a=readLocal(),cid=genId();
+  a.push({id:cid,text,t:Date.now(),pub:true,sig:getSignal(),replies:[],pinned:false});
   writeLocal(a);spawnDrift(0xfff0c8);updateLetterStat();
+  // ส่งขึ้น cloud ให้คนอื่นเจอ (graceful: ถ้าไม่พร้อม คำฝากยังอยู่ local)
+  if(window.BSync&&window.BSync.configured&&window.BSync.letters)
+    window.BSync.letters.post({cid,text:text.slice(0,200),sig:getSignal()}).then(()=>refreshCloudLetters());
 }
 function letterPool(){
   const mySig=getSignal();
   const seeds=(LANG==='en'?SEED_LETTERS_EN:SEED_LETTERS).map((text,i)=>({id:'seed_'+i,text,t:0,pub:true,sig:null,replies:[]}));
-  const avail=readLocal().filter(l=>l.pub&&l.sig!==mySig&&(!l.replies||l.replies.length===0));
+  // ถ้ามี cloud (cross-user) → discover คำฝากจริงของคนอื่น; ไม่งั้น fallback local
+  const src=(_cloudLetters!==null)?_cloudLetters:readLocal();
+  const avail=src.filter(l=>l.pub&&l.sig!==mySig&&(!l.replies||l.replies.length===0));
   return seeds.concat(avail);
 }
 function checkDispatchDecay(){
@@ -4009,14 +4030,25 @@ function openLetter(letter,meta){
   currentOpenLetter=(typeof letter==='string')?null:letter;
   const canReply=currentOpenLetter&&currentOpenLetter.id&&!currentOpenLetter.id.startsWith('seed_')&&(!currentOpenLetter.replies||currentOpenLetter.replies.length===0);
   $p('replyToggle').style.display=canReply?'':'none';
+  $p('msgReport').style.display=(currentOpenLetter&&currentOpenLetter.cloud)?'':'none';
+  $p('msgReport').textContent=L('⚐ Report as inappropriate','⚐ รายงานว่าไม่เหมาะสม');
   msgRead.classList.add('on');}
 function showMsg(m){openLetter((m&&m.text)||m,'');}
 $p('msgReadClose').onclick=()=>msgRead.classList.remove('on');
+$p('msgReport').onclick=()=>{if(currentOpenLetter&&currentOpenLetter.cloud&&window.BSync&&window.BSync.letters){window.BSync.letters.report(currentOpenLetter.cid);}
+  $p('msgReport').textContent=L('Reported · thank you','รายงานแล้ว · ขอบคุณ');setTimeout(()=>msgRead.classList.remove('on'),1100);};
 $p('replyToggle').onclick=()=>{const o=$p('replyBox').classList.toggle('open');$p('replyToggle').style.display=o?'none':'';if(o)$p('replyInput').focus();};
 $p('replySend').onclick=()=>{let t=($p('replyInput').value||'').trim();
   if(!t){$p('replyWarn').textContent=L('Write your reply first','เขียนคำตอบก่อนนะ');return;}
   if(BADWORDS.some(w=>t.toLowerCase().includes(w))){$p('replyWarn').textContent=L('That has something inappropriate — try again','มีคำไม่เหมาะสม ลองใหม่อีกที');return;}
   if(!currentOpenLetter||!currentOpenLetter.id||currentOpenLetter.id.startsWith('seed_')){$p('replyWarn').textContent=L('Can’t reply to this','ไม่สามารถตอบได้');return;}
+  if(currentOpenLetter.cloud){ // คำฝาก cross-user → ตอบผ่าน cloud RPC
+    if((currentOpenLetter.replies||[]).length>=1){$p('replyWarn').textContent=L('Someone already replied','มีคนตอบไปแล้ว');return;}
+    if(window.BSync&&window.BSync.letters)window.BSync.letters.reply(currentOpenLetter.cid,t.slice(0,200),getSignal()).then(ok=>{if(ok)refreshCloudLetters();});
+    try{const r=JSON.parse(localStorage.getItem('repliedIds')||'[]');r.push(currentOpenLetter.id);localStorage.setItem('repliedIds',JSON.stringify(r.slice(-200)));}catch(e){}
+    $p('replyWarn').textContent=L('Reply sent ✦','ส่งคำตอบแล้ว ✦');$p('replyToggle').style.display='none';
+    setTimeout(()=>msgRead.classList.remove('on'),1200);return;
+  }
   const a=readLocal(),idx=a.findIndex(l=>l.id===currentOpenLetter.id);
   if(idx===-1){$p('replyWarn').textContent=L('This message no longer exists','ไม่พบคำฝากนี้แล้ว');return;}
   if((a[idx].replies||[]).length>=1){$p('replyWarn').textContent=L('Someone already replied','มีคนตอบไปแล้ว');return;}
@@ -4565,10 +4597,15 @@ window.sigUnlink=function(){
   if(window.BSync&&window.BSync.configured){window.BSync.logout().then(()=>renderSigIdentity());}
   else{localStorage.removeItem('sigEmail');renderSigIdentity();}
 };
+// social คำฝาก: ดึง pool จาก cloud เมื่อ backend พร้อม (+ retry เผื่อ event มาก่อน listener)
+window.addEventListener('bsync:ready',()=>{try{refreshCloudLetters();}catch(e){}});
+window.addEventListener('bsync:auth',()=>{try{refreshCloudLetters();}catch(e){}});
+setTimeout(()=>{try{refreshCloudLetters();}catch(e){}},2500);
 // ซิงก์: re-render หน้า/ดาว/ปฏิทิน เมื่อดึงข้อมูลจาก cloud มา merge เสร็จ + เมื่อสถานะ login เปลี่ยน
 window.addEventListener('bsync:pulled',()=>{try{
   applyCreatorSignal();
   refreshMyStar();updateMoodBtn();
+  refreshCloudLetters();
   if(philo)refreshMemoryPlanets(); // ดาว/ชื่อ/คลัง ที่ซิงก์มา → แสดงผล
   if($p('moodModal').classList.contains('on'))renderMoodCal();
   if($p('sigModal').classList.contains('on'))renderSigIdentity();
@@ -4595,7 +4632,15 @@ function renderSigResonance(){
 }
 
 function renderSigDispatches(){
-  const mySig=getSignal(),a=readLocal().filter(l=>l.pub&&l.sig===mySig).reverse();
+  const mySig=getSignal();
+  let mine=readLocal().filter(l=>l.pub&&l.sig===mySig);
+  if(_cloudMine!==null){ // ดึงคำตอบที่คนอื่นทิ้งไว้บนคำฝากของเรา จาก cloud (match ด้วย cid)
+    const byCid=new Map(_cloudMine.map(c=>[String(c.cid),c]));
+    const localIds=new Set(mine.map(l=>String(l.id)));
+    mine=mine.map(l=>{const c=byCid.get(String(l.id));return c?{...l,replies:c.replies||l.replies}:l;});
+    _cloudMine.forEach(c=>{if(!localIds.has(String(c.cid)))mine.push(c);}); // คำฝากที่ฝากจากเครื่องอื่น
+  }
+  const a=mine.reverse();
   const privCount=getDispatchStats().priv||0;
   const now=Date.now(),D3=3*864e5,D7=7*864e5;
   let html=`<div class="stab-group-head">${L('Let go','ปล่อยวาง')}</div><div class="disp-priv-count">${L(privCount+' times',privCount+' ครั้ง')}<span>${L('released — no one sees them, not even you','ปล่อยไปแล้ว — ไม่มีใครเห็น รวมตัวเอง')}</span></div>`;
