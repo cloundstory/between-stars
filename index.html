@@ -102,18 +102,9 @@
   .flinks a:hover{color:var(--gold)}
   .fcredit{font-family:var(--eng);font-size:10px;letter-spacing:.1em;color:var(--faint);margin-top:20px;line-height:1.8}
   /* about modal */
-  #aboutModal,#newsModal{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);
+  #aboutModal{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);
     display:none;align-items:center;justify-content:center;padding:24px}
-  #aboutModal.on,#newsModal.on{display:flex}
-  .news-item{padding:16px 0;border-bottom:1px solid var(--line)}
-  .news-item:last-child{border-bottom:none}
-  .news-date{font-family:var(--eng);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(243,201,122,.55)}
-  .news-t{font-family:var(--th);font-size:16px;font-weight:500;color:var(--ink);margin:5px 0 4px}
-  .news-d{font-family:var(--th);font-size:13.5px;line-height:1.8;color:rgba(238,242,251,.62)}
-  #newsList{margin-top:8px}
-  #newsDot{display:none;width:6px;height:6px;border-radius:50%;background:var(--gold);
-    margin-left:6px;vertical-align:middle;box-shadow:0 0 7px rgba(243,201,122,.7)}
-  #newsDot.on{display:inline-block}
+  #aboutModal.on{display:flex}
   #newsLink{font-weight:500}
   .am-card{position:relative;width:100%;max-width:480px;max-height:86vh;overflow-y:auto;background:rgba(10,12,22,.98);
     border:1px solid rgba(243,201,122,.16);border-radius:18px;padding:34px 30px}
@@ -181,7 +172,7 @@
 
   <footer>
     <nav class="flinks">
-      <a id="newsLink" onclick="openNews()" style="cursor:pointer">✦ <span data-i18n="fNews">มีอะไรใหม่</span><span id="newsDot"></span></a>
+      <a id="newsLink" onclick="openNews()" style="cursor:pointer">✦ <span data-news-label>มีอะไรใหม่</span><span data-news-dot></span></a>
       <a onclick="document.getElementById('aboutModal').classList.add('on')" style="cursor:pointer" data-i18n="fAbout">เกี่ยวกับ</a>
       <a href="credits.html" data-i18n="fCredits">อ้างอิง &amp; เครดิต</a>
       <a href="privacy.html" data-i18n="fPrivacy">ความเป็นส่วนตัว</a>
@@ -207,16 +198,6 @@
       ติดต่อ · ข้อเสนอแนะ: <a href="mailto:cloundstory@gmail.com">cloundstory@gmail.com</a><br>
       <a href="credits.html">แหล่งข้อมูล &amp; เครดิต</a> · <a href="privacy.html">ความเป็นส่วนตัว</a>
     </div>
-  </div>
-</div>
-
-<!-- What's New modal -->
-<div id="newsModal">
-  <div class="am-card">
-    <button class="am-x" onclick="document.getElementById('newsModal').classList.remove('on')">×</button>
-    <div class="am-pre" id="newsPre">บันทึกการเดินทาง</div>
-    <div class="am-title" id="newsTitle">มีอะไรใหม่</div>
-    <div id="newsList"></div>
   </div>
 </div>
 
@@ -258,41 +239,6 @@
   var lt=document.getElementById('langToggle');
   if(lt)lt.onclick=function(){var nl=LANG==='en'?'th':'en';try{localStorage.setItem('lang',nl);}catch(e){}var u=new URL(location.href);u.searchParams.set('lang',nl);location.assign(u.toString());};
 })();
-// ── What's New / บันทึกการเดินทาง (เพิ่มรายการใหม่ไว้บนสุดของ NEWS) ──
-(function(){
-  var LANG=(function(){try{var q=new URLSearchParams(location.search).get('lang');if(q==='en'||q==='th')return q;var s=localStorage.getItem('lang');if(s==='en'||s==='th')return s;}catch(e){}return (navigator.language||'').toLowerCase().indexOf('th')===0?'th':'en';})();
-  var en=(LANG==='en');
-  var NEWS=[
-    {id:'2026-06-26', d:{th:'26 มิ.ย. 2026',en:'26 Jun 2026'},
-     th:{t:'คำฝากถึงกันได้แล้ว',d:'คำฝากที่คุณฝากไว้กับดวงดาว เริ่มลอยไปถึงคนอื่นจริง ๆ — ถ้ามีใครเขียนตอบ คุณจะได้เห็นมันใน SIGNAL ของคุณ'},
-     en:{t:'Letters that reach others',d:'The คำฝาก you leave with the stars now drift to real people — and if someone writes back, you’ll find it in your SIGNAL.'}},
-    {id:'2026-06-24', d:{th:'24 มิ.ย. 2026',en:'24 Jun 2026'},
-     th:{t:'ทั้งเว็บมีภาษาอังกฤษแล้ว',d:'สลับ ไทย/อังกฤษ ได้จากปุ่มมุมขวาบน — ครบทุกหน้า ทั้งการสำรวจและการใคร่ครวญ'},
-     en:{t:'The whole site is now bilingual',d:'Switch Thai / English from the top-right — every page, explore and contemplate alike.'}},
-    {id:'2026-06-22', d:{th:'22 มิ.ย. 2026',en:'22 Jun 2026'},
-     th:{t:'ดาวที่เกิดจากใจคุณ',d:'บันทึกห้วงใจต่อเนื่อง แล้วเฝ้าดูบางบันทึกก่อตัวเป็นดาวที่โคจรรอบดาวของคุณเอง'},
-     en:{t:'Stars born from your heart',d:'Keep writing your Inner Space, and watch some entries form into stars that orbit your own.'}},
-    {id:'2026-06-20', d:{th:'มิ.ย. 2026',en:'Jun 2026'},
-     th:{t:'เสียงดาววันนี้ · ดวงในวันเกิด',d:'แตะดวงที่ใจถูกดึงไปหา รับคำใคร่ครวญประจำวัน · และเก็บภาพจักรวาลในวันเกิดคุณไว้แชร์'},
-     en:{t:'Star Echo · the sky on your birthday',d:'Tap the star your heart is drawn to for a daily reflection · and capture the universe on your birthday to share.'}}
-  ];
-  function esc(s){return String(s).replace(/[&<>]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;'})[c];});}
-  function render(){
-    var el=document.getElementById('newsList');if(!el)return;
-    el.innerHTML=NEWS.map(function(n){var c=en?n.en:n.th;
-      return '<div class="news-item"><div class="news-date">'+esc(en?n.d.en:n.d.th)+'</div><div class="news-t">'+esc(c.t)+'</div><div class="news-d">'+esc(c.d)+'</div></div>';
-    }).join('');
-    var pre=document.getElementById('newsPre'),ti=document.getElementById('newsTitle');
-    if(pre)pre.textContent=en?'Journey log':'บันทึกการเดินทาง';
-    if(ti)ti.textContent=en?'What’s new':'มีอะไรใหม่';
-  }
-  var latest=NEWS.length?NEWS[0].id:'';
-  function seen(){try{return localStorage.getItem('newsSeen')||'';}catch(e){return'';}}
-  function updateDot(){var dot=document.getElementById('newsDot');if(dot)dot.classList.toggle('on', !!latest && seen()!==latest);}
-  window.openNews=function(){render();try{localStorage.setItem('newsSeen',latest);}catch(e){}updateDot();
-    document.getElementById('newsModal').classList.add('on');};
-  render();updateDot();
-})();
 // starfield เบาๆ
 (function(){
   var c=document.getElementById('stars'),x=c.getContext('2d'),st=[],W,H;
@@ -312,11 +258,11 @@
   document.addEventListener('visibilitychange',function(){if(!document.hidden)loop();});  // หยุดตอนสลับแท็บ
 })();
 // ปิด modal ด้วย ESC / คลิกพื้นหลัง
-addEventListener('keydown',function(e){if(e.key==='Escape'){document.getElementById('aboutModal').classList.remove('on');document.getElementById('newsModal').classList.remove('on');}});
+addEventListener('keydown',function(e){if(e.key==='Escape')document.getElementById('aboutModal').classList.remove('on');});
 document.getElementById('aboutModal').addEventListener('click',function(e){if(e.target.id==='aboutModal')this.classList.remove('on');});
-document.getElementById('newsModal').addEventListener('click',function(e){if(e.target.id==='newsModal')this.classList.remove('on');});
 </script>
 <script src="warp.js"></script>
+<script src="news.js"></script>
 <script src="track.js"></script>
 </body>
 </html>
