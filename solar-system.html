@@ -4221,6 +4221,7 @@ function setMode(p){philo=p;document.body.classList.toggle('philo',p);
   _bhTarget=0; // หลุมดำจะปรากฏเฉพาะตอนกด "ปล่อยวาง"
   _msTarget=p?1:0; // ดาวของเราปรากฏ/เลือนหายตามโหมด — cross-fade กับดวงอาทิตย์พร้อมกัน
   if(p){
+    if(window.bsEvent)bsEvent('contemplate_enter'); // วัด funnel: เข้าใคร่ครวญ → เขียนห้วงใจ
     webb.visible=false;webbHit.visible=false; // ซ่อน Chronos Lens ในโหมดใคร่ครวญ
     liveMode=true;tLive.classList.add('on');running=true;play.innerHTML=ICON_PAUSE;simDate=new Date();updateBodies(simDate);updateClock();updatePhysics(simDate);// บังคับ LIVE
     tO.classList.remove('on');tO.classList.add('disabled');
@@ -4868,6 +4869,7 @@ function obContemplateGuide(){
 // ===== Field Guide (คู่มือฟีเจอร์) — เปิดได้ทุกเมื่อจาก bnav "✦ คู่มือ" ทั้งสองโหมด · อธิบายว่าแต่ละอย่างคืออะไร ทำอะไรได้ =====
 function openGuide(){
   const body=$p('gdBody');if(!body)return;
+  if(window.bsEvent)bsEvent('guide_open');
   $p('gdTitle').textContent=L('Field Guide','คู่มือฉบับย่อ');
   $p('gdLead').textContent=L('What everything here is — and what you can do with it.','ที่นี่มีอะไรบ้าง และแต่ละอย่างทำอะไรได้');
   const G=[

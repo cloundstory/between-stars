@@ -101,6 +101,20 @@
   .lr.zero .vv{color:var(--faint);font-weight:400}
   .lr.zero .rk{color:rgba(255,255,255,.14)}
 
+  /* funnel (conversion) */
+  .fnl{display:flex;flex-direction:column;gap:15px}
+  .fhdr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
+  .fnm{font-family:var(--th);font-size:13.5px;color:var(--ink)}
+  .fval{font-family:var(--eng);font-size:16px;font-weight:500;color:var(--gold)}
+  .ftrack{height:10px;background:rgba(255,255,255,.05);border-radius:6px;overflow:hidden}
+  .fbar{height:100%;border-radius:6px;transition:width .7s cubic-bezier(.22,.68,0,1.1)}
+  .fbar-a{background:linear-gradient(90deg,#9cc3ff,#4a6fb0)}
+  .fbar-b{background:linear-gradient(90deg,#f6d79a,#cf9a44)}
+  .fconv{display:flex;align-items:baseline;justify-content:flex-end;gap:9px;font-family:var(--th);font-size:13px;color:var(--muted);margin-top:2px}
+  .fconv b{font-family:var(--eng);font-size:22px;font-weight:500;color:var(--gold)}
+  .fnote{font-family:var(--th);font-size:12px;color:var(--faint);border-top:1px solid rgba(255,255,255,.05);padding-top:13px}
+  .fnote b{color:var(--muted);font-family:var(--eng);font-weight:500}
+
   /* centered states */
   .center{min-height:54vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px}
   .center .muted{font-family:var(--th);color:var(--muted);font-size:14px;line-height:1.85}
@@ -192,7 +206,8 @@ const fmtDur = sec => { if(sec==null) return '–'; sec=Math.round(sec); if(sec<
 
 // nicer labels for events / paths — key order = how unused (0-count) features are ordered on the card
 const EV = { mood_save:'บันทึกห้วงใจ', release:'ปล่อยวาง (หลุมดำ)', letter_cast:'ฝากคำฝาก', letter_reply:'ตอบคำฝาก', letter_catch:'รับคำฝาก (จับดาวตก)', star_echo:'เสียงดาววันนี้',
-  chronos_open:'เปิด Chronos Lens', capture:'บันทึกภาพ', share:'แชร์', golden_save:'Golden Record', resonance:'เสียงสะท้อน', lightecho:'แสงจากวันนั้น' };
+  chronos_open:'เปิด Chronos Lens', capture:'บันทึกภาพ', share:'แชร์', golden_save:'Golden Record', resonance:'เสียงสะท้อน', lightecho:'แสงจากวันนั้น',
+  contemplate_enter:'เข้าโหมดใคร่ครวญ', guide_open:'เปิดคู่มือ' };
 const PG = { '/':'หน้าแรก','/index.html':'หน้าแรก','/solar-system.html':'ระบบสุริยะ','/light-echo.html':'แสงจากวันนั้น','/starmap.html':'แผนที่ดาว','/space-history.html':'70 ปีอวกาศ','/credits.html':'เครดิต','/privacy.html':'ความเป็นส่วนตัว','/dashboard.html':'แดชบอร์ด' };
 const niceEvent = n => EV[n] || n;
 const nicePath  = p => PG[p] || p;
@@ -218,6 +233,26 @@ function eventsCard(topEvents){
       <div class="k"><span class="rk">${zero?'·':rank}</span><span class="nm">${esc(niceEvent(it.name))}</span></div>
       <span class="vv">${nf(it.count)}</span></div>`;
   }).join('') + `</div>`;
+}
+
+// Funnel — distinct visitors who entered Contemplate vs. who actually wrote Inner Space
+function funnelStep(label,val,pct,cls){
+  const w = Math.max(pct>0?2:0, pct);
+  return `<div class="fstep">
+    <div class="fhdr"><span class="fnm">${label}</span><span class="fval">${nf(val)}</span></div>
+    <div class="ftrack"><div class="fbar ${cls}" style="width:${w}%"></div></div>
+  </div>`;
+}
+function funnelCard(f){
+  if(!f) return '<div class="empty">ยังไม่มีข้อมูล (อัปเดต RPC founder_stats แล้วหรือยัง?)</div>';
+  const entered=f.entered||0, wrote=f.wrote||0, guide=f.opened_guide||0;
+  const pct = entered>0 ? Math.round(wrote/entered*100) : 0;
+  return `<div class="fnl">
+    ${funnelStep('เข้าโหมดใคร่ครวญ', entered, 100, 'fbar-a')}
+    ${funnelStep('เขียนห้วงใจจริง', wrote, entered>0?wrote/entered*100:0, 'fbar-b')}
+    <div class="fconv">อัตราเปลี่ยนเป็นผู้เขียน<b>${pct}%</b></div>
+    <div class="fnote">เปิดคู่มือฟีเจอร์ <b>${nf(guide)}</b> คน</div>
+  </div>`;
 }
 
 let sb;
@@ -364,6 +399,9 @@ function statsView(s, email){
       <div class="card"><div class="ctitle">Events</div><div class="csub">การใช้ฟีเจอร์ · ตัวที่จาง = ยังไม่มีคนใช้</div>${eventsCard(s.top_events)}</div>
       <div class="card"><div class="ctitle">Pages</div><div class="csub">หน้ายอดนิยม</div>${ranked(s.by_path,'path','views',nicePath)}</div>
     </div>
+
+    <div class="slabel"><span>Conversion</span><span class="th">เส้นทางสู่การเขียน</span></div>
+    <div class="card"><div class="ctitle">Contemplate → Inner Space</div><div class="csub">คนที่เข้าโหมดใคร่ครวญ แล้วลงมือเขียนห้วงใจจริง (นับคนไม่ซ้ำ)</div>${funnelCard(s.funnel)}</div>
 
     <div class="slabel"><span>Audience</span><span class="th">ผู้ชม</span></div>
     <div class="grid2">

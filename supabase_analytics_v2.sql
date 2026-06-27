@@ -86,6 +86,13 @@ begin
       select coalesce(json_agg(json_build_object('name', name, 'count', c) order by c desc), '[]'::json)
       from (select name, count(*) as c from events
             where name not like '\_%' group by 1 order by 2 desc limit 15) q
+    ),
+    -- funnel: เข้าใคร่ครวญ → เขียนห้วงใจ (นับ vid ไม่ซ้ำ; wrote = คนที่ทั้งเข้าใคร่ครวญ "และ" เขียน)
+    'funnel', json_build_object(
+      'entered', (select count(distinct vid) from events where name = 'contemplate_enter'),
+      'wrote',   (select count(distinct vid) from events e where e.name = 'mood_save'
+                    and exists (select 1 from events c where c.vid = e.vid and c.name = 'contemplate_enter')),
+      'opened_guide', (select count(distinct vid) from events where name = 'guide_open')
     )
   ) into result;
 
