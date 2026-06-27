@@ -226,7 +226,10 @@
   #intro .over{margin-bottom:18px}
   #intro h1{font-family:var(--th);font-size:clamp(38px,7vw,86px);font-weight:300;letter-spacing:.04em;line-height:1}
   #intro .en2{font-family:var(--eng);font-weight:300;letter-spacing:.5em;text-transform:uppercase;font-size:clamp(11px,1.4vw,15px);color:var(--muted);margin-top:20px;padding-left:.5em}
-  #intro .ld{margin-top:46px;font-family:var(--eng);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--faint)}
+  #intro .ld{margin-top:42px;font-family:var(--eng);font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:rgba(243,201,122,.86);
+    display:inline-block;padding:11px 22px;border:1px solid rgba(243,201,122,.34);border-radius:999px;background:rgba(243,201,122,.06);
+    animation:introCue 2.4s ease-in-out infinite}
+  @keyframes introCue{0%,100%{opacity:.6;transform:translateY(0)}50%{opacity:1;transform:translateY(-2px)}}
   #intro .ld2{margin-top:14px;font-family:var(--th);font-size:11.5px;letter-spacing:.04em;color:rgba(255,255,255,.5);line-height:1.6}
   @media(max-width:860px),(pointer:coarse){#introHint{display:none}}  /* มือถือ = อุปกรณ์หลัก: ไม่ไล่ด้วยคำว่า "ดูบนเดสก์ท็อปดีกว่า" */
   #loading{position:fixed;inset:0;z-index:11;background:var(--bg);display:grid;place-items:center;
@@ -250,6 +253,10 @@
     background:rgba(8,11,20,.72);border:1px solid var(--line);border-radius:20px;padding:8px 14px;cursor:pointer;
     transition:border-color .2s,background .2s,color .2s;backdrop-filter:blur(12px);white-space:nowrap}
   #tLang:hover{border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.06);color:var(--ink)}
+  #tGuide{font-family:var(--eng);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);
+    background:var(--gold-dim);border:1px solid rgba(243,201,122,.42);border-radius:20px;padding:8px 15px;cursor:pointer;
+    transition:border-color .2s,background .2s,color .2s;backdrop-filter:blur(12px);white-space:nowrap}
+  #tGuide:hover{border-color:var(--gold);background:rgba(243,201,122,.18);color:#fff}
   #sigBtn{display:flex;align-items:center;gap:8px;
     background:rgba(8,11,20,.72);border:1px solid var(--line);border-radius:20px;
     padding:7px 16px 7px 12px;cursor:pointer;transition:border-color .2s,background .2s;backdrop-filter:blur(12px)}
@@ -375,7 +382,7 @@
   #starLevelUp .slu-name{font-family:var(--th);font-weight:300;font-size:34px;color:#fbeccf;text-shadow:0 0 34px rgba(243,201,122,.6)}
   #starLevelUp .slu-sub{font-family:var(--th);font-size:13px;color:rgba(228,220,205,.78);max-width:300px;line-height:1.7}
   @media(max-width:520px){#starLevelUp .slu-name{font-size:28px}}
-  @media(max-width:860px){#topActions{top:14px;right:14px;gap:8px}#sigBtn{padding:6px 12px 6px 10px}#tLang{padding:6px 11px;font-size:9px}}
+  @media(max-width:860px){#topActions{top:14px;right:14px;gap:7px}#sigBtn{padding:6px 12px 6px 10px}#tLang,#tGuide{padding:6px 11px;font-size:9px}}
   #philoTint{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity 1.4s;
     background:radial-gradient(1200px 800px at 50% 120%,rgba(243,201,122,.10),transparent 60%),radial-gradient(900px 700px at 50% -10%,rgba(120,90,180,.10),transparent 60%)}
   body.philo #philoTint{opacity:1}
@@ -402,6 +409,29 @@
   #philoBar button{font-family:var(--eng);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);
     background:rgba(8,11,20,.55);border:1px solid var(--line);border-radius:9px;padding:10px 16px;cursor:pointer;backdrop-filter:blur(8px);transition:.25s}
   #philoBar button:hover{border-color:var(--gold);background:var(--gold-dim)}
+  /* ===== Field Guide (คู่มือฟีเจอร์) — เปิดดูได้ทุกเมื่อ ทั้งสองโหมด ===== */
+  #guideModal{position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;padding:22px;
+    background:radial-gradient(120% 90% at 50% 12%,rgba(26,28,44,.6),rgba(2,3,9,.86));backdrop-filter:blur(11px)}
+  #guideModal.on{display:flex}
+  .gd-card{position:relative;width:min(620px,94vw);max-height:calc(100vh - 40px);display:flex;flex-direction:column;
+    background:linear-gradient(180deg,rgba(10,13,24,.97),rgba(6,8,16,.95));
+    border:1px solid rgba(216,199,154,.2);border-radius:18px;
+    box-shadow:0 30px 90px rgba(0,0,0,.64),inset 0 1px 0 rgba(255,255,255,.05)}
+  #guideModal.on .gd-card{animation:seCardIn .42s cubic-bezier(.2,.7,.16,1) both}
+  .gd-x{position:absolute;top:14px;right:16px;z-index:2;background:none;border:none;color:rgba(255,255,255,.4);font-size:21px;line-height:1;cursor:pointer;padding:5px;transition:.2s}
+  .gd-x:hover{color:#fff}
+  .gd-head{padding:26px 30px 15px;border-bottom:1px solid rgba(255,255,255,.07)}
+  .gd-pre{font-family:var(--eng);font-size:8.5px;letter-spacing:.28em;text-transform:uppercase;color:rgba(216,199,154,.7)}
+  .gd-title{font-family:var(--th);font-size:21px;font-weight:500;color:#fff2cf;margin-top:6px}
+  .gd-lead{font-family:var(--th);font-size:12.5px;line-height:1.6;color:rgba(238,242,251,.6);margin-top:6px;max-width:440px}
+  .gd-body{overflow-y:auto;padding:16px 22px 22px}
+  .gd-sec{font-family:var(--eng);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:rgba(216,199,154,.62);margin:17px 6px 9px}
+  .gd-sec:first-child{margin-top:4px}
+  .gd-row{display:grid;grid-template-columns:32px 1fr;gap:13px;align-items:start;
+    background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:13px 14px;margin-bottom:9px}
+  .gd-ic{font-size:18px;line-height:1.25;color:var(--gold);text-align:center}
+  .gd-n{font-family:var(--th);font-size:15px;font-weight:500;color:#fff;line-height:1.3}
+  .gd-d{font-family:var(--th);font-size:12.5px;line-height:1.62;color:rgba(238,242,251,.66);margin-top:4px}
   #starEchoModal{position:fixed;inset:0;z-index:28;display:none;align-items:center;justify-content:center;padding:24px;
     background:radial-gradient(110% 86% at 50% 20%,rgba(28,30,46,.58),rgba(2,3,9,.82));backdrop-filter:blur(10px)}
   #starEchoModal.on{display:flex}
@@ -1040,7 +1070,7 @@
   <div class="over" data-i18n="intro.over">An interactive model · แบบจำลองเชิงโต้ตอบ</div>
   <h1 data-i18n="intro.title">ระบบสุริยะ</h1>
   <div class="en2" data-i18n="intro.sub">The Solar System</div>
-  <div class="ld" data-i18n="intro.enter">คลิกเพื่อข้าม · CLICK TO ENTER</div>
+  <div class="ld" data-i18n="intro.enter">แตะตรงไหนก็ได้เพื่อเริ่ม</div>
   <div class="ld2" id="introHint">◖ เพื่อรับสัญญาณได้ชัดที่สุด · แนะนำรับชมบนเดสก์ท็อปพร้อมหูฟัง</div>
 </div></div>
 
@@ -1124,6 +1154,7 @@
 
 <button id="modeBtn" data-i18n="mode.contemplate">✦ ใคร่ครวญ</button>
 <div id="topActions">
+  <button id="tGuide" type="button" title="คู่มือ / Guide" data-i18n="guide.label">✦ คู่มือ</button>
   <button id="tLang" type="button" title="ภาษา / Language" data-i18n="lang.toggle">EN</button>
   <button id="sigBtn"><span id="sigBtnDot"></span><span id="sigBtnLabel">SIGNAL</span><span id="sigBadge"></span></button>
 </div>
@@ -1145,6 +1176,16 @@
   </div>
   <div id="letterStat"></div>
 </div>
+
+<div id="guideModal"><div class="gd-card">
+  <button class="gd-x" id="gdX">×</button>
+  <div class="gd-head">
+    <div class="gd-pre">FIELD GUIDE</div>
+    <div class="gd-title" id="gdTitle"></div>
+    <div class="gd-lead" id="gdLead"></div>
+  </div>
+  <div class="gd-body" id="gdBody"></div>
+</div></div>
 <div id="msgPanel">
   <button id="msgClose">×</button>
   <textarea id="msgInput" maxlength="200" placeholder="เขียนคำฝาก ไม่เกิน 200 ตัวอักษร…" data-i18n-ph="msg.ph"></textarea>
@@ -1559,7 +1600,7 @@ const UI_EN={
  'msg.replyToggle':'✉ Write back','msg.replyPh':'Write back… your reply will drift toward whoever left this',
  'msg.replySend':'✦ Send your reply','msg.report':'⚐ Report as inappropriate',
  'res.ph':'Leave your resonance…','res.submit':'Post resonance',
- 'intro.over':'An interactive model','intro.title':'The Solar System','intro.sub':'the real sky, alive and in motion','intro.enter':'CLICK TO ENTER',
+ 'intro.over':'An interactive model','intro.title':'The Solar System','intro.sub':'the real sky, alive and in motion','intro.enter':'TAP ANYWHERE TO BEGIN',
  'pbd.earth':'Earth','pbd.stripe':'Sunlight scattered in the camera’s lens — not a ring',
  'pbd.l1':'Look again at that dot.','pbd.l2':'That’s here. That’s home. That’s us.',
  'pbd.l3':'On it everyone you love, everyone you know,','pbd.l4':'everyone who ever was, lived out their lives.',
@@ -1584,7 +1625,7 @@ const UI_EN={
  'gr.ph':'Write in case someone in this universe receives it…','gr.submit':'✦ Seal it onto the record',
  'cm.pre':'A signal from the deep','cm.close':'Acknowledged',
  'ds.sub':'Deep-space probes · real-time distance from the Sun',
- 'bnav.home':'← Between Stars','bnav.credits':'Credits','bnav.privacy':'Privacy',
+ 'bnav.home':'← Between Stars','bnav.credits':'Credits','bnav.privacy':'Privacy','guide.label':'✦ Guide',
  'lang.toggle':'ไทย'
 };
 function applyUILang(){
@@ -3080,6 +3121,7 @@ document.getElementById('tReset').onclick=()=>{focusObj=null;setActiveNav(null);
 document.getElementById('tReplayGuide').onclick=()=>{viewsPop.classList.remove('open');layersBtn.classList.remove('on');obGuide(true);};
 // ── global language toggle + apply EN chrome overrides ──
 const _tLang=document.getElementById('tLang');if(_tLang)_tLang.onclick=()=>setAppLang(LANG==='en'?'th':'en');
+const _tGuide=document.getElementById('tGuide');if(_tGuide)_tGuide.onclick=()=>openGuide();   // คู่มือฟีเจอร์ — เด่น ข้างปุ่มภาษา
 applyUILang();
 
 // ============ AMBIENT AUDIO — เสียงอวกาศสังเคราะห์ (Web Audio, ไม่มีไฟล์นอก) ============
@@ -4188,7 +4230,8 @@ function setMode(p){philo=p;document.body.classList.toggle('philo',p);
     setTimeout(()=>{if(philo)setSolarVisible(false);},650);     // ละมุน: ซ่อนระบบสุริยะหลังจอเบลอ
     philoHint(true);
     refreshMemoryPlanets();memPlanetGroup.visible=true;updateMemoryBelts(_memPlanets.length);
-    startQuotes();startComets();updateLetterStat();updateMoodBtn();refreshMyStar();obCometTip();
+    startQuotes();startComets();updateLetterStat();updateMoodBtn();refreshMyStar();
+    if(localStorage.getItem(OBC_KEY))obCometTip();else setTimeout(obContemplateGuide,1700);  // ครั้งแรก: ไกด์ใคร่ครวญ (หลังจอเบลอเข้าที่) · ครั้งต่อไป: ทิปดาวตก
   }else{
     setMemoryInspect(false);
     webb.visible=true;webbHit.visible=true; // คืน Chronos Lens
@@ -4297,7 +4340,7 @@ if(_startContemplate){
 const clock=new THREE.Clock();
 let uiAcc=0,dashAcc=0,bodiesAcc=0;
 function animate(){if(document.hidden)return;requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),0.05);perfGovernor(dt);
-  if(intro){introT+=dt;const t=Math.min(introT/5,1);const e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+  if(intro){introT+=dt;const t=Math.min(introT/3.5,1);const e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
     camera.position.lerpVectors(introA,introB,e);camera.lookAt(0,0,0);
     if(t>.55&&!uiShown)showUI();if(t>=1){intro=false;controls.enabled=true;controls.target.set(0,0,0);}}
   if(chronosEntryCam){
@@ -4740,7 +4783,7 @@ function animateRelease(text,anchorEl){
 function planetColor(en){const p=PLANETS.find(x=>x.en===en);return p?p.color:'var(--gold)';}
 
 // ===== ONBOARDING =====
-const OB_KEY='ob1';
+const OB_KEY='ob1',OBC_KEY='obC1';   // ob1 = ไกด์โหมดสำรวจ · obC1 = ไกด์โหมดใคร่ครวญ (แยกกัน)
 let _obDismissSignal=null,_obPhiloDone=false;
 function isFirstVisit(){return!localStorage.getItem(OB_KEY);}
 function markObDone(){localStorage.setItem(OB_KEY,'1');}
@@ -4792,6 +4835,72 @@ function obGuide(force){
   el.style.display='';render();
   setTimeout(()=>el.classList.add('on'),500);
 }
+// ไกด์ครั้งแรกของโหมด "ใคร่ครวญ" — บอกว่าที่นี่ทำอะไร (เขียนห้วงใจ → ดาวก่อตัว) เพราะ obGuide ทำงานเฉพาะโหมดสำรวจ
+function obContemplateGuide(){
+  if(localStorage.getItem(OBC_KEY))return;
+  const el=$p('obGuide');if(!el)return;
+  localStorage.setItem(OBC_KEY,'1');   // กันโชว์ซ้ำ (ตั้งทันทีที่จะแสดง)
+  const dn=$p('dailyNudge');if(dn&&dn.classList.contains('on')){dn.classList.remove('on');setTimeout(()=>{dn.style.display='none';},300);}  // กันการ์ดซ้อน
+  const steps=[
+    {s:L('Contemplation','การใคร่ครวญ'),t:L('You and your own star','คุณกับดาวของคุณ'),
+     d:L('A quiet place where everything else fades away — only you and the star at the center. Drag gently to look around.','พื้นที่เงียบสงบที่ทุกอย่างอื่นเลือนหายไป — เหลือเพียงคุณกับดาวตรงกลาง · ลากเบา ๆ เพื่อมองรอบ ๆ'),go:L('Next','ถัดไป'),act:'next'},
+    {s:L('Each day','แต่ละวัน'),t:L('Write your Inner Space','เขียนห้วงใจ'),
+     d:L('Leave a few honest words about how today feels. When they carry real feeling, a star is born from your heart — and slowly begins to glow and grow.','ทิ้งคำจากใจสั้น ๆ ว่าวันนี้รู้สึกยังไง · เมื่อมันมีความรู้สึกจริง ดาวจะก่อตัวจากใจคุณ แล้วค่อย ๆ เปล่งแสงและเติบโต'),go:L('◐ Start writing','◐ เริ่มบันทึกห้วงใจ'),act:'mood'}
+  ];
+  let i=0;
+  function finish(){el.classList.remove('on');setTimeout(()=>{el.style.display='none';},700);}
+  function render(){
+    const st=steps[i];
+    el.innerHTML=`<div class="ob-step">${st.s}</div><div class="ob-t">${st.t}</div><div class="ob-d">${st.d}</div>`
+      +`<div class="ob-row"><button class="ob-b ob-go" id="obcGo">${st.go}</button>`
+      +`<button class="ob-b ob-skip" id="obcSkip">${i<steps.length-1?L('Skip','ข้าม'):L('Close','ปิด')}</button></div>`
+      +`<div class="ob-dots">${steps.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('')}</div>`;
+    $p('obcGo').onclick=()=>{
+      if(st.act==='mood'){finish();openMoodPanel();return;}
+      i++;render();
+    };
+    const sk=$p('obcSkip');if(sk)sk.onclick=finish;
+  }
+  el.style.display='';render();
+  setTimeout(()=>el.classList.add('on'),300);
+}
+// ===== Field Guide (คู่มือฟีเจอร์) — เปิดได้ทุกเมื่อจาก bnav "✦ คู่มือ" ทั้งสองโหมด · อธิบายว่าแต่ละอย่างคืออะไร ทำอะไรได้ =====
+function openGuide(){
+  const body=$p('gdBody');if(!body)return;
+  $p('gdTitle').textContent=L('Field Guide','คู่มือฉบับย่อ');
+  $p('gdLead').textContent=L('What everything here is — and what you can do with it.','ที่นี่มีอะไรบ้าง และแต่ละอย่างทำอะไรได้');
+  const G=[
+    {h:L('Two ways in','สองทางเข้า'),items:[
+      {ic:'☉',n:L('Explore','การสำรวจ'),d:L('A Solar System that follows the planets’ real positions, right now — drag and zoom to look around, tap a planet to read about it.','ระบบสุริยะที่อิงตำแหน่งดาวจริง ณ ตอนนี้ — ลาก/ซูมเพื่อมองรอบ ๆ แตะดาวเพื่ออ่านข้อมูล')},
+      {ic:'✦',n:L('Contemplate','การใคร่ครวญ'),d:L('A quiet place with only you and your own star. Everything else fades away; here you write, and your star grows.','พื้นที่เงียบที่มีเพียงคุณกับดาวของตัวเอง · ทุกอย่างอื่นเลือนหาย ที่นี่คุณเขียนแล้วดาวจะเติบโต')}
+    ]},
+    {h:L('In Contemplate','ในโหมดใคร่ครวญ'),items:[
+      {ic:'✦',n:L('Your star','ดาวของคุณ'),d:L('The star at the center is yours alone. It is born and grows from what you write — and everyone’s is different.','ดาวกลางจอเป็นของคุณคนเดียว · มันถือกำเนิดและเติบโตจากสิ่งที่คุณเขียน — ของแต่ละคนไม่เหมือนกัน')},
+      {ic:'◐',n:L('Inner Space','ห้วงใจ'),d:L('Write how today feels in a few honest words. When it carries real feeling, a new star is born from your heart.','บันทึกความรู้สึกของวันนี้สั้น ๆ จากใจจริง · เมื่อมันมีความรู้สึกจริง ดาวดวงใหม่จะก่อตัวจากใจคุณ')},
+      {ic:'✧',n:L('Star Echo','เสียงดาววันนี้'),d:L('Tap the star your heart is drawn to and receive a small reading for the day. Once a day.','แตะดาวที่ใจคุณถูกดึงไปหา แล้วรับคำทำนาย/ข้อคิดประจำวัน · วันละครั้ง')},
+      {ic:'◌',n:L('Let go','ปล่อยวาง'),d:L('Write something you want to release, then let the black hole carry it away. Once a day.','เขียนสิ่งที่อยากปล่อยวาง แล้วให้หลุมดำกลืนมันหายไป · วันละครั้ง')},
+      {ic:'✶',n:L('Leave a message','คำฝาก'),d:L('Send a short message drifting toward a stranger — and tap a falling star to catch someone else’s.','ฝากข้อความสั้น ๆ ให้ลอยไปหาคนแปลกหน้า — และแตะดาวตกเพื่อรับคำฝากของคนอื่น')}
+    ]},
+    {h:L('In Explore','ในโหมดสำรวจ'),items:[
+      {ic:'◉',n:L('Birthday universe','จักรวาลวันเกิด'),d:L('Enter a birthday and keep a portrait of the sky exactly as it was that day — then share it.','พิมพ์วันเกิด แล้วเก็บภาพระบบสุริยะของวันนั้นไว้เป็นที่ระลึก — แล้วแชร์ได้')},
+      {ic:'✸',n:L('Tap a planet or craft','แตะดาวหรือยาน'),d:L('Read its facts, its physical traits, and a short reflection written just for it.','อ่านข้อมูล ลักษณะทางกายภาพ และบทใคร่ครวญสั้น ๆ ของแต่ละดวง')},
+      {ic:'◷',n:L('Time & eclipses','เวลา & สุริยุปราคา'),d:L('Speed up or rewind time from the dock, jump back to today, or find the next solar or lunar eclipse.','เร่งหรือย้อนเวลาจากแถบล่าง กลับมาวันนี้ หรือค้นหาวันสุริยุปราคา/จันทรุปราคาถัดไป')},
+      {ic:'⚏',n:L('Layers','ชั้นการแสดงผล'),d:L('Toggle orbits, labels, the asteroid belt, the zodiac and more — show only what you want to see.','เปิด/ปิด วงโคจร ป้ายชื่อ แถบดาวเคราะห์น้อย ราศี ฯลฯ ให้เหลือเฉพาะที่อยากเห็น')}
+    ]},
+    {h:L('Always here','มีอยู่เสมอ'),items:[
+      {ic:'●',n:L('Signal','สัญญาณ · ตัวตน'),d:L('Your anonymous identity in space. See your notes, messages and saved stars — and sign in to sync across devices.','ตัวตนนิรนามของคุณในห้วงอวกาศ · ดูบันทึก คำฝาก และดาวที่เก็บไว้ — ล็อกอินเพื่อซิงก์ข้ามเครื่อง')},
+      {ic:'⊕',n:L('Language','ภาษา'),d:L('Switch between Thai and English anytime.','สลับภาษาไทย/อังกฤษได้ทุกเมื่อ')}
+    ]}
+  ];
+  body.innerHTML=G.map(sec=>`<div class="gd-sec">${sec.h}</div>`+sec.items.map(it=>
+    `<div class="gd-row"><div class="gd-ic">${it.ic}</div><div><div class="gd-n">${it.n}</div><div class="gd-d">${it.d}</div></div></div>`).join('')).join('');
+  body.scrollTop=0;
+  $p('guideModal').classList.add('on');
+}
+function closeGuide(){$p('guideModal').classList.remove('on');}
+window.openGuide=openGuide;   // เรียกจาก onclick ใน bnav ได้ (สคริปต์เป็น module)
+$p('gdX').onclick=closeGuide;
+$p('guideModal').onclick=e=>{if(e.target===$p('guideModal'))closeGuide();};   // แตะนอกการ์ด = ปิด
 // ชวนกลับมาบันทึกห้วงใจรายวัน (เฉพาะคนที่เคยมาแล้ว + ยังไม่บันทึกวันนี้ + วันละครั้ง) — สร้างวงจรกลับมา
 function dailyReturnNudge(){
   if(isFirstVisit())return;                          // คนใหม่ให้ทำ onboarding ก่อน
