@@ -96,6 +96,10 @@
   .lr .nm{font-family:var(--th);font-size:14px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .lr .vv{font-family:var(--eng);font-size:14px;font-weight:500;color:var(--gold);white-space:nowrap}
   .empty{font-family:var(--th);font-size:13px;color:var(--faint);padding:14px 0}
+  .lr.zero{opacity:.5}
+  .lr.zero .nm{color:var(--faint)}
+  .lr.zero .vv{color:var(--faint);font-weight:400}
+  .lr.zero .rk{color:rgba(255,255,255,.14)}
 
   /* centered states */
   .center{min-height:54vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px}
@@ -186,12 +190,35 @@ const nf  = n => (n==null?'–':Number(n).toLocaleString('en-US'));
 const reduceMotion = matchMedia('(prefers-reduced-motion:reduce)').matches;
 const fmtDur = sec => { if(sec==null) return '–'; sec=Math.round(sec); if(sec<60) return sec+'<small style="font-size:.5em;color:var(--muted)"> วิ</small>'; const m=Math.floor(sec/60),s=sec%60; return m+'<small style="font-size:.5em;color:var(--muted)"> น</small>'+(s?' '+s+'<small style="font-size:.5em;color:var(--muted)"> วิ</small>':''); };
 
-// nicer labels for events / paths
-const EV = { chronos_open:'เปิด Chronos Lens', capture:'บันทึกภาพ', share:'แชร์', golden_save:'Golden Record', mood_save:'บันทึกห้วงใจ', resonance:'เสียงสะท้อน', lightecho:'แสงจากวันนั้น',
-  release:'ปล่อยวาง (หลุมดำ)', letter_cast:'ฝากคำฝาก', letter_reply:'ตอบคำฝาก', letter_catch:'รับคำฝาก (จับดาวตก)', star_echo:'เสียงดาววันนี้' };
+// nicer labels for events / paths — key order = how unused (0-count) features are ordered on the card
+const EV = { mood_save:'บันทึกห้วงใจ', release:'ปล่อยวาง (หลุมดำ)', letter_cast:'ฝากคำฝาก', letter_reply:'ตอบคำฝาก', letter_catch:'รับคำฝาก (จับดาวตก)', star_echo:'เสียงดาววันนี้',
+  chronos_open:'เปิด Chronos Lens', capture:'บันทึกภาพ', share:'แชร์', golden_save:'Golden Record', resonance:'เสียงสะท้อน', lightecho:'แสงจากวันนั้น' };
 const PG = { '/':'หน้าแรก','/index.html':'หน้าแรก','/solar-system.html':'ระบบสุริยะ','/light-echo.html':'แสงจากวันนั้น','/starmap.html':'แผนที่ดาว','/space-history.html':'70 ปีอวกาศ','/credits.html':'เครดิต','/privacy.html':'ความเป็นส่วนตัว','/dashboard.html':'แดชบอร์ด' };
 const niceEvent = n => EV[n] || n;
 const nicePath  = p => PG[p] || p;
+
+// Events card — ALWAYS list every known feature, even at 0 (so "exists but unused" ≠ "not tracked yet").
+// Used features (count>0) rank by count; unused show 0, dimmed, in EV order.
+function eventsCard(topEvents){
+  const counts = {};
+  (topEvents||[]).forEach(e=>{ counts[e.name] = e.count; });
+  const names = [...new Set([...Object.keys(EV), ...Object.keys(counts)])]; // known + any new event from data
+  const ord = n => { const i = Object.keys(EV).indexOf(n); return i<0 ? 999 : i; };
+  const items = names.map(n=>({ name:n, count:counts[n]||0 }))
+    .sort((a,b)=> (b.count - a.count) || (ord(a.name) - ord(b.name)));
+  const max = Math.max(1, ...items.map(it=>it.count||0));
+  let rank = 0;
+  return `<div class="rows">` + items.map((it,i)=>{
+    const zero = !it.count;
+    const w = Math.round(((it.count||0)/max)*100);
+    if(!zero) rank++;
+    const ac = reduceMotion ? '' : ' anim';
+    const dl = reduceMotion ? '' : `;animation-delay:${i*26}ms`;
+    return `<div class="lr${zero?' zero':''}">${zero?'':`<div class="meter${ac}" style="width:${w}%${dl}"></div>`}
+      <div class="k"><span class="rk">${zero?'·':rank}</span><span class="nm">${esc(niceEvent(it.name))}</span></div>
+      <span class="vv">${nf(it.count)}</span></div>`;
+  }).join('') + `</div>`;
+}
 
 let sb;
 try{
@@ -334,7 +361,7 @@ function statsView(s, email){
 
     <div class="slabel"><span>Engagement detail</span></div>
     <div class="grid2">
-      <div class="card"><div class="ctitle">Events</div><div class="csub">การใช้ฟีเจอร์</div>${ranked(s.top_events,'name','count',niceEvent)}</div>
+      <div class="card"><div class="ctitle">Events</div><div class="csub">การใช้ฟีเจอร์ · ตัวที่จาง = ยังไม่มีคนใช้</div>${eventsCard(s.top_events)}</div>
       <div class="card"><div class="ctitle">Pages</div><div class="csub">หน้ายอดนิยม</div>${ranked(s.by_path,'path','views',nicePath)}</div>
     </div>
 
