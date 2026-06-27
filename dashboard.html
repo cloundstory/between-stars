@@ -187,7 +187,8 @@ const reduceMotion = matchMedia('(prefers-reduced-motion:reduce)').matches;
 const fmtDur = sec => { if(sec==null) return '–'; sec=Math.round(sec); if(sec<60) return sec+'<small style="font-size:.5em;color:var(--muted)"> วิ</small>'; const m=Math.floor(sec/60),s=sec%60; return m+'<small style="font-size:.5em;color:var(--muted)"> น</small>'+(s?' '+s+'<small style="font-size:.5em;color:var(--muted)"> วิ</small>':''); };
 
 // nicer labels for events / paths
-const EV = { chronos_open:'เปิด Chronos Lens', capture:'บันทึกภาพ', share:'แชร์', golden_save:'Golden Record', mood_save:'บันทึกห้วงใจ', resonance:'เสียงสะท้อน', lightecho:'แสงจากวันนั้น' };
+const EV = { chronos_open:'เปิด Chronos Lens', capture:'บันทึกภาพ', share:'แชร์', golden_save:'Golden Record', mood_save:'บันทึกห้วงใจ', resonance:'เสียงสะท้อน', lightecho:'แสงจากวันนั้น',
+  release:'ปล่อยวาง (หลุมดำ)', letter_cast:'ฝากคำฝาก', letter_reply:'ตอบคำฝาก', letter_catch:'รับคำฝาก (จับดาวตก)', star_echo:'เสียงดาววันนี้' };
 const PG = { '/':'หน้าแรก','/index.html':'หน้าแรก','/solar-system.html':'ระบบสุริยะ','/light-echo.html':'แสงจากวันนั้น','/starmap.html':'แผนที่ดาว','/space-history.html':'70 ปีอวกาศ','/credits.html':'เครดิต','/privacy.html':'ความเป็นส่วนตัว','/dashboard.html':'แดชบอร์ด' };
 const niceEvent = n => EV[n] || n;
 const nicePath  = p => PG[p] || p;

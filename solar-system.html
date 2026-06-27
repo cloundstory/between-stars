@@ -4029,11 +4029,11 @@ function setDailyLimit(key){localStorage.setItem(key,todayStr());}
 function getDispatchStats(){try{return JSON.parse(localStorage.getItem(DISP_STATS)||'{"priv":0}');}catch(e){return{priv:0};}}
 function incPrivCount(){const s=getDispatchStats();s.priv=(s.priv||0)+1;localStorage.setItem(DISP_STATS,JSON.stringify(s));}
 function castLetter(text,pub){
-  if(!pub){setDailyLimit(DISPATCH_PRIV_KEY);incPrivCount();updateLetterStat();return;} // ปล่อยวาง — ไม่ spawnDrift (ใช้ ritual ดูดเข้าหลุมดำแทน)
+  if(!pub){setDailyLimit(DISPATCH_PRIV_KEY);incPrivCount();updateLetterStat();if(window.bsEvent)bsEvent('release');return;} // ปล่อยวาง — ไม่ spawnDrift (ใช้ ritual ดูดเข้าหลุมดำแทน)
   setDailyLimit(DISPATCH_PUB_KEY);
   const a=readLocal(),cid=genId();
   a.push({id:cid,text,t:Date.now(),pub:true,sig:getSignal(),replies:[],pinned:false});
-  writeLocal(a);spawnDrift(0xfff0c8);updateLetterStat();
+  writeLocal(a);spawnDrift(0xfff0c8);updateLetterStat();if(window.bsEvent)bsEvent('letter_cast');
   // ส่งขึ้น cloud ให้คนอื่นเจอ (graceful: ถ้าไม่พร้อม คำฝากยังอยู่ local)
   if(window.BSync&&window.BSync.configured&&window.BSync.letters)
     window.BSync.letters.post({cid,text:text.slice(0,200),sig:getSignal()}).then(()=>refreshCloudLetters());
@@ -4087,6 +4087,7 @@ $p('replySend').onclick=()=>{let t=($p('replyInput').value||'').trim();
   if(currentOpenLetter.cloud){ // คำฝาก cross-user → ตอบผ่าน cloud RPC
     if((currentOpenLetter.replies||[]).length>=1){$p('replyWarn').textContent=L('Someone already replied','มีคนตอบไปแล้ว');return;}
     if(window.BSync&&window.BSync.letters)window.BSync.letters.reply(currentOpenLetter.cid,t.slice(0,200),getSignal()).then(ok=>{if(ok)refreshCloudLetters();});
+    if(window.bsEvent)bsEvent('letter_reply');
     try{const r=JSON.parse(localStorage.getItem('repliedIds')||'[]');r.push(currentOpenLetter.id);localStorage.setItem('repliedIds',JSON.stringify(r.slice(-200)));}catch(e){}
     $p('replyWarn').textContent=L('Reply sent ✦','ส่งคำตอบแล้ว ✦');$p('replyToggle').style.display='none';
     setTimeout(()=>msgRead.classList.remove('on'),1200);return;
@@ -4096,7 +4097,7 @@ $p('replySend').onclick=()=>{let t=($p('replyInput').value||'').trim();
   if((a[idx].replies||[]).length>=1){$p('replyWarn').textContent=L('Someone already replied','มีคนตอบไปแล้ว');return;}
   if(!a[idx].replies)a[idx].replies=[];
   a[idx].replies.push({text:t.slice(0,200),t:Date.now(),sig:getSignal()});
-  writeLocal(a);
+  writeLocal(a);if(window.bsEvent)bsEvent('letter_reply');
   try{const r=JSON.parse(localStorage.getItem('repliedIds')||'[]');r.push(currentOpenLetter.id);localStorage.setItem('repliedIds',JSON.stringify(r.slice(-200)));}catch(e){}
   $p('replyWarn').textContent=L('Reply sent ✦','ส่งคำตอบแล้ว ✦');$p('replyToggle').style.display='none';
   setTimeout(()=>msgRead.classList.remove('on'),1200);};
@@ -4161,7 +4162,7 @@ function flyComet(){
   let caught=false;
   el.onclick=()=>{if(caught)return;caught=true;
     const ct=$p('obComet');if(ct)ct.classList.remove('on');markObDone();
-    const m=pickLetter();el.remove();if(m){found++;updateLetterStat();openLetter(m,L('— from someone, somewhere out in space','— จากใครบางคน ที่ไหนสักแห่งในห้วงอวกาศ'));}};
+    const m=pickLetter();el.remove();if(m){found++;updateLetterStat();if(window.bsEvent)bsEvent('letter_catch');openLetter(m,L('— from someone, somewhere out in space','— จากใครบางคน ที่ไหนสักแห่งในห้วงอวกาศ'));}};
   document.body.appendChild(el);
   requestAnimationFrame(()=>requestAnimationFrame(()=>{el.style.transform='rotate('+ang+'rad) translateX('+dist+'px)';}));
   setTimeout(()=>{if(!caught){el.classList.add('gone');setTimeout(()=>el.remove(),600);}},dur*1000);
@@ -5991,6 +5992,7 @@ function applyStarEchoLang(){
   const lb=$p('starEchoLang');if(lb)lb.textContent=en?'ไทย':'EN';
 }
 function openStarEcho(){
+  if(window.bsEvent)bsEvent('star_echo');
   msgPanel.classList.remove('open');msgRead.classList.remove('on');closeMoodPanel();closeBlackHolePanel();closeMemoryCard();
   $p('myStarPanel').classList.remove('on');
   applyStarEchoLang();
