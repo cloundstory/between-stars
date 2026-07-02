@@ -58,9 +58,18 @@ export function checkDispatchDecay(){
   });
   if(filtered.length<a.length)writeLocal(filtered);
 }
-let lastFound=-1;
-export function pickLetter(){const p=letterPool();if(!p.length)return null;
-  let i;do{i=Math.floor(Math.random()*p.length);}while(p.length>1&&i===lastFound);lastFound=i;return p[i];}
+let lastFoundId=null;
+export function pickLetter(){
+  const p=letterPool();if(!p.length)return null;
+  // คำฝากจริงมีน้อยแต่มีค่าที่สุด — อย่าให้ seed 30 ฉบับกลบ (เดิมสุ่มรวม ≈ เจอจริงแค่ ~6%)
+  // ยิ่งมีคำฝากจริงมาก seed ยิ่งจาง: จริง 1 ฉบับ → เจอจริง ~65%, 5+ ฉบับ → ~85% (เพดาน)
+  const isSeed=l=>String(l.id).startsWith('seed_');
+  const real=p.filter(l=>!isSeed(l)),seeds=p.filter(isSeed);
+  const pReal=Math.min(0.85,0.6+0.05*real.length);
+  const src=(real.length&&(!seeds.length||Math.random()<pReal))?real:seeds;
+  let pick;do{pick=src[Math.floor(Math.random()*src.length)];}while(src.length>1&&pick.id===lastFoundId);
+  lastFoundId=pick.id;return pick;
+}
 
 export function getUnseenRepliedIds(){
   const mySig=hooks.getSignal();
