@@ -24,9 +24,10 @@ import {audio} from './js/audio.js';
 import {genId,todayStr,checkDailyLimit,setDailyLimit,escapeHtml} from './js/util.js';
 import {initLetters,readLocal,writeLocal,refreshCloudLetters,castLetter,letterPool,pickLetter,checkDispatchDecay,getDispatchStats,cloudMine,getUnseenRepliedIds,markRepliesSeenStore,DISPATCH_PUB_KEY,DISPATCH_PRIV_KEY} from './js/letters.js';
 import {MOODS,moodColor,moodLabel,moodLocalStr,pickMoodQ,readMood,writeMood,moodStreak,moodRecent} from './js/mood.js';
+import {readGRPool,hasWrittenGR,sealGR,craftDailyMessage} from './js/golden-record.js';
 import {SUN,PLANETS,PLANET_EN,ZODIAC} from './data/bodies.js';
 import {MISSIONS} from './data/missions.js';
-import {QUOTES,QUOTES_EN,BADWORDS,PHILO,PHILO_EN,SEED_LETTERS,SEED_LETTERS_EN,GR_SEEDS,GR_SEEDS_EN} from './data/contemplate.js';
+import {QUOTES,QUOTES_EN,BADWORDS,PHILO,PHILO_EN,SEED_LETTERS,SEED_LETTERS_EN} from './data/contemplate.js';
 import {INNER_POOLS,MEM_ARCH,MEM_ARCH_TH,MEM_CLASS,MEM_LADDER,MEM_TEXTURE_ASSETS,MEM_ORBIT_BASE,MOOD_TO_ARCH} from './data/memory-stars.js';
 import {STAR_ECHO_COPY,STAR_ECHO_EXTRA,STAR_ECHO_TITLE_POOL,STAR_ECHO_EMPTY_TITLES,STAR_ECHO_ASK_Q,STAR_ECHO_ASK_TITLES,SE_ARCH_EN,SE_MOOD_EN,STAR_ECHO_COPY_EN,STAR_ECHO_ASK_Q_EN,STAR_ECHO_ASK_TITLES_EN,STAR_ECHO_TITLE_POOL_EN,STAR_ECHO_EMPTY_TITLES_EN,SE_ITEMS_TH,SE_ITEMS_EN,STAR_ECHO_PICK_ARCH} from './data/star-echo.js';
 
@@ -2797,12 +2798,6 @@ $p('sigBtn').onclick=()=>{if(_obDismissSignal){_obDismissSignal();_obDismissSign
 // ===== END RESONANCE =====
 
 // ============ GOLDEN RECORD ============
-const GR_KEY='goldenRecord',GR_POOL='grPool',CRAFT_MSG_KEY='craftMsgDate';
-
-function readGRPool(){try{return JSON.parse(localStorage.getItem(GR_POOL)||'[]');}catch(e){return[];}}
-function writeGRPool(a){try{localStorage.setItem(GR_POOL,JSON.stringify(a));}catch(e){}}
-function hasWrittenGR(){const d=localStorage.getItem(GR_KEY);return d?JSON.parse(d):null;}
-function markGRWritten(date,ownId,text){localStorage.setItem(GR_KEY,JSON.stringify({date,ownId,text}));}
 
 function openGoldenRecord(){
   const already=hasWrittenGR();
@@ -2852,16 +2847,7 @@ document.getElementById('grSubmit').onclick=()=>{
   const t=(document.getElementById('grTextarea').value||'').trim();
   if(!t){document.getElementById('grWarn').textContent=L('Write something first','เขียนอะไรสักอย่างก่อนนะ');return;}
   if(BADWORDS&&BADWORDS.some(w=>t.toLowerCase().includes(w))){document.getElementById('grWarn').textContent=L('That has something inappropriate — try again','มีคำไม่เหมาะสม ลองใหม่');return;}
-  // add to pool (anonymous — no sig)
-  const pool=readGRPool();
-  const ownId=Date.now().toString(36)+Math.random().toString(36).slice(2,4);
-  const ownText=t.slice(0,200);
-  pool.push({id:ownId,text:ownText,t:Date.now()});
-  if(pool.length>200)pool.splice(0,pool.length-200);
-  writeGRPool(pool);
-  markGRWritten(new Date().toISOString(),ownId,ownText);
-  if(window.bsEvent)bsEvent('golden_save');
-  if(window.BSync&&window.BSync.push)window.BSync.push();
+  sealGR(t);
   // show confirmation then close
   document.getElementById('grForm').style.display='none';
   document.getElementById('grAlready').style.display='';
@@ -2869,29 +2855,12 @@ document.getElementById('grSubmit').onclick=()=>{
   setTimeout(()=>document.getElementById('grOverlay').classList.remove('on'),2200);
 };
 
-// ============ CRAFT PHILO CLICK → DEEP SPACE MESSAGE ============
-function getCraftMessage(){
-  const ownId=(hasWrittenGR()||{}).ownId;
-  const pool=readGRPool().filter(m=>m.text&&m.id!==ownId);
-  if(pool.length>0&&Math.random()<0.55){
-    const pick=pool[Math.floor(Math.random()*pool.length)];
-    return{text:pick.text,attr:L('A signal from the Golden Record · sender unknown','สัญญาณจาก Golden Record · ผู้ส่งไม่ทราบชื่อ'),fromPool:true};
-  }
-  const seedPool=LANG==='en'?GR_SEEDS_EN:GR_SEEDS,seed=seedPool[Math.floor(Math.random()*seedPool.length)];
-  return{text:seed,attr:L('A signal from the deep · Voyager Interstellar Mission','สัญญาณจากห้วงลึก · Voyager Interstellar Mission'),fromPool:false};
-}
 
 function showCraftMessage(m){
   const au=m._curAU||currentAU(m,simDate);
   const hrs=(au*LTSEC_PER_AU/3600).toFixed(1);
   const sub=m.en+' · '+au.toFixed(1)+' AU · '+L('signal takes '+hrs+' hr','สัญญาณใช้เวลา '+hrs+' ชม.');
-  let cached=null;
-  try{cached=JSON.parse(localStorage.getItem(CRAFT_MSG_KEY)||'null');}catch(e){}
-  if(!cached||cached.date!==todayStr()){
-    const msg=getCraftMessage();
-    cached={date:todayStr(),text:msg.text,attr:msg.attr};
-    localStorage.setItem(CRAFT_MSG_KEY,JSON.stringify(cached));
-  }
+  const cached=craftDailyMessage();
   document.getElementById('cmSub').textContent=sub;
   document.getElementById('cmText').textContent='"'+cached.text+'"';
   document.getElementById('cmAttr').textContent=cached.attr;
