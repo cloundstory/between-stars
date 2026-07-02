@@ -10,6 +10,9 @@
   var en=(LANG==='en');
 
   var NEWS=[
+    {id:'2026-07-02', d:{th:'2 ก.ค. 2026',en:'2 Jul 2026'},
+     th:{t:'วันเกิดบนดาวดวงอื่น · ระยะทางระหว่างเรา',d:'Chronos Lens ทำได้มากขึ้น — ดูว่าคุณอายุเท่าไหร่บนดาวอังคาร เพิ่มวันเกิดดาวลงปฏิทิน และวัดว่าระหว่างสองวันของเรา ฟ้าเคลื่อนไปแค่ไหน'},
+     en:{t:'Planet birthdays · the space between us',d:'Chronos Lens grows — see your age on Mars, add planet birthdays to your calendar, and measure how far the sky has moved between two days that matter.'}},
     {id:'2026-06-26', d:{th:'26 มิ.ย. 2026',en:'26 Jun 2026'},
      th:{t:'คำฝากถึงกันได้แล้ว',d:'คำฝากที่คุณฝากไว้กับดวงดาว เริ่มลอยไปถึงคนอื่นจริง ๆ — ถ้ามีใครเขียนตอบ คุณจะได้เห็นมันใน SIGNAL ของคุณ'},
      en:{t:'Letters that reach others',d:'The คำฝาก you leave with the stars now drift to real people — and if someone writes back, you’ll find it in your SIGNAL.'}},

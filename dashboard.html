@@ -207,7 +207,8 @@ const fmtDur = sec => { if(sec==null) return '–'; sec=Math.round(sec); if(sec<
 // nicer labels for events / paths — key order = how unused (0-count) features are ordered on the card
 const EV = { mood_save:'บันทึกห้วงใจ', release:'ปล่อยวาง (หลุมดำ)', letter_cast:'ฝากคำฝาก', letter_reply:'ตอบคำฝาก', letter_catch:'รับคำฝาก (จับดาวตก)', star_echo:'เสียงดาววันนี้',
   chronos_open:'เปิด Chronos Lens', capture:'บันทึกภาพ', share:'แชร์', golden_save:'Golden Record', resonance:'เสียงสะท้อน', lightecho:'แสงจากวันนั้น',
-  contemplate_enter:'เข้าโหมดใคร่ครวญ', guide_open:'เปิดคู่มือ' };
+  contemplate_enter:'เข้าโหมดใคร่ครวญ', guide_open:'เปิดคู่มือ',
+  planet_bday:'ดูวันเกิดดาว', planet_bday_card:'การ์ดวันเกิดดาว', planet_bday_ics:'โหลดปฏิทินวันเกิดดาว', between_card:'การ์ดระหว่างเรา' };
 const PG = { '/':'หน้าแรก','/index.html':'หน้าแรก','/solar-system.html':'ระบบสุริยะ','/light-echo.html':'แสงจากวันนั้น','/starmap.html':'แผนที่ดาว','/space-history.html':'70 ปีอวกาศ','/credits.html':'เครดิต','/privacy.html':'ความเป็นส่วนตัว','/dashboard.html':'แดชบอร์ด' };
 const niceEvent = n => EV[n] || n;
 const nicePath  = p => PG[p] || p;

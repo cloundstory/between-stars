@@ -26,6 +26,7 @@ import {initLetters,readLocal,writeLocal,refreshCloudLetters,castLetter,letterPo
 import {MOODS,moodColor,moodLabel,moodLocalStr,pickMoodQ,readMood,writeMood,moodStreak,moodRecent} from './js/mood.js';
 import {readGRPool,hasWrittenGR,sealGR,craftDailyMessage} from './js/golden-record.js';
 import {SIGKEY,STORMKEY,RES_STORM_DAYS,STAR_NAMES,getSignal,getSignalFull,readBoard,writeBoard,readLikes,readReports,checkStorm,postResonance,likeResonance,reportResonance} from './js/resonance.js';
+import {planetAges,nearestMilestone,betweenStats,buildBirthdayCard,buildBetweenCard,buildBirthdayICS,fmtDate as cosmicDate} from './js/cosmic-dates.js';
 import {SUN,PLANETS,PLANET_EN,ZODIAC} from './data/bodies.js';
 import {MISSIONS} from './data/missions.js';
 import {QUOTES,QUOTES_EN,BADWORDS,PHILO,PHILO_EN,SEED_LETTERS,SEED_LETTERS_EN} from './data/contemplate.js';
@@ -669,13 +670,13 @@ chronosPreview.innerHTML=
   '<div style="font-family:var(--eng);font-size:9px;letter-spacing:.3em;color:#f3c97a">PROJECT CHRONOS LENS · CAPTURE</div>'
  +'<img id="chronosImg" style="max-width:92vw;max-height:52vh;border-radius:10px;box-shadow:0 0 60px rgba(243,201,122,.2)">'
  +'<div id="chronosPreviewBtns" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">'
- +'<button id="prevShare" style="padding:11px 22px;border:none;border-radius:12px;color:#1a1408;font-weight:600;font-size:14px;font-family:var(--th);cursor:pointer;background:linear-gradient(135deg,#f3c97a,#e0a94e)">แชร์ภาพ</button>'
- +'<button id="prevSave" style="padding:11px 18px;border:1px solid rgba(243,201,122,.4);border-radius:12px;color:#ffe6a8;background:rgba(243,201,122,.08);font-size:13px;font-family:var(--th);cursor:pointer">บันทึกลงเครื่อง</button>'
- +'<button id="prevClose" style="padding:11px 14px;background:none;border:none;color:var(--muted);font-size:12px;font-family:var(--th);cursor:pointer">ปิด</button>'
+ +'<button id="prevShare" style="padding:11px 22px;border:none;border-radius:12px;color:#1a1408;font-weight:600;font-size:14px;font-family:var(--th);cursor:pointer;background:linear-gradient(135deg,#f3c97a,#e0a94e)">'+L('Share','แชร์ภาพ')+'</button>'
+ +'<button id="prevSave" style="padding:11px 18px;border:1px solid rgba(243,201,122,.4);border-radius:12px;color:#ffe6a8;background:rgba(243,201,122,.08);font-size:13px;font-family:var(--th);cursor:pointer">'+L('Save to device','บันทึกลงเครื่อง')+'</button>'
+ +'<button id="prevClose" style="padding:11px 14px;background:none;border:none;color:var(--muted);font-size:12px;font-family:var(--th);cursor:pointer">'+L('Close','ปิด')+'</button>'
  +'</div>'
- +'<button id="prevTextToggle" style="padding:7px 16px;background:none;border:1px solid rgba(255,255,255,0.12);border-radius:20px;color:rgba(238,242,251,0.45);font-size:11px;font-family:var(--eng);cursor:pointer;letter-spacing:0.06em;transition:all .2s">Aa  ซ่อนข้อความ</button>'
+ +'<button id="prevTextToggle" style="padding:7px 16px;background:none;border:1px solid rgba(255,255,255,0.12);border-radius:20px;color:rgba(238,242,251,0.45);font-size:11px;font-family:var(--eng);cursor:pointer;letter-spacing:0.06em;transition:all .2s">'+L('Aa  hide text','Aa  ซ่อนข้อความ')+'</button>'
  +'<button id="prevLookOut" style="padding:0;background:none;border:none;cursor:pointer;font-family:var(--th);font-size:13px;color:rgba(180,215,255,0.65);letter-spacing:0.03em;transition:color .25s">'
- +'✦ แสงจากวันนั้น ยังเดินทางอยู่ →</button>';
+ +'✦ '+L('The light from that day is still traveling →','แสงจากวันนั้น ยังเดินทางอยู่ →')+'</button>';
 document.body.appendChild(chronosPreview);
 
 function shutterClick(){
@@ -731,14 +732,14 @@ function addCardText(ctx,CW,CH){
   ctx.shadowColor='rgba(0,0,0,0.9)';ctx.shadowBlur=20;
   ctx.font='300 48px "Noto Sans Thai",sans-serif';
   ctx.fillStyle='#ffffff';
-  _ct('ระบบสุริยะ',CH*0.822);
+  _ct(L('The Solar System','ระบบสุริยะ'),CH*0.822);
   ctx.font='300 30px "Noto Sans Thai",sans-serif';
   ctx.fillStyle='rgba(255,255,255,0.68)';
-  _ct('ณ '+(webbOccasion||'วันสำคัญของฉัน'),CH*0.822+46);
+  _ct(L('on ','ณ ')+(webbOccasion||L('my special day','วันสำคัญของฉัน')),CH*0.822+46);
   ctx.restore();
 
   if(webbBirthday){
-    const dateStr=webbBirthday.toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
+    const dateStr=webbBirthday.toLocaleDateString(LANG==='en'?'en-GB':'th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
     ctx.save();
     ctx.font='600 30px "Noto Sans Thai","Space Grotesk",sans-serif';
     ctx.fillStyle='#f3c97a';
@@ -765,7 +766,7 @@ function addCardText(ctx,CW,CH){
 async function rebuildCard(showText){
   chronosTextVisible=showText;
   const btn=document.getElementById('prevTextToggle');
-  if(btn)btn.textContent=showText?'Aa  ซ่อนข้อความ':'Aa  แสดงข้อความ';
+  if(btn)btn.textContent=showText?L('Aa  hide text','Aa  ซ่อนข้อความ'):L('Aa  show text','Aa  แสดงข้อความ');
   if(!capturedBaseDataURL)return;
   if(!showText){setCaptured(capturedBaseDataURL);return;}
   const img=new Image();
@@ -844,6 +845,7 @@ async function doCapture(){
   chronosFlash.style.transition='opacity 0.55s ease-out';
   chronosFlash.style.opacity='0';
 
+  resetCardPreview();
   chronosPreview.style.display='flex';
 }
 
@@ -851,8 +853,8 @@ async function doCapture(){
 function shareCapture(){
   if(!capturedDataURL)return;
   if(window.bsEvent)bsEvent('share');
-  const bd=webbBirthday?webbBirthday.toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}):'';
-  const text='ระบบสุริยะ ณ '+(webbOccasion||'วันสำคัญของฉัน')+(bd?' · '+bd:'')+' · ห้วงดาว · between-stars.vercel.app';
+  const bd=webbBirthday?webbBirthday.toLocaleDateString(LANG==='en'?'en-GB':'th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}):'';
+  const text=cardShareText||(L('The Solar System on ','ระบบสุริยะ ณ ')+(webbOccasion||L('my special day','วันสำคัญของฉัน'))+(bd?' · '+bd:'')+' · '+L('Between Stars','ห้วงดาว')+' · between-stars.vercel.app');
   if(capturedFile&&navigator.canShare&&navigator.canShare({files:[capturedFile]})){
     navigator.share({files:[capturedFile],title:'ห้วงดาว · Between Stars',text}).catch(()=>{});
     return;
@@ -871,7 +873,7 @@ function saveCapture(){
 }
 document.getElementById('prevShare').onclick=shareCapture;
 document.getElementById('prevSave').onclick=saveCapture;
-document.getElementById('prevClose').onclick=()=>{chronosPreview.style.display='none';chronosTextVisible=true;showClosingTip();};
+document.getElementById('prevClose').onclick=()=>{chronosPreview.style.display='none';chronosTextVisible=true;resetCardPreview();showClosingTip();};
 document.getElementById('prevTextToggle').onclick=()=>rebuildCard(!chronosTextVisible);
 document.getElementById('prevLookOut').onclick=()=>{
   const d=webbBirthday?webbBirthday.toISOString().slice(0,10):'';
@@ -922,29 +924,46 @@ webbModal.innerHTML='<div id="webbInner" style="width:344px;max-width:90vw;backg
  +'<div style="font-family:var(--eng);font-size:10px;letter-spacing:.28em;color:#f3c97a;margin-bottom:16px">PROJECT CHRONOS LENS</div>'
  // ── Step 1: กรอกวัน ──
  +'<div id="webbStep1">'
- +'<div style="font-size:17px;color:#fff;font-weight:300;margin-bottom:6px">ระบบสุริยะ ณ วันสำคัญของคุณ</div>'
- +'<div style="font-size:12px;color:rgba(238,242,251,.45);line-height:1.7;margin-bottom:18px">เลือกวันสำคัญ แล้วดูดาวเคราะห์เคลื่อนไปตำแหน่งจริงของวันนั้น</div>'
- +'<input id="webbOccasion" type="text" maxlength="40" placeholder="วันนี้คือวันอะไร? เช่น วันเกิด (ไม่ใส่ก็ได้)" style="'+_inp+'">'
+ +'<div style="font-size:17px;color:#fff;font-weight:300;margin-bottom:6px">'+L('The Solar System on your special day','ระบบสุริยะ ณ วันสำคัญของคุณ')+'</div>'
+ +'<div style="font-size:12px;color:rgba(238,242,251,.45);line-height:1.7;margin-bottom:18px">'+L('Pick a date, and watch the planets move to where they really were','เลือกวันสำคัญ แล้วดูดาวเคราะห์เคลื่อนไปตำแหน่งจริงของวันนั้น')+'</div>'
+ +'<input id="webbOccasion" type="text" maxlength="40" placeholder="'+L('What day is this? e.g. my birthday (optional)','วันนี้คือวันอะไร? เช่น วันเกิด (ไม่ใส่ก็ได้)')+'" style="'+_inp+'">'
  +'<div id="webbChips" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px;margin-bottom:4px">'
- +['วันเกิดของฉัน','วันครบรอบของเรา','วันแต่งงาน','วันรับปริญญา'].map(o=>'<button type="button" class="wbchip" style="font-family:var(--th);font-size:12px;color:rgba(243,201,122,.85);background:rgba(243,201,122,.08);border:1px solid rgba(243,201,122,.25);border-radius:14px;padding:5px 12px;cursor:pointer">'+o+'</button>').join('')
+ +(LANG==='en'?['My birthday','Our anniversary','Our wedding day','Graduation day']:['วันเกิดของฉัน','วันครบรอบของเรา','วันแต่งงาน','วันรับปริญญา']).map(o=>'<button type="button" class="wbchip" style="font-family:var(--th);font-size:12px;color:rgba(243,201,122,.85);background:rgba(243,201,122,.08);border:1px solid rgba(243,201,122,.25);border-radius:14px;padding:5px 12px;cursor:pointer">'+o+'</button>').join('')
  +'</div>'
  +'<input id="webbDate" type="date" style="'+_inp+';margin-top:10px">'
- +'<input id="webbTime" type="time" placeholder="เวลา (ถ้าจำได้)" style="'+_inp+';margin-top:9px">'
- +'<button id="webbGo" style="width:100%;margin-top:14px;padding:13px;border:none;border-radius:12px;color:#1a1408;font-weight:600;font-size:14px;font-family:var(--th);cursor:pointer;background:linear-gradient(135deg,#f3c97a,#e0a94e)">✦ พาไปวันนั้น</button>'
- +'<button id="webbClose" style="margin-top:12px;background:none;border:none;color:var(--muted);font-size:12px;font-family:var(--th);cursor:pointer">ปิด</button>'
+ +'<input id="webbTime" type="time" placeholder="'+L('time, if you remember','เวลา (ถ้าจำได้)')+'" style="'+_inp+';margin-top:9px">'
+ +'<button id="webbTwoToggle" type="button" style="width:100%;margin-top:10px;padding:9px;background:rgba(122,197,255,.05);border:1px solid rgba(122,197,255,.2);border-radius:11px;color:rgba(180,215,255,.8);font-size:12.5px;font-family:var(--th);cursor:pointer">✦ '+L('Two dates · the space between us','สองวัน · ระยะทางระหว่างเรา')+'</button>'
+ +'<div id="webbTwoWrap" style="display:none">'
+ +'<input id="webbDate2" type="date" style="'+_inp+';margin-top:9px">'
+ +'<div style="font-size:11px;color:rgba(238,242,251,.35);margin-top:6px">'+L('two birthdays · the day you met → today · any two days','วันเกิดสองคน · วันที่เจอกัน → วันนี้ · สองวันไหนก็ได้')+'</div>'
+ +'<button id="webbBetweenGo" style="width:100%;margin-top:9px;padding:12px;border:none;border-radius:12px;color:#0a1420;font-weight:600;font-size:13.5px;font-family:var(--th);cursor:pointer;background:linear-gradient(135deg,#9fd0ff,#6fa8e8)">✦ '+L('How far between these two days?','ระหว่างสองวันนี้ ฟ้าเคลื่อนไปแค่ไหน?')+'</button>'
+ +'</div>'
+ +'<button id="webbGo" style="width:100%;margin-top:14px;padding:13px;border:none;border-radius:12px;color:#1a1408;font-weight:600;font-size:14px;font-family:var(--th);cursor:pointer;background:linear-gradient(135deg,#f3c97a,#e0a94e)">✦ '+L('Take me to that day','พาไปวันนั้น')+'</button>'
+ +'<button id="webbClose" style="margin-top:12px;background:none;border:none;color:var(--muted);font-size:12px;font-family:var(--th);cursor:pointer">'+L('Close','ปิด')+'</button>'
  +'</div>'
  // ── Step 2: เลือก action ──
  +'<div id="webbStep2" style="display:none">'
-  +'<div style="font-size:11px;color:rgba(243,201,122,.65);letter-spacing:.12em;margin-bottom:5px">ระบบสุริยะ ณ</div>'
+  +'<div style="font-size:11px;color:rgba(243,201,122,.65);letter-spacing:.12em;margin-bottom:5px">'+L('THE SOLAR SYSTEM ON','ระบบสุริยะ ณ')+'</div>'
   +'<div id="webbDateLabel" style="font-size:20px;color:#fff;font-weight:300;margin-bottom:22px"></div>'
   +'<div id="webbShotModes" style="display:flex;gap:7px;justify-content:center;margin:-8px 0 16px">'
-  +'<button type="button" data-mode="orbit" style="font-family:var(--eng);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#1a1408;background:#f3c97a;border:1px solid rgba(243,201,122,.65);border-radius:16px;padding:6px 12px;cursor:pointer">วงโคจร</button>'
-  +'<button type="button" data-mode="portrait" style="font-family:var(--eng);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(243,201,122,.74);background:rgba(243,201,122,.06);border:1px solid rgba(243,201,122,.24);border-radius:16px;padding:6px 12px;cursor:pointer">ภาพเหมือน</button>'
-  +'<button type="button" data-mode="inner" style="font-family:var(--eng);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(243,201,122,.74);background:rgba(243,201,122,.06);border:1px solid rgba(243,201,122,.24);border-radius:16px;padding:6px 12px;cursor:pointer">ดาวชั้นใน</button>'
+  +'<button type="button" data-mode="orbit" style="font-family:var(--eng);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#1a1408;background:#f3c97a;border:1px solid rgba(243,201,122,.65);border-radius:16px;padding:6px 12px;cursor:pointer">'+L('Orbits','วงโคจร')+'</button>'
+  +'<button type="button" data-mode="portrait" style="font-family:var(--eng);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(243,201,122,.74);background:rgba(243,201,122,.06);border:1px solid rgba(243,201,122,.24);border-radius:16px;padding:6px 12px;cursor:pointer">'+L('Portrait','ภาพเหมือน')+'</button>'
+  +'<button type="button" data-mode="inner" style="font-family:var(--eng);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(243,201,122,.74);background:rgba(243,201,122,.06);border:1px solid rgba(243,201,122,.24);border-radius:16px;padding:6px 12px;cursor:pointer">'+L('Inner worlds','ดาวชั้นใน')+'</button>'
   +'</div>'
-  +'<button id="webbShot" style="width:100%;padding:13px;border:none;border-radius:12px;color:#1a1408;font-weight:600;font-size:14px;font-family:var(--th);cursor:pointer;background:linear-gradient(135deg,#f3c97a,#e0a94e)">◉ บันทึกภาพ ✦ แชร์</button>'
- +'<button id="webbLightEcho" style="width:100%;margin-top:10px;padding:12px;background:none;border:none;color:rgba(180,215,255,0.65);font-size:13px;font-family:var(--th);cursor:pointer;letter-spacing:0.02em">✦ แสงจากวันนั้น ยังเดินทางอยู่จนถึงทุกวันนี้ →</button>'
- +'<button id="webbBack" style="margin-top:8px;background:none;border:none;color:var(--muted);font-size:12px;font-family:var(--th);cursor:pointer">← เปลี่ยนวัน</button>'
+  +'<button id="webbShot" style="width:100%;padding:13px;border:none;border-radius:12px;color:#1a1408;font-weight:600;font-size:14px;font-family:var(--th);cursor:pointer;background:linear-gradient(135deg,#f3c97a,#e0a94e)">◉ '+L('Capture ✦ share','บันทึกภาพ ✦ แชร์')+'</button>'
+ +'<button id="webbLightEcho" style="width:100%;margin-top:10px;padding:12px;background:none;border:none;color:rgba(180,215,255,0.65);font-size:13px;font-family:var(--th);cursor:pointer;letter-spacing:0.02em">✦ '+L('The light from that day is still traveling →','แสงจากวันนั้น ยังเดินทางอยู่จนถึงทุกวันนี้ →')+'</button>'
+ +'<button id="webbAges" style="width:100%;margin-top:8px;padding:12px;background:rgba(243,201,122,.05);border:1px solid rgba(243,201,122,.22);border-radius:12px;color:rgba(243,201,122,.85);font-size:13px;font-family:var(--th);cursor:pointer">🎂 '+L('My age on other planets →','อายุของฉันบนดาวดวงอื่น →')+'</button>'
+ +'<button id="webbBack" style="margin-top:8px;background:none;border:none;color:var(--muted);font-size:12px;font-family:var(--th);cursor:pointer">← '+L('Change the date','เปลี่ยนวัน')+'</button>'
+ +'</div>'
+ // ── Step 3: วันเกิดบนดาวดวงอื่น ──
+ +'<div id="webbStep3" style="display:none">'
+ +'<div style="font-size:16px;color:#fff;font-weight:300;margin-bottom:2px">'+L('Your age on other planets','อายุของคุณบนดาวดวงอื่น')+'</div>'
+ +'<div id="wbAgesFrom" style="font-size:11.5px;color:rgba(238,242,251,.4);margin-bottom:12px"></div>'
+ +'<div id="wbAgesList" style="text-align:left;font-size:13.5px;line-height:2.05;margin-bottom:10px"></div>'
+ +'<div id="wbMilestone" style="font-size:12.5px;color:rgba(243,201,122,.9);line-height:1.7;margin-bottom:14px"></div>'
+ +'<button id="wbBdayCard" style="width:100%;padding:13px;border:none;border-radius:12px;color:#1a1408;font-weight:600;font-size:14px;font-family:var(--th);cursor:pointer;background:linear-gradient(135deg,#f3c97a,#e0a94e)">🎂 '+L('Make my planet-birthday card','สร้างการ์ดวันเกิดดาว')+'</button>'
+ +'<button id="wbIcs" style="width:100%;margin-top:9px;padding:11px;background:rgba(243,201,122,.06);border:1px solid rgba(243,201,122,.25);border-radius:12px;color:#ffe6a8;font-size:13px;font-family:var(--th);cursor:pointer">📅 '+L('Add them to my calendar (.ics)','เพิ่มวันเกิดดาวลงปฏิทิน (.ics)')+'</button>'
+ +'<button id="wbAgesBack" style="margin-top:10px;background:none;border:none;color:var(--muted);font-size:12px;font-family:var(--th);cursor:pointer">← '+L('Back','กลับ')+'</button>'
  +'</div>'
  +'</div>';
 document.body.appendChild(webbModal);
@@ -977,6 +996,7 @@ const hideVF=()=>vf.style.opacity='0';
 function webbShowStep(n){
   document.getElementById('webbStep1').style.display=n===1?'block':'none';
   document.getElementById('webbStep2').style.display=n===2?'block':'none';
+  document.getElementById('webbStep3').style.display=n===3?'block':'none';
   if(n===2)refreshChronosShotModes();
 }
 function chronosAdjustPulse(after){
@@ -996,7 +1016,7 @@ function openWebbPanel(fromChronosEntry=false){
     const mm=webbBirthday.getUTCMinutes().toString().padStart(2,'0');
     if(hh!=='12'||mm!=='00')ti.value=hh+':'+mm;
     // ถ้ามีวันอยู่แล้ว เปิด step 2 ทันที
-    document.getElementById('webbDateLabel').textContent=webbBirthday.toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
+    document.getElementById('webbDateLabel').textContent=webbBirthday.toLocaleDateString(LANG==='en'?'en-GB':'th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
     webbShowStep(2);
   }else{
     webbShowStep(1);
@@ -1015,13 +1035,87 @@ document.getElementById('webbGo').onclick=()=>{
   webbModal.style.display='none';hideVF();
   chronosWarpSound();startChronosTravelFX();
   dateTween={from:simDate.getTime(),to:target.getTime(),t0:performance.now(),dur:2400,onDone:()=>{
-    document.getElementById('webbDateLabel').textContent=target.toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
+    document.getElementById('webbDateLabel').textContent=target.toLocaleDateString(LANG==='en'?'en-GB':'th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
     webbShowStep(2);
     finishChronosTravelFX();
     setTimeout(()=>{webbModal.style.display='flex';showVF();},1650);
   }};
 };
 document.getElementById('webbBack').onclick=()=>chronosAdjustPulse(()=>webbShowStep(1));
+
+// ═══ การ์ดใหม่ (วันเกิดดาว / ระหว่างเรา) ใช้ preview+share เดิม — ต่างแค่ข้อความแชร์ และไม่มี toggle ข้อความ ═══
+let cardShareText=null;
+function resetCardPreview(){
+  cardShareText=null;
+  document.getElementById('prevTextToggle').style.display='';
+  document.getElementById('prevLookOut').style.display='';
+}
+function openCardPreview(canvas,text){
+  setCaptured(canvas.toDataURL('image/png'));
+  cardShareText=text;
+  document.getElementById('prevTextToggle').style.display='none';
+  document.getElementById('prevLookOut').style.display='none';
+  webbModal.style.display='none';hideVF();
+  shutterClick();
+  chronosPreview.style.display='flex';
+}
+
+// ── สองวัน · ระหว่างเรา ──
+document.getElementById('webbTwoToggle').onclick=()=>{
+  const w=document.getElementById('webbTwoWrap');
+  const on=w.style.display==='none';
+  w.style.display=on?'block':'none';
+  if(on){const d2=document.getElementById('webbDate2');d2.max=new Date().toISOString().slice(0,10);d2.focus();}
+};
+document.getElementById('webbBetweenGo').onclick=()=>{
+  const v1=document.getElementById('webbDate').value,v2=document.getElementById('webbDate2').value;
+  if(!v1||!v2)return;
+  const d1=new Date(v1+'T12:00:00Z'),d2=new Date(v2+'T12:00:00Z');
+  if(isNaN(d1)||isNaN(d2)||d1.getTime()===d2.getTime())return;
+  const s=betweenStats(d1,d2);
+  if(window.bsEvent)bsEvent('between_card');
+  const orbits=s.earthOrbits.toLocaleString(LANG==='en'?'en-US':'th-TH',{maximumFractionDigits:1});
+  openCardPreview(buildBetweenCard(s),
+    L('✦ Between '+cosmicDate(s.from)+' and '+cosmicDate(s.to)+', Earth carried us '+orbits+' orbits · Between Stars · between-stars.vercel.app',
+      '✦ ระหว่าง '+cosmicDate(s.from)+' ถึง '+cosmicDate(s.to)+' โลกพาเราโคจรมาแล้ว '+orbits+' รอบ · ห้วงดาว · between-stars.vercel.app'));
+};
+
+// ── วันเกิดบนดาวดวงอื่น ──
+document.getElementById('webbAges').onclick=()=>{
+  if(!webbBirthday)return;
+  const ages=planetAges(webbBirthday);
+  if(!ages.length)return;
+  document.getElementById('wbAgesFrom').textContent=L('counting from ','นับจากวันที่ ')+cosmicDate(webbBirthday);
+  document.getElementById('wbAgesList').innerHTML=ages.map(a=>
+    '<div style="display:flex;justify-content:space-between;gap:10px"><span>'
+    +'<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:'+a.color+';margin-right:9px;vertical-align:middle"></span>'
+    +(LANG==='en'?a.en:a.th)+'</span><span style="color:rgba(238,242,251,.55);font-family:var(--eng)">'
+    +a.age.toLocaleString(LANG==='en'?'en-US':'th-TH',{maximumFractionDigits:1})+' '+L('yrs','ปี')+'</span></div>').join('');
+  const m=nearestMilestone(ages);
+  document.getElementById('wbMilestone').textContent=m?
+    L('✦ In '+Math.max(1,Math.round(m.daysUntil))+' days you turn '+m.nextN+' on '+m.en+' — '+cosmicDate(m.nextDate),
+      '✦ อีก '+Math.max(1,Math.round(m.daysUntil))+' วัน คุณจะครบ '+m.nextN+' ขวบบน'+m.th+' — '+cosmicDate(m.nextDate)):'';
+  if(window.bsEvent)bsEvent('planet_bday');
+  chronosAdjustPulse(()=>webbShowStep(3));
+};
+document.getElementById('wbAgesBack').onclick=()=>chronosAdjustPulse(()=>webbShowStep(2));
+document.getElementById('wbBdayCard').onclick=()=>{
+  if(!webbBirthday)return;
+  const m=nearestMilestone(planetAges(webbBirthday));if(!m)return;
+  if(window.bsEvent)bsEvent('planet_bday_card');
+  openCardPreview(buildBirthdayCard(m,webbBirthday),
+    L('🎂 In '+Math.max(1,Math.round(m.daysUntil))+' days I turn '+m.nextN+' on '+m.en+' · Between Stars · between-stars.vercel.app',
+      '🎂 อีก '+Math.max(1,Math.round(m.daysUntil))+' วัน ฉันจะอายุครบ '+m.nextN+' ขวบบน'+m.th+' · ห้วงดาว · between-stars.vercel.app'));
+};
+document.getElementById('wbIcs').onclick=()=>{
+  if(!webbBirthday)return;
+  const ages=planetAges(webbBirthday);if(!ages.length)return;
+  if(window.bsEvent)bsEvent('planet_bday_ics');
+  const blob=new Blob([buildBirthdayICS(webbBirthday,ages)],{type:'text/calendar;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='planet-birthdays.ics';a.rel='noopener';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+};
 document.getElementById('webbShot').onclick=()=>{webbModal.style.display='none';hideVF();setTimeout(doCapture,80);};
 document.getElementById('webbLightEcho').onclick=()=>{
   const v=document.getElementById('webbDate').value;
@@ -2878,7 +2972,7 @@ function openCosmicDaily(){
   if(!COSMIC_DAILY_ENABLED)return;
   const d=new Date(); // ดวงวันนี้จริง — ไม่ผูกกับ simDate
   const cd=cosmicDailyData(d);
-  document.getElementById('cdDate').textContent='วัน'+cd.ruler.day+'ที่ '+d.toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('cdDate').textContent='วัน'+cd.ruler.day+'ที่ '+d.toLocaleDateString(LANG==='en'?'en-GB':'th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric'});
   document.getElementById('cdGlyph').textContent=cd.ruler.g;
   document.getElementById('cdRuler').textContent=cd.ruler.th+'ครองวัน';
   document.getElementById('cdPos').textContent='โคจรอยู่ในราศี'+cd.sign.th+' '+cd.sign.g+' · องศาที่ '+cd.deg;
