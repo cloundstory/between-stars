@@ -82,11 +82,12 @@ def main():
             if errs:
                 failures.append(label)
 
-        # ── data modules: import ทุกไฟล์ใน data/ ต้อง parse ผ่านและมี export ──
+        # ── โมดูล data/ และ js/: import ทุกไฟล์ ต้อง parse ผ่านและมี export ──
         page = browser.new_page()
         page.goto(base + "/credits.html", wait_until="load")
-        for f in sorted((ROOT / "data").glob("*.js")):
-            mod = f"/data/{f.name}"
+        mods = [f"/data/{f.name}" for f in sorted((ROOT / "data").glob("*.js"))]
+        mods += [f"/js/{f.name}" for f in sorted((ROOT / "js").glob("*.js"))]
+        for mod in mods:
             try:
                 keys = page.evaluate("m => import(m).then(ns => Object.keys(ns))", mod)
                 assert keys, "no exports"
