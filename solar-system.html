@@ -1575,59 +1575,18 @@ import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import * as Astronomy from 'https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/+esm';
+// ── data modules (เฟส 1: ข้อมูลล้วน แยกไฟล์เพื่อ cache/แก้ง่าย) ──
+import {UI_EN,MISSION_EN,SOLAR_EN,LUNAR_EN} from './data/i18n-ui.js';
+import {SUN,PLANETS,PLANET_EN,ZODIAC} from './data/bodies.js';
+import {MISSIONS} from './data/missions.js';
+import {QUOTES,QUOTES_EN,BADWORDS,PHILO,PHILO_EN,SEED_LETTERS,SEED_LETTERS_EN,GR_SEEDS,GR_SEEDS_EN} from './data/contemplate.js';
+import {INNER_POOLS,MEM_ARCH,MEM_ARCH_TH,MEM_CLASS,MEM_LADDER,MEM_TEXTURE_ASSETS,MEM_ORBIT_BASE,MOOD_QBANK,MOOD_QBANK_EN,MOOD_TO_ARCH} from './data/memory-stars.js';
+import {STAR_ECHO_COPY,STAR_ECHO_EXTRA,STAR_ECHO_TITLE_POOL,STAR_ECHO_EMPTY_TITLES,STAR_ECHO_ASK_Q,STAR_ECHO_ASK_TITLES,SE_ARCH_EN,SE_MOOD_EN,STAR_ECHO_COPY_EN,STAR_ECHO_ASK_Q_EN,STAR_ECHO_ASK_TITLES_EN,STAR_ECHO_TITLE_POOL_EN,STAR_ECHO_EMPTY_TITLES_EN,SE_ITEMS_TH,SE_ITEMS_EN,STAR_ECHO_PICK_ARCH} from './data/star-echo.js';
 
 // ── language (TH primary in HTML; EN additive). Hoisted to top so early code can read LANG without TDZ. ──
 const LANG=(()=>{try{const q=new URLSearchParams(location.search).get('lang');if(q==='en'||q==='th'){localStorage.setItem('lang',q);return q;} // persist ?lang so sub-page links (credits/privacy) inherit it
   const s=localStorage.getItem('lang');if(s==='en'||s==='th')return s;}catch(e){}
   return (navigator.language||'').toLowerCase().startsWith('th')?'th':'en';})();
-// EN overrides for static UI chrome. Keys map to [data-i18n] (text) / [data-i18n-ph] (placeholder) / [data-i18n-title] (title).
-const UI_EN={
- 'dock.sound':'Ambient sound','dock.play':'Play / pause time','dock.prev':'Back 1 month','dock.next':'Forward 1 month',
- 'dock.rate':'Time rate','dock.now':'Today','dock.layers':'Layers ▾',
- 'views.orbits':'Orbits','views.labels':'Names','views.belt':'Asteroid / Kuiper belt','views.zodiac':'Zodiac',
- 'views.missions':'Mission paths','views.scale':'True scale','views.hideui':'Hide UI','views.reset':'Reset view','views.replay':'✦ Replay guide',
- 'ui.restore':'⤢ Show UI',
- 'philo.hint':'✦ Write an “Inner Space” note and watch your star slowly glow',
- 'philo.mood':'◐ Inner Space','philo.echo':'✧ Star Echo','philo.bh':'◌ Let go','philo.write':'✦ Leave a message','philo.reset':'⊙ Reset view',
- 'info.focus':'Zoom camera to this body',
- 'mode.contemplate':'✦ Contemplate',
- 'mood.pre':'INNER SPACE','mood.reroll':'↻ Another question',
- 'mood.note':'Anything on your mind? You can leave it here — there’s always space for you.',
- 'bh.label':'Black hole · tap to let go','bh.title':'Black Hole',
- 'bh.poem':'What crosses the event horizon never returns — not even light<br><span>this is the place for letting go</span>',
- 'bh.ph':'Is there something you want to let disappear…','bh.release':'Release into the dark',
- 'msg.ph':'Write a message, up to 200 characters…','msg.send':'✦ Leave it with the stars',
- 'msg.replyToggle':'✉ Write back','msg.replyPh':'Write back… your reply will drift toward whoever left this',
- 'msg.replySend':'✦ Send your reply','msg.report':'⚐ Report as inappropriate',
- 'res.ph':'Leave your resonance…','res.submit':'Post resonance',
- 'intro.over':'An interactive model','intro.title':'The Solar System','intro.sub':'the real sky, alive and in motion','intro.enter':'TAP ANYWHERE TO BEGIN',
- 'pbd.earth':'Earth','pbd.stripe':'Sunlight scattered in the camera’s lens — not a ring',
- 'pbd.l1':'Look again at that dot.','pbd.l2':'That’s here. That’s home. That’s us.',
- 'pbd.l3':'On it everyone you love, everyone you know,','pbd.l4':'everyone who ever was, lived out their lives.',
- 'pbd.l5':'Every hero and coward, every creator','pbd.l6':'and destroyer of civilization, every saint and sinner —',
- 'pbd.l7':'lived there, on a mote of dust suspended in a sunbeam.','pbd.l8':'The Earth is a very small stage in a vast cosmic arena.',
- 'pbd.endQuote':'That’s us. All of us.','pbd.endSub':'In a single pixel · a 640×480 photo · 6 billion km from Earth','pbd.return':'← Back to the cosmos',
- 'mem.vaultPre':'Star vault · <span id="vaultCount">0/9</span>','mem.mcPre':'Inner Space · <span id="mcDate"></span>',
- 'mem.candTitle':'A new star is forming','mem.candModalTitle':'A new star','mem.candPreview':'See this star',
- 'mem.archive':'Keep in vault','mem.dismiss':'Let it scatter','mem.slotTitle':'Choose an orbit for this star to take',
- 'mem.starBorn':'✦ A new star is born','mem.snHint':'Leave it blank — the universe will name it from the words in your heart',
- 'mem.nameSave':'Name this star','mem.nameSkip':'Let the universe name it',
- 'mem.vaultLabel':'Star vault','mem.vaultSlotTitle':'Choose an orbit for the star to take',
- 'mem.bringBack':'Bring back into orbit','mem.release':'Release the star','mem.cancel':'Cancel',
- 'star.label':'Your star','star.growth':'Growth level','star.addBtn':'✦ Write today’s Inner Space','star.stageUp':'STAGE UP',
- 'star.poem':'A star that floats free, orbiting no one — turning around your own heart<br><span>its colour and light are born from the Inner Space you write</span>',
- 'gr.sub':'A golden record holding the sounds and images of humankind, sent out aboard Voyager 1<br>in case someone, somewhere in the universe, ever finds it',
- 'gr.contextTitle':'What is already recorded',
- 'gr.contextRow':'<span>115 images</span> — Earth, humankind, life, science<br><span>27 pieces of music</span> — Bach · Beethoven · Chuck Berry · Thai music<br><span>55 languages</span> — greetings from every corner of the world<br><span>Sounds of nature</span> — waves, rain, wind, whales, a beating heart<br><span>Ann Druyan’s brainwaves</span> — recorded while thinking of love',
- 'gr.voiceLabel':'A voice from Earth','gr.you':'— your voice is in there too',
- 'gr.note':'1 Signal, recorded once · it won’t appear when you click the craft — but someone else might receive it',
- 'gr.already':'<span class="gr-check">✦</span>Sealed<br><span style="font-size:10px;color:rgba(255,200,80,.35)" id="grAlreadyDate"></span>',
- 'gr.ph':'Write in case someone in this universe receives it…','gr.submit':'✦ Seal it onto the record',
- 'cm.pre':'A signal from the deep','cm.close':'Acknowledged',
- 'ds.sub':'Deep-space probes · real-time distance from the Sun',
- 'bnav.home':'← Between Stars','bnav.credits':'Credits','bnav.privacy':'Privacy','guide.label':'✦ Guide',
- 'lang.toggle':'ไทย'
-};
 function applyUILang(){
   if(LANG!=='en')return; // TH = HTML stays as authored → zero regression for Thai users
   document.querySelectorAll('[data-i18n]').forEach(el=>{const v=UI_EN[el.dataset.i18n];if(v!=null)el.textContent=v;});
@@ -1675,102 +1634,8 @@ const MISSION_MODELS={
 };
 
 // ============ DATA ============
-const SUN={ name:'ดวงอาทิตย์', en:'The Sun', size:8, color:'#ffcf57', type:'ดาวฤกษ์ · G2V', map:'sunmap.jpg',
-  phys:[['เส้นผ่านศูนย์กลาง','1,392,700 กม.'],['มวล','99.86% ของระบบสุริยะ'],['อุณหภูมิผิว','~5,500 °C'],
-    ['อุณหภูมิแกนกลาง','~15,000,000 °C'],['องค์ประกอบ','ไฮโดรเจน 73% · ฮีเลียม 25%'],['อายุ','~4.6 พันล้านปี']],
-  facts:['ดวงอาทิตย์ใหญ่จนบรรจุโลกได้ราว <b>1.3 ล้านดวง</b> และแสงใช้เวลา <b>8 นาที 20 วินาที</b> กว่าจะถึงโลก',
-    'ทุกวินาทีเปลี่ยนไฮโดรเจน <b>~600 ล้านตัน</b> เป็นพลังงานด้วยปฏิกิริยานิวเคลียร์ฟิวชัน'] };
 
-const PLANETS=[
-  { name:'ดาวพุธ', en:'Mercury', orbit:19, size:0.9, spin:0.6, rotH:1407.6, color:'#b7b0a8', tilt:0.01, bands:false, map:'mercurymap.jpg',
-    orbitData:[['ระยะจากดวงอาทิตย์','57.9 ล้าน กม.'],['คาบโคจร','88 วันโลก'],['คาบหมุนรอบตัว','176 วันโลก'],['ความเร็ววงโคจร','47.4 กม./วิ']],
-    phys:[['เส้นผ่านศูนย์กลาง','4,879 กม.'],['แรงโน้มถ่วง','0.38 g'],['อุณหภูมิ','-180 ถึง 430 °C'],['ดวงจันทร์','ไม่มี'],['องค์ประกอบ','หินและเหล็ก'],['บรรยากาศ','แทบไม่มี']],
-    facts:['ดาวที่เล็กและใกล้ดวงอาทิตย์ที่สุด — กลางวันร้อนจัด กลางคืนหนาวจัด เพราะแทบไม่มีบรรยากาศกักความร้อน',
-      'พื้นผิวเต็มไปด้วยหลุมอุกกาบาตคล้ายดวงจันทร์ และมี <b>ช่วงอุณหภูมิต่างกันมากที่สุด</b>ในระบบสุริยะ'] },
-  { name:'ดาวศุกร์', en:'Venus', orbit:28, size:1.5, spin:0.5, rotH:-5832.5, color:'#e8b96b', tilt:0.05, bands:true, atmo:'#ffd98a', map:'venusmap.jpg',
-    orbitData:[['ระยะจากดวงอาทิตย์','108 ล้าน กม.'],['คาบโคจร','225 วันโลก'],['คาบหมุนรอบตัว','243 วัน (ถอยหลัง)'],['ความเร็ววงโคจร','35 กม./วิ']],
-    phys:[['เส้นผ่านศูนย์กลาง','12,104 กม.'],['แรงโน้มถ่วง','0.90 g'],['อุณหภูมิ','~465 °C'],['ดวงจันทร์','ไม่มี'],['องค์ประกอบ','หิน · แกนเหล็ก'],['บรรยากาศ','CO₂ หนาแน่น · เมฆกรดกำมะถัน']],
-    facts:['ดาวที่ร้อนที่สุดจากปรากฏการณ์เรือนกระจกรุนแรง และ <b>หมุนรอบตัวเองช้ากว่าโคจรรอบดวงอาทิตย์</b>',
-      'หมุนสวนทางดาวอื่น — บนดาวศุกร์ดวงอาทิตย์จะ <b>ขึ้นทางทิศตะวันตก</b>'] },
-  { name:'โลก', en:'Earth', orbit:34, size:1.6, spin:1.2, rotH:23.934, color:'#5b9bff', tilt:0.41, bands:true, atmo:'#6ab8ff', map:'earthmap1k.jpg', bump:'earthbump1k.jpg', clouds:'earthcloudmap.jpg', spec:'earthspec1k.jpg', lights:'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r160/examples/textures/planets/earth_lights_2048.png', moon:true,
-    orbitData:[['ระยะจากดวงอาทิตย์','149.6 ล้าน กม.'],['คาบโคจร','365.25 วัน'],['คาบหมุนรอบตัว','23.9 ชม.'],['ความเร็ววงโคจร','29.8 กม./วิ']],
-    phys:[['เส้นผ่านศูนย์กลาง','12,742 กม.'],['แรงโน้มถ่วง','1.00 g'],['อุณหภูมิเฉลี่ย','15 °C'],['ดวงจันทร์','1 ดวง'],['องค์ประกอบ','หิน · แกนเหล็ก-นิกเกิล'],['บรรยากาศ','N₂ 78% · O₂ 21%']],
-    facts:['ดาวเคราะห์ดวงเดียวเท่าที่รู้ที่มี <b>สิ่งมีชีวิต</b> และมีน้ำของเหลวปกคลุมกว่า 70% ของพื้นผิว',
-      'สนามแม่เหล็กโลกช่วย <b>ปกป้องจากลมสุริยะ</b> และทำให้เกิดแสงเหนือ–แสงใต้'] },
-  { name:'ดาวอังคาร', en:'Mars', orbit:44, size:1.2, spin:1.1, rotH:24.623, color:'#e1623d', tilt:0.44, bands:false, atmo:'#e08a5a', map:'marsmap1k.jpg', bump:'marsbump1k.jpg',
-    orbitData:[['ระยะจากดวงอาทิตย์','228 ล้าน กม.'],['คาบโคจร','687 วันโลก'],['คาบหมุนรอบตัว','24.6 ชม.'],['ความเร็ววงโคจร','24.1 กม./วิ']],
-    phys:[['เส้นผ่านศูนย์กลาง','6,779 กม.'],['แรงโน้มถ่วง','0.38 g'],['อุณหภูมิ','-140 ถึง 20 °C'],['ดวงจันทร์','2 ดวง'],['องค์ประกอบ','หินภูเขาไฟ · เหล็กออกไซด์'],['บรรยากาศ','CO₂ เบาบาง']],
-    facts:['"ดาวเคราะห์สีแดง" จากสนิมเหล็ก มีภูเขาไฟ <b>โอลิมปัส มอนส์</b> สูงที่สุดในระบบสุริยะ (~22 กม.)',
-      'มีแคนยอน <b>วาลเลส มาริเนริส</b> ยาวกว่า 4,000 กม. และมีน้ำแข็งที่ขั้วทั้งสอง'] },
-  { name:'ดาวพฤหัสบดี', en:'Jupiter', orbit:91, size:4.5, spin:2.4, rotH:9.925, color:'#d9a066', tilt:0.05, bands:true, atmo:'#e8c79a', map:'jupitermap.jpg',
-    orbitData:[['ระยะจากดวงอาทิตย์','778 ล้าน กม.'],['คาบโคจร','11.9 ปีโลก'],['คาบหมุนรอบตัว','9.9 ชม.'],['ความเร็ววงโคจร','13.1 กม./วิ']],
-    phys:[['เส้นผ่านศูนย์กลาง','139,820 กม.'],['แรงโน้มถ่วง','2.53 g'],['อุณหภูมิ','~-110 °C'],['ดวงจันทร์','95 ดวง'],['องค์ประกอบ','ดาวแก๊ส · ไฮโดรเจน-ฮีเลียม'],['บรรยากาศ','เมฆแอมโมเนียหลายชั้น']],
-    facts:['ดาวเคราะห์ที่ใหญ่ที่สุด — <b>จุดแดงใหญ่</b> คือพายุที่ใหญ่กว่าโลก พัดต่อเนื่องหลายร้อยปี',
-      'ดวงจันทร์ <b>แกนีมีด</b> ใหญ่ที่สุดในระบบสุริยะ — ใหญ่กว่าดาวพุธเสียอีก'] },
-  { name:'ดาวเสาร์', en:'Saturn', orbit:132, size:3.9, spin:2.2, rotH:10.656, color:'#e3ca8c', tilt:0.47, bands:true, ring:true, atmo:'#efdcab', map:'saturnmap.jpg', ringMap:'saturnringcolor.jpg', ringAlpha:'saturnringpattern.gif',
-    orbitData:[['ระยะจากดวงอาทิตย์','1,430 ล้าน กม.'],['คาบโคจร','29.5 ปีโลก'],['คาบหมุนรอบตัว','10.7 ชม.'],['ความเร็ววงโคจร','9.7 กม./วิ']],
-    phys:[['เส้นผ่านศูนย์กลาง','116,460 กม.'],['แรงโน้มถ่วง','1.07 g'],['อุณหภูมิ','~-140 °C'],['ดวงจันทร์','146 ดวง'],['องค์ประกอบ','ดาวแก๊ส · ไฮโดรเจน-ฮีเลียม'],['ความหนาแน่น','น้อยกว่าน้ำ (ลอยน้ำได้)']],
-    facts:['มี <b>วงแหวน</b> สวยที่สุด จากน้ำแข็งและหินนับล้านชิ้น กว้างหลายแสนกิโลเมตรแต่หนาเพียงไม่กี่สิบเมตร',
-      'ดวงจันทร์ <b>ไททัน</b> มีบรรยากาศหนาและทะเลสาบมีเทนเหลว — เป้าหมายค้นหาสิ่งมีชีวิต'] },
-  { name:'ดาวยูเรนัส', en:'Uranus', orbit:200, size:2.7, spin:1.4, rotH:-17.24, color:'#9fe3e0', tilt:1.7, bands:false, ring:true, atmo:'#b8f0ee', map:'uranusmap.jpg', ringMap:'uranusringcolour.jpg', ringAlpha:'uranusringtrans.gif',
-    orbitData:[['ระยะจากดวงอาทิตย์','2,870 ล้าน กม.'],['คาบโคจร','84 ปีโลก'],['คาบหมุนรอบตัว','17 ชม. (ถอยหลัง)'],['ความเร็ววงโคจร','6.8 กม./วิ']],
-    phys:[['เส้นผ่านศูนย์กลาง','50,724 กม.'],['แรงโน้มถ่วง','0.89 g'],['อุณหภูมิ','~-195 °C'],['ดวงจันทร์','28 ดวง'],['องค์ประกอบ','ดาวน้ำแข็ง · น้ำ-มีเทน-แอมโมเนีย'],['บรรยากาศ','ไฮโดรเจน · ฮีเลียม · มีเทน']],
-    facts:['ดาวที่ <b>เอียงตะแคงข้าง</b> เกือบ 98° เหมือนกลิ้งไปตามวงโคจร ทำให้ฤดูกาลยาวนานสุดขั้ว',
-      'มีเทนในบรรยากาศดูดกลืนแสงสีแดง ทำให้เห็นเป็น <b>สีฟ้าอมเขียว</b>'] },
-  { name:'ดาวเนปจูน', en:'Neptune', orbit:262, size:2.6, spin:1.5, rotH:16.11, color:'#4f6bff', tilt:0.49, bands:true, atmo:'#6a82ff', map:'neptunemap.jpg',
-    orbitData:[['ระยะจากดวงอาทิตย์','4,500 ล้าน กม.'],['คาบโคจร','165 ปีโลก'],['คาบหมุนรอบตัว','16 ชม.'],['ความเร็ววงโคจร','5.4 กม./วิ']],
-    phys:[['เส้นผ่านศูนย์กลาง','49,244 กม.'],['แรงโน้มถ่วง','1.14 g'],['อุณหภูมิ','~-200 °C'],['ดวงจันทร์','16 ดวง'],['องค์ประกอบ','ดาวน้ำแข็ง · น้ำ-มีเทน-แอมโมเนีย'],['บรรยากาศ','ไฮโดรเจน · ฮีเลียม · มีเทน']],
-    facts:['ดาวที่ไกลที่สุด มีลมแรงที่สุดในระบบสุริยะถึง <b>2,100 กม./ชม.</b>',
-      'ดาวเคราะห์ดวงแรกที่ถูกค้นพบด้วย <b>การคำนวณทางคณิตศาสตร์</b> ก่อนส่องกล้องเห็นจริง (ปี 1846)'] },
-  { name:'ดาวพลูโต', en:'Pluto', orbit:304, size:0.7, spin:0.4, rotH:-153.29, color:'#c9b6a0', tilt:0.3, bands:false, map:'plutomap1k.jpg', type:'ดาวเคราะห์แคระ · Dwarf planet',
-    orbitData:[['ระยะจากดวงอาทิตย์','5,900 ล้าน กม.'],['คาบโคจร','248 ปีโลก'],['คาบหมุนรอบตัว','6.4 วันโลก'],['ความเร็ววงโคจร','4.7 กม./วิ']],
-    phys:[['เส้นผ่านศูนย์กลาง','2,377 กม.'],['แรงโน้มถ่วง','0.063 g'],['อุณหภูมิ','~-230 °C'],['ดวงจันทร์','5 ดวง (คารอน ฯลฯ)'],['องค์ประกอบ','หิน + น้ำแข็งไนโตรเจน'],['สถานะ','ดาวเคราะห์แคระ (2006)']],
-    facts:['ดาวเคราะห์แคระในแถบไคเปอร์ — เคยเป็นดาวเคราะห์ดวงที่ 9 จนถูกจัดประเภทใหม่ปี 2006',
-      'มีหัวใจน้ำแข็งไนโตรเจนยักษ์ (Tombaugh Regio) และดวงจันทร์ <b>คารอน</b> ที่ใหญ่เกือบครึ่งของพลูโต'] },
-];
 
-// EN parallel for the planet encyclopedia (keyed by `en`). openInfo picks this when LANG==='en'; falls back to Thai if a body is missing. Original PLANETS/SUN untouched.
-const PLANET_EN={
- 'The Sun':{type:'Star · G2V',
-   phys:[['Diameter','1,392,700 km'],['Mass','99.86% of the Solar System'],['Surface temp','~5,500 °C'],['Core temp','~15,000,000 °C'],['Composition','Hydrogen 73% · Helium 25%'],['Age','~4.6 billion years']],
-   facts:['The Sun is vast enough to hold about <b>1.3 million Earths</b>, and its light takes <b>8 min 20 sec</b> to reach us','Every second it turns <b>~600 million tonnes</b> of hydrogen into energy through nuclear fusion']},
- 'Mercury':{
-   orbitData:[['Distance from Sun','57.9 million km'],['Orbital period','88 Earth days'],['Rotation period','176 Earth days'],['Orbital speed','47.4 km/s']],
-   phys:[['Diameter','4,879 km'],['Gravity','0.38 g'],['Temperature','-180 to 430 °C'],['Moons','None'],['Composition','Rock and iron'],['Atmosphere','Almost none']],
-   facts:['The smallest planet and the closest to the Sun — blazing by day, freezing by night, with almost no atmosphere to hold heat','Its surface is cratered like the Moon, and it has the <b>greatest temperature range</b> in the Solar System']},
- 'Venus':{
-   orbitData:[['Distance from Sun','108 million km'],['Orbital period','225 Earth days'],['Rotation period','243 days (retrograde)'],['Orbital speed','35 km/s']],
-   phys:[['Diameter','12,104 km'],['Gravity','0.90 g'],['Temperature','~465 °C'],['Moons','None'],['Composition','Rock · iron core'],['Atmosphere','Dense CO₂ · sulfuric-acid clouds']],
-   facts:['The hottest planet, from a runaway greenhouse effect — and it <b>spins slower than it orbits the Sun</b>','It turns the opposite way to the others — on Venus the Sun <b>rises in the west</b>']},
- 'Earth':{
-   orbitData:[['Distance from Sun','149.6 million km'],['Orbital period','365.25 days'],['Rotation period','23.9 hr'],['Orbital speed','29.8 km/s']],
-   phys:[['Diameter','12,742 km'],['Gravity','1.00 g'],['Avg temperature','15 °C'],['Moons','1'],['Composition','Rock · iron-nickel core'],['Atmosphere','N₂ 78% · O₂ 21%']],
-   facts:['The only planet known to hold <b>life</b>, with liquid water covering over 70% of its surface','Earth’s magnetic field <b>shields us from the solar wind</b> and gives rise to the northern and southern lights']},
- 'Mars':{
-   orbitData:[['Distance from Sun','228 million km'],['Orbital period','687 Earth days'],['Rotation period','24.6 hr'],['Orbital speed','24.1 km/s']],
-   phys:[['Diameter','6,779 km'],['Gravity','0.38 g'],['Temperature','-140 to 20 °C'],['Moons','2'],['Composition','Volcanic rock · iron oxide'],['Atmosphere','Thin CO₂']],
-   facts:['The “Red Planet,” coloured by iron rust, home to <b>Olympus Mons</b> — the tallest volcano in the Solar System (~22 km)','Its canyon <b>Valles Marineris</b> stretches over 4,000 km, and ice caps sit at both poles']},
- 'Jupiter':{
-   orbitData:[['Distance from Sun','778 million km'],['Orbital period','11.9 Earth years'],['Rotation period','9.9 hr'],['Orbital speed','13.1 km/s']],
-   phys:[['Diameter','139,820 km'],['Gravity','2.53 g'],['Temperature','~-110 °C'],['Moons','95'],['Composition','Gas giant · hydrogen-helium'],['Atmosphere','Layered ammonia clouds']],
-   facts:['The largest planet — its <b>Great Red Spot</b> is a storm bigger than Earth that has raged for centuries','Its moon <b>Ganymede</b> is the largest in the Solar System — even bigger than Mercury']},
- 'Saturn':{
-   orbitData:[['Distance from Sun','1,430 million km'],['Orbital period','29.5 Earth years'],['Rotation period','10.7 hr'],['Orbital speed','9.7 km/s']],
-   phys:[['Diameter','116,460 km'],['Gravity','1.07 g'],['Temperature','~-140 °C'],['Moons','146'],['Composition','Gas giant · hydrogen-helium'],['Density','Less than water (it would float)']],
-   facts:['Wears the most beautiful <b>rings</b>, made of millions of ice and rock pieces — hundreds of thousands of km wide yet only tens of metres thick','Its moon <b>Titan</b> has a thick atmosphere and lakes of liquid methane — a target in the search for life']},
- 'Uranus':{
-   orbitData:[['Distance from Sun','2,870 million km'],['Orbital period','84 Earth years'],['Rotation period','17 hr (retrograde)'],['Orbital speed','6.8 km/s']],
-   phys:[['Diameter','50,724 km'],['Gravity','0.89 g'],['Temperature','~-195 °C'],['Moons','28'],['Composition','Ice giant · water-methane-ammonia'],['Atmosphere','Hydrogen · helium · methane']],
-   facts:['The planet that <b>tips on its side</b> at nearly 98°, rolling along its orbit — giving it extreme, long seasons','Methane in its atmosphere absorbs red light, making it look <b>blue-green</b>']},
- 'Neptune':{
-   orbitData:[['Distance from Sun','4,500 million km'],['Orbital period','165 Earth years'],['Rotation period','16 hr'],['Orbital speed','5.4 km/s']],
-   phys:[['Diameter','49,244 km'],['Gravity','1.14 g'],['Temperature','~-200 °C'],['Moons','16'],['Composition','Ice giant · water-methane-ammonia'],['Atmosphere','Hydrogen · helium · methane']],
-   facts:['The farthest planet, with the strongest winds in the Solar System — up to <b>2,100 km/h</b>','The first planet found by <b>mathematical prediction</b> before anyone saw it through a telescope (1846)']},
- 'Pluto':{type:'Dwarf planet',
-   orbitData:[['Distance from Sun','5,900 million km'],['Orbital period','248 Earth years'],['Rotation period','6.4 Earth days'],['Orbital speed','4.7 km/s']],
-   phys:[['Diameter','2,377 km'],['Gravity','0.063 g'],['Temperature','~-230 °C'],['Moons','5 (Charon, etc.)'],['Composition','Rock + nitrogen ice'],['Status','Dwarf planet (2006)']],
-   facts:['A dwarf planet in the Kuiper Belt — once the ninth planet, until it was reclassified in 2006','It has a giant nitrogen-ice heart (Tombaugh Regio) and a moon, <b>Charon</b>, nearly half its own size']},
-};
 
 // ============ TEXTURES ============
 const loadMgr=new THREE.LoadingManager();
@@ -2059,20 +1924,6 @@ const kuiper=new THREE.Group();scene.add(kuiper);
 
 // ============ ZODIAC (กลุ่มดาวจักรราศีตามแนวสุริยวิถี) ============
 const ZR=3600;
-const ZODIAC=[
-  {th:'ราศีเมษ',en:'Aries',lon:33,stars:[[27,9],[32,6],[36,3],[41,2]],lines:[[0,1],[1,2],[2,3]]},
-  {th:'ราศีพฤษภ',en:'Taurus',lon:60,stars:[[52,4],[57,1],[60,-2],[65,5],[70,9]],lines:[[0,1],[1,2],[1,3],[3,4]]},
-  {th:'ราศีเมถุน',en:'Gemini',lon:90,stars:[[83,7],[86,2],[92,1],[96,6],[88,-3],[94,-4]],lines:[[0,1],[1,4],[2,3],[3,5],[1,2]]},
-  {th:'ราศีกรกฎ',en:'Cancer',lon:118,stars:[[114,5],[118,1],[121,-3],[122,6]],lines:[[0,1],[1,2],[1,3]]},
-  {th:'ราศีสิงห์',en:'Leo',lon:150,stars:[[142,8],[147,4],[151,2],[156,1],[158,-4],[150,-3]],lines:[[0,1],[1,2],[2,3],[3,4],[4,5],[2,5]]},
-  {th:'ราศีกันย์',en:'Virgo',lon:188,stars:[[180,6],[185,2],[190,-1],[195,3],[198,-5]],lines:[[0,1],[1,2],[2,3],[2,4]]},
-  {th:'ราศีตุลย์',en:'Libra',lon:222,stars:[[216,5],[221,1],[225,-2],[228,4]],lines:[[0,1],[1,2],[1,3]]},
-  {th:'ราศีพิจิก',en:'Scorpio',lon:245,stars:[[238,3],[243,0],[247,-3],[251,-7],[255,-10],[240,5]],lines:[[5,0],[0,1],[1,2],[2,3],[3,4]]},
-  {th:'ราศีธนู',en:'Sagittarius',lon:270,stars:[[263,5],[268,1],[272,-2],[276,3],[279,-5]],lines:[[0,1],[1,2],[2,3],[2,4]]},
-  {th:'ราศีมังกร',en:'Capricorn',lon:300,stars:[[293,4],[298,0],[303,-3],[307,1],[301,5]],lines:[[0,4],[0,1],[1,2],[2,3],[3,4]]},
-  {th:'ราศีกุมภ์',en:'Aquarius',lon:330,stars:[[323,6],[328,2],[332,-1],[337,4],[340,-3]],lines:[[0,1],[1,2],[2,3],[2,4]]},
-  {th:'ราศีมีน',en:'Pisces',lon:2,stars:[[352,5],[357,2],[2,-1],[7,3],[12,7]],lines:[[0,1],[1,2],[2,3],[3,4]]},
-];
 const zodiacGroup=new THREE.Group();zodiacGroup.visible=false;scene.add(zodiacGroup);
 const zLabelLayer=document.createElement('div');
 zLabelLayer.style.cssText='position:fixed;inset:0;z-index:3;pointer-events:none;overflow:hidden';document.body.appendChild(zLabelLayer);
@@ -2145,71 +1996,6 @@ function escPoint(m,au){const d=dirFromEcliptic(m.escLon,m.escLat),s=auToScene(a
   return new THREE.Vector3(d[0]*s,d[1]*s,d[2]*s);}
 function currentAU(m,date){return Math.max(m.au0+m.rate*((date.getTime()-new Date(m.epoch).getTime())/YR_MS),1);}
 
-const MISSIONS=[
- {id:'voyager1',th:'วอยเอเจอร์ 1',en:'Voyager 1',color:0xffd27a,badge:'ยานสำรวจห้วงอวกาศ · 1977',
-  launch:'1977-09-05',epoch:'2026-06-15',au0:167.0,rate:3.58,escLon:254.5,escLat:34.9,tubeR:0.75,
-  anchors:[{body:'Earth',date:'1977-09-05'},{body:'Jupiter',date:'1979-03-05'},{body:'Saturn',date:'1980-11-12'},
-    {au:30},{au:75},{au:125},{au:185}],
-  timeline:[['ออกเดินทาง','5 ก.ย. 1977'],['เฉียดดาวพฤหัสบดี','5 มี.ค. 1979'],['เฉียดดาวเสาร์','12 พ.ย. 1980'],['เข้าสู่ห้วงอวกาศระหว่างดาว','25 ส.ค. 2012']],
-  facts:['<b>วัตถุฝีมือมนุษย์ที่ไกลที่สุด</b> — ปัจจุบันอยู่ในห้วงอวกาศระหว่างดาว นอกเขตอิทธิพลลมสุริยะแล้ว',
-    'พกแผ่นเสียงทองคำ <b>Golden Record</b> บันทึกเสียงและภาพของโลก เผื่ออารยธรรมอื่นได้พบ'],
-  philo:{
-    quote:'ห่างจากบ้าน 24,000,000,000 กิโลเมตร — ยังคงส่งสัญญาณมาอยู่',
-    facts:[
-      'พลังงาน RTG ที่เหลืออยู่ไม่ถึง 5 วัตต์ — เบากว่าหลอดไฟตู้เย็น แต่ยังข้ามความว่างเปล่าได้',
-      'มนุษย์บันทึกเสียงคลื่น เสียงฝน เสียงวาฬ เสียงหัวใจ และดนตรีจาก 27 วัฒนธรรมไว้ในแผ่นทองคำ — เผื่อใครสักคนจะพบ',
-      'Ann Druyan บันทึกคลื่นสมองของตัวเองขณะคิดถึงความรัก — ความรู้สึกนั้นพ้นระบบสุริยะไปแล้ว',
-      'แสงดวงอาทิตย์ที่ยานรับได้ อ่อนกว่าที่โลกรับถึง 900 เท่า — ยังพออบอุ่นพอส่งข่าวกลับบ้าน'
-    ],decayLabel:'SIGNAL FADE'}},
- {id:'voyager2',th:'วอยเอเจอร์ 2',en:'Voyager 2',color:0x7ad0ff,badge:'แกรนด์ทัวร์ · 1977',
-  launch:'1977-08-20',epoch:'2026-06-15',au0:139.0,rate:3.24,escLon:289.0,escLat:-34.0,tubeR:0.75,
-  anchors:[{body:'Earth',date:'1977-08-20'},{body:'Jupiter',date:'1979-07-09'},{body:'Saturn',date:'1981-08-25'},
-    {body:'Uranus',date:'1986-01-24'},{body:'Neptune',date:'1989-08-25'},{au:60},{au:100},{au:160}],
-  timeline:[['ออกเดินทาง','20 ส.ค. 1977'],['ดาวพฤหัสบดี','9 ก.ค. 1979'],['ดาวเสาร์','25 ส.ค. 1981'],['ดาวยูเรนัส','24 ม.ค. 1986'],['ดาวเนปจูน','25 ส.ค. 1989']],
-  facts:['ยานลำเดียวในประวัติศาสตร์ที่ไปเยือนทั้ง <b>ดาวยูเรนัสและดาวเนปจูน</b> — เส้นทาง "แกรนด์ทัวร์" อาศัยการเรียงตัวของดาวเคราะห์ที่เกิดขึ้นทุก ~175 ปี',
-    'เข้าสู่ห้วงอวกาศระหว่างดาวในปี 2018 เป็นลำที่สองต่อจากวอยเอเจอร์ 1'],
-  philo:{
-    quote:'ยานลำเดียวที่ได้สัมผัสดาวเคราะห์ยักษ์ครบทั้งสี่ — โอกาสที่เกิดขึ้นทุก 175 ปี',
-    facts:[
-      'การเรียงตัวของดาวเคราะห์ที่ทำให้แกรนด์ทัวร์เป็นไปได้ เกิดขึ้นครั้งสุดท้ายในยุค Thomas Jefferson และจะเกิดอีกครั้งในปี 2153',
-      'Voyager 2 ออกเดินทางก่อน Voyager 1 สิบหกวัน — ตอนนี้อยู่คนละทิศ ห่างกันกว่า 40 AU',
-      'ภาพจากยานเผยพายุที่ดาวเนปจูนใหญ่กว่าโลก ห่างออกไปกว่า 4,500,000,000 กิโลเมตร',
-      'สัญญาณที่ส่งกลับมาอ่อนกว่าพลังงานของหลอดไฟในนาฬิกาข้อมือ แต่เราสร้างเสาอากาศขนาด 70 เมตรเพื่อรับมัน'
-    ],decayLabel:'SIGNAL FADE'}},
- {id:'newhorizons',th:'นิวฮอไรซันส์',en:'New Horizons',color:0xb39cff,badge:'ภารกิจสู่พลูโต · 2006',
-  launch:'2006-01-19',epoch:'2026-06-15',au0:61.0,rate:2.88,escLon:285.0,escLat:-1.8,tubeR:0.7,
-  anchors:[{body:'Earth',date:'2006-01-19'},{body:'Jupiter',date:'2007-02-28'},{body:'Pluto',date:'2015-07-14'},
-    {au:50},{au:80}],
-  timeline:[['ออกเดินทาง','19 ม.ค. 2006'],['ใช้แรงโน้มถ่วงดาวพฤหัสบดีเหวี่ยง','28 ก.พ. 2007'],['เฉียดดาวพลูโต','14 ก.ค. 2015'],['เฉียดวัตถุไคเปอร์ Arrokoth','1 ม.ค. 2019']],
-  facts:['ยานลำแรกที่สำรวจ <b>ดาวพลูโต</b>ในระยะใกล้ เผยภาพ "หัวใจ" น้ำแข็งไนโตรเจนอันโด่งดัง',
-    'ออกจากโลกด้วยความเร็วสูงสุดเท่าที่เคยมี ~16 กม./วิ — ผ่านวงโคจรดวงจันทร์ในเวลาเพียง 9 ชั่วโมง'],
-  philo:{
-    quote:'บนยานมีเถ้ากระดูกของ Clyde Tombaugh — เขาได้กลับไปเยี่ยมดาวที่ตัวเองค้นพบ',
-    facts:[
-      'Clyde Tombaugh ค้นพบดาวพลูโตในปี 1930 เสียชีวิตปี 1997 และในปี 2006 ส่วนหนึ่งของเขาออกเดินทางไปเยี่ยมดาวนั้น',
-      '"หัวใจ" ของพลูโต — Tombaugh Regio — เป็นที่ราบน้ำแข็งไนโตรเจนขนาดเท่ารัฐเท็กซัส ค้นพบจากยานนี้',
-      'New Horizons เดินทางไปพลูโตนาน 9.5 ปี แต่ใช้เวลาเพียง 22 นาทีในการเฉียดผ่าน',
-      'ข้อมูลทั้งหมดจากการบินผ่านพลูโตใช้เวลา 16 เดือนจึงส่งกลับมาถึงโลกครบ'
-    ],decayLabel:'SIGNAL FADE'}},
-];
-// EN parallel for mission badge/timeline/facts/philo (keyed by id). openMissionInfo picks this when LANG==='en'.
-const MISSION_EN={
- voyager1:{badge:'Interstellar probe · 1977',
-   timeline:[['Launch','5 Sep 1977'],['Jupiter flyby','5 Mar 1979'],['Saturn flyby','12 Nov 1980'],['Entered interstellar space','25 Aug 2012']],
-   facts:['<b>The most distant human-made object</b> — now in interstellar space, beyond the reach of the Sun’s wind.','Carries the <b>Golden Record</b>, holding Earth’s sounds and images, in case another civilization finds it.'],
-   philo:{quote:'24,000,000,000 kilometres from home — and still sending signals back',
-     facts:['Its remaining RTG power is under 5 watts — less than a fridge bulb — yet it still crosses the void.','Humanity recorded waves, rain, whale song, a heartbeat, and music from 27 cultures onto the golden disc — in case someone finds it.','Ann Druyan recorded her own brainwaves while thinking of love — that feeling has already left the Solar System.','The sunlight it receives is 900× fainter than on Earth — still just enough to send word home.']}},
- voyager2:{badge:'Grand Tour · 1977',
-   timeline:[['Launch','20 Aug 1977'],['Jupiter','9 Jul 1979'],['Saturn','25 Aug 1981'],['Uranus','24 Jan 1986'],['Neptune','25 Aug 1989']],
-   facts:['The only craft in history to visit <b>both Uranus and Neptune</b> — the “Grand Tour” rode a planetary alignment that recurs only every ~175 years.','Entered interstellar space in 2018, the second to do so after Voyager 1.'],
-   philo:{quote:'The only craft to touch all four giant planets — a chance that comes once every 175 years',
-     facts:['The alignment that made the Grand Tour possible last occurred in Thomas Jefferson’s era, and returns in 2153.','Voyager 2 launched sixteen days before Voyager 1 — they’re now in different directions, over 40 AU apart.','Its images revealed a storm on Neptune larger than Earth, over 4,500,000,000 kilometres away.','Its returning signal is weaker than a wristwatch bulb, yet we built 70-metre antennas to catch it.']}},
- newhorizons:{badge:'Mission to Pluto · 2006',
-   timeline:[['Launch','19 Jan 2006'],['Jupiter gravity assist','28 Feb 2007'],['Pluto flyby','14 Jul 2015'],['Kuiper object Arrokoth flyby','1 Jan 2019']],
-   facts:['The first craft to explore <b>Pluto</b> up close, revealing its famous nitrogen-ice “heart.”','Left Earth at the highest launch speed ever, ~16 km/s — passing the Moon’s orbit in just 9 hours.'],
-   philo:{quote:'It carries the ashes of Clyde Tombaugh — he got to visit the world he discovered',
-     facts:['Clyde Tombaugh discovered Pluto in 1930, died in 1997, and in 2006 part of him set off to visit it.','Pluto’s “heart” — Tombaugh Regio — is a nitrogen-ice plain the size of Texas, found by this craft.','New Horizons took 9.5 years to reach Pluto, but only 22 minutes to fly past it.','All the data from the Pluto flyby took 16 months to fully return to Earth.']}},
-};
 const missionGroup=new THREE.Group();scene.add(missionGroup);
 let showPaths=false;
 const missLabelLayer=document.createElement('div');missLabelLayer.id='missLabels';
@@ -3314,59 +3100,8 @@ function audioGesture(){if(soundOn)tryStartAudio();
 addEventListener('pointerdown',audioGesture);addEventListener('keydown',audioGesture);
 
 // ============ PHILOSOPHY MODE — Pale Blue Dot + ฝากข้อความ + คำคม ============
-const QUOTES=[
-  'เรากำลังมองดูบ้านของตัวเอง ในมหาสมุทรอันไร้ขอบเขต',
-  'ทุกสิ่งที่คุณรัก ทุกคนที่คุณรู้จัก อยู่บนจุดเล็ก ๆ จุดเดียวนี้',
-  'ถ้าจักรวาลกว้างใหญ่ขนาดนี้ ทำไมเราถึงยังทะเลาะกันเรื่องเล็ก ๆ?',
-  'หนึ่งชั่วชีวิตบนโลก เป็นเพียงพริบตาเดียวของดวงดาว',
-  'เราคือวิธีที่จักรวาลใช้ทำความรู้จักตัวเอง',
-  'ดาวทุกดวงที่คุณเห็น คือแสงจากอดีต — บางดวงอาจดับไปแล้ว',
-  'ความเงียบของอวกาศ แปลว่าเราโดดเดี่ยว หรือเรายังหาไม่เจอ?',
-  'ถ้าคืนนี้คือคืนสุดท้าย คุณจะมองท้องฟ้าต่างออกไปไหม?',
-  'เราตัวเล็กนิดเดียว แต่เราคือสิ่งเดียวที่รู้ว่าตัวเองตัวเล็ก',
-  'ทุกอะตอมในตัวคุณ เคยอยู่ในใจกลางของดาวฤกษ์',
-];
-const QUOTES_EN=[
-  'We are looking at our own home, in a shoreless ocean of space.',
-  'Everything you love, everyone you know, is on this one small point.',
-  'If the universe is this vast, why do we still quarrel over such small things?',
-  'A whole human life is just one blink to the stars.',
-  'We are the universe’s way of knowing itself.',
-  'Every star you see is light from the past — some may already be gone.',
-  'Does the silence of space mean we are alone, or that we just haven’t found each other yet?',
-  'If tonight were the last night, would you look at the sky any differently?',
-  'We are tiny — yet we are the only thing that knows it is tiny.',
-  'Every atom in you was once inside the heart of a star.',
-];
 const QUOTE_POOL=()=>LANG==='en'?QUOTES_EN:QUOTES;
-const BADWORDS=['เหี้ย','สัส','ควย','หี','เย็ด','แม่ง','ระยำ','ชิบหาย','สถุล','อีดอก','fuck','shit','bitch','asshole','dick','cunt'];
 
-// มุมมองเชิงปรัชญาของแต่ละดวง (โชว์ใน sidebar เฉพาะโหมดใคร่ครวญ)
-const PHILO={
- 'The Sun':{c:'อพอลโล · ศูนย์กลางและแสงสว่าง',t:['เกือบทุกอารยธรรมยกให้ดวงอาทิตย์เป็นสัญลักษณ์ของความจริงและการเริ่มต้น เพลโตเปรียบมันเป็นต้นกำเนิดของปัญญา — สิ่งที่ทำให้เรา "มองเห็น" ความจริงได้','ทุกสิ่งในระบบนี้โคจรรอบมัน เตือนว่าเราต่างมีบางอย่างเป็นศูนย์กลางที่ยึดชีวิตไว้เสมอ'],q:'อะไรคือ "ดวงอาทิตย์" ที่ทุกอย่างในชีวิตคุณโคจรรอบ?'},
- 'Mercury':{c:'เฮอร์มีส · ผู้ส่งสาร',t:['ดาวที่เร็วที่สุด ตั้งชื่อตามเทพแห่งการสื่อสารและการเดินทาง เป็นตัวแทนของความคิดที่ว่องไวและการเชื่อมต่อ','มันเร็วแต่ร้อน-หนาวสุดขั้ว เหมือนความคิดที่ไวเกินไปจนไม่ทันได้รู้สึก'],q:'วันนี้คุณรีบจนลืมรู้สึกอะไรไปบ้าง?'},
- 'Venus':{c:'อโฟรไดที · ความงามที่ลวงตา',t:['ดาวที่สว่างงามที่สุดบนฟ้ายามเช้า-ค่ำ ตั้งชื่อตามเทพีแห่งความรักและความงาม','แต่ใต้เมฆสวยคือไอกรดและความร้อนเผาผลาญ — สิ่งที่งดงามที่สุดอาจไม่ใช่สิ่งที่ปลอดภัยที่สุด'],q:'ความงามแบบไหนที่คุณยอมเข้าใกล้แม้รู้ว่าร้อน?'},
- 'Earth':{c:'บ้าน · จุดสีฟ้าจาง',t:['ดาวเดียวเท่าที่รู้ว่ามีชีวิต เม็ดฝุ่นสีฟ้าในความมืดไร้ขอบเขต','ทุกความรัก ทุกสงคราม ทุกคนที่เคยมีชีวิต อยู่บนจุดนี้จุดเดียว — เรายังไม่มีที่อื่นให้ไป'],q:'ถ้านี่คือบ้านหลังเดียวของเราทุกคน เราน่าจะดูแลกันอย่างไร?'},
- 'Mars':{c:'อาเรส · พรมแดนถัดไป',t:['ดาวสีเลือดของเทพสงคราม แต่ยุคนี้กลายเป็นสัญลักษณ์ของความหวังและความทะเยอทะยานของมนุษย์','ความอยากก้าวข้ามขอบเขตไปตั้งถิ่นฐานที่ใหม่ คือธรรมชาติของเรา'],q:'พรมแดนถัดไปในชีวิตคุณคืออะไร?'},
- 'Jupiter':{c:'ซุส · ผู้คุ้มครอง',t:['ราชาแห่งดาวเคราะห์ ตั้งชื่อตามเทพสูงสุด แรงโน้มถ่วงมหาศาลของมันดูดอุกกาบาตหลายดวงแทนโลก','ความยิ่งใหญ่ที่บางครั้งคอยปกป้องเราอยู่เงียบ ๆ โดยเราไม่รู้ตัว'],q:'ใครคือ "พฤหัส" ที่คอยปกป้องคุณโดยไม่เอ่ยปาก?'},
- 'Saturn':{c:'โครนอส · กาลเวลา',t:['เทพแห่งเวลาผู้กลืนกินทุกสิ่ง วงแหวนงดงามของมันแท้จริงคือเศษซากที่แตกสลาย','ความงามและความไม่จีรังอยู่ด้วยกัน — ทุกสิ่งมีวันเริ่มและวันจบ'],q:'ถ้าเวลามีจำกัด วันนี้คุณอยากใช้มันกับอะไร?'},
- 'Uranus':{c:'ยูเรนัส · การพลิกมุม',t:['ดาวที่เอียงตะแคงเกือบ 90° หมุนคนละแบบกับใคร ตั้งชื่อตามเทพท้องฟ้า','บางครั้งการมองโลกจากมุมที่ต่างสุดขั้ว ก็เผยสิ่งที่คนอื่นมองไม่เห็น'],q:'มีเรื่องไหนที่ถ้าลองพลิกมุมมอง อาจเปลี่ยนไปเลย?'},
- 'Neptune':{c:'โพไซดอน · สิ่งที่อยู่ลึก',t:['ดาวสีน้ำเงินไกลโพ้น ตั้งชื่อตามเทพสมุทร ถูกค้นพบด้วยการคำนวณก่อนจะมีใครเห็นจริง','บางสิ่งเรารู้ว่ามีอยู่ก่อนจะมองเห็น เหมือนความรู้สึกลึก ๆ ที่อธิบายไม่ได้แต่จริง'],q:'มีอะไรที่ใจคุณรู้อยู่แล้ว แม้ตายังไม่เห็น?'},
- 'Pluto':{c:'ฮาเดส · สิ่งที่ถูกนิยามใหม่',t:['เคยเป็นดาวเคราะห์ดวงที่เก้า จนถูกปลดเป็น "ดาวเคราะห์แคระ" ในปี 2006','คุณค่าของมันไม่ได้เปลี่ยน เปลี่ยนแค่ชื่อที่เราตั้งให้ — คำนิยามของคนอื่นไม่ใช่ความจริงของเราเสมอไป'],q:'มีอะไรที่ถูกคนอื่นตีค่า แต่คุณรู้ว่ามันมีความหมาย?'},
-};
-// EN contemplative essays — transcreated for feeling (myth + philosophy + a reflective question), not machine-translated. openInfo picks this when LANG==='en'.
-const PHILO_EN={
- 'The Sun':{c:'Apollo · the centre and the light',t:['Almost every civilization made the Sun a symbol of truth and beginnings. Plato likened it to the source of wisdom — the thing that lets us truly “see”.','Everything here orbits it — a reminder that each of us keeps some centre that holds a life in place.'],q:'What is the “sun” that everything in your life orbits around?'},
- 'Mercury':{c:'Hermes · the messenger',t:['The fastest planet, named for the god of messages and travel — a figure of quick thought and connection.','Yet it swings from scorching to freezing, like a mind so fast it outruns its own feelings.'],q:'What did you rush past today without letting yourself feel?'},
- 'Venus':{c:'Aphrodite · beauty that deceives',t:['The brightest, loveliest light in the morning and evening sky, named for the goddess of love and beauty.','But beneath the beautiful clouds lie acid vapour and searing heat — what is most beautiful is not always what is safest.'],q:'What kind of beauty do you draw close to, even knowing it burns?'},
- 'Earth':{c:'Home · the pale blue dot',t:['The only world we know that holds life — a blue mote of dust in boundless dark.','Every love, every war, everyone who ever lived — all on this single point. We have nowhere else to go.'],q:'If this is the only home we all share, how might we care for one another?'},
- 'Mars':{c:'Ares · the next frontier',t:['The blood-red star of the god of war — yet in our age it has become a symbol of human hope and ambition.','The longing to cross our own limits and settle somewhere new is part of our nature.'],q:'What is the next frontier in your life?'},
- 'Jupiter':{c:'Zeus · the protector',t:['King of the planets, named for the highest god; its immense gravity pulls in many comets that might otherwise have struck Earth.','A greatness that sometimes shields us quietly, without our ever knowing.'],q:'Who is the “Jupiter” that protects you without ever saying so?'},
- 'Saturn':{c:'Cronus · time',t:['The god of time who devours all things; its gorgeous rings are, in truth, the debris of what has shattered.','Beauty and impermanence live side by side — everything has its beginning and its end.'],q:'If time is limited, what would you spend today on?'},
- 'Uranus':{c:'Uranus · a shift in perspective',t:['Tilted almost 90°, turning unlike any other, named for the god of the sky.','Sometimes seeing the world from a radically different angle reveals what no one else can.'],q:'Is there something that, seen from another angle, might change completely?'},
- 'Neptune':{c:'Poseidon · what lies deep',t:['A blue world far out, named for the god of the sea — found by calculation before anyone laid eyes on it.','Some things we know are there before we can see them, like a deep feeling that defies explanation yet is true.'],q:'What does your heart already know, even before your eyes can see it?'},
- 'Pluto':{c:'Hades · what gets redefined',t:['Once the ninth planet, until it was reclassified as a “dwarf planet” in 2006.','Its worth never changed — only the name we gave it. Other people’s definitions are not always your truth.'],q:'What has been dismissed by others that you know still holds meaning?'},
-};
 
 const msgGroup=new THREE.Group();scene.add(msgGroup);msgGroup.visible=false;
 const $p=id=>document.getElementById(id);
@@ -3461,8 +3196,6 @@ const MEM_ORBIT_KEY='memoryStarOrbit';
 const MEM_ARCHIVE_KEY='memoryStarArchive';
 const MEM_CANDIDATE_KEY='memoryStarCandidate';
 const MEM_ARCHIVE_MAX=9;
-// แนววงโคจรแบบระบบสุริยะ: ดาวหิน 4 วงในชิดกัน → ช่องว่าง (แถบดาวเคราะห์น้อย) → ดาวก๊าซ 5 วงนอก → แถบน้ำแข็ง
-const MEM_ORBIT_BASE=[54,71,93,118,151,181,216,252,292];
 const MEM_ORBIT=i=>MEM_ORBIT_BASE[i]||(292+(i-8)*42); // intentionally uneven, less artificial than fixed spacing
 const MEM_AST_R=120,MEM_ICE_R=244; // รัศมีแถบดาวเคราะห์น้อย / แถบน้ำแข็ง
 
@@ -3513,7 +3246,6 @@ function memoryStarEligible(sc){
   return sc&&sc.keywords>=MEM_STAR_MIN_KEYWORDS&&sc.score>=MEM_STAR_MIN_SCORE;
 }
 // ===== เส้นเชื่อม "คำของผู้ใช้ → ดาว" — ให้รู้สึกว่าดาวเกิดจากใจเขาจริง =====
-const MEM_ARCH_TH={love:'ความรัก',growth:'การเติบโต',hope:'ความหวัง',healing:'การเยียวยา',release:'การปล่อยวาง',shadow:'เงาภายใน',return:'การหวนคืน'};
 function archLabelTH(a){return MEM_ARCH_TH[a]||'ความทรงจำ';}
 // คำในบันทึกที่ "เรียก" ดาว archetype นี้ออกมา (ใช้โชว์ว่าดาวมาจากคำไหนของผู้ใช้)
 function matchedWords(note,arch,max=3){
@@ -3941,70 +3673,6 @@ function celebrateStageUp(stage){
 
 // ----- จดหมายในอวกาศ (Hybrid: localStorage ตอนนี้ + วางโครงเผื่อ backend ภายหลัง) -----
 const LKEY='spaceLetters';
-const SEED_LETTERS=[
-  'ถึงใครก็ตามที่อ่านอยู่ — ขอให้วันนี้ของคุณเบาสบายกว่าเมื่อวาน',
-  'ฉันไม่รู้ว่าเธอเป็นใคร แต่ดีใจที่เธอมาเจอจดหมายฉบับนี้',
-  'บางครั้งแค่รู้ว่ามีคนอื่นมองดาวดวงเดียวกัน ก็พอแล้ว',
-  'ถ้าเหนื่อยอยู่ พักก่อนก็ได้ จักรวาลไม่ได้รีบไปไหน',
-  'เก็บความฝันที่เคยทิ้งไว้ กลับมาดูบ้างนะ',
-  'ขอบคุณที่ยังอยู่มาจนถึงวันนี้',
-  'ความคิดถึงของฉัน ฝากลอยมากับแสงดาว',
-  'ไม่เป็นไรหรอกถ้ายังหาคำตอบไม่เจอ เราทุกคนก็กำลังหา',
-  'สักวันเราอาจได้เจอกันที่ไหนสักแห่งในจักรวาลนี้',
-  'ถึงตัวฉันในอนาคต — หวังว่าเธอจะภูมิใจในสิ่งที่เราเลือกวันนี้',
-  'โลกใบเล็กนี้สวยงามเสมอ แม้ในวันที่มันยากเย็น',
-  'ขอให้คนที่อ่านบรรทัดนี้ ได้รับสิ่งดี ๆ โดยไม่ทันตั้งตัว',
-  'แสงที่เราเห็นจากดาวนั้น เดินทางมาหลายพันปี เพื่อมาถึงดวงตาของเราวันนี้',
-  'เราคือฝุ่นของดาวฤกษ์ที่ตั้งคำถามถึงต้นกำเนิดของตัวเอง',
-  'ในความมืดของอวกาศ แม้แสงเล็กน้อยก็มองเห็นได้จากระยะไกลมาก',
-  'ทุกอะตอมในร่างกายเราเคยเป็นส่วนหนึ่งของดาวฤกษ์ดวงใดดวงหนึ่ง',
-  'โลกหมุนรอบดวงอาทิตย์ทุกวัน แต่เรามักลืมรู้สึกมหัศจรรย์กับมัน',
-  'บางคืนแค่มองดาว ก็รู้สึกว่าปัญหาทุกอย่างเล็กลง',
-  'ดวงดาวไม่ตาย มันแค่เปลี่ยนรูปแบบ กลายเป็นสิ่งใหม่',
-  'จักรวาลขยายตัวอยู่ทุกขณะ ความเป็นไปได้จึงไม่มีวันหมด',
-  'แสงอาทิตย์ที่แตะผิวหนังเราวันนี้ เดินทางมา 8 นาทีเพื่อสัมผัสเรา',
-  'ความว่างเปล่าในอวกาศเต็มไปด้วยสิ่งที่เรายังไม่เข้าใจ',
-  'จักรวาลอยู่มา 13,800 ล้านปี แล้วเลือกช่วงเวลานี้ให้เราได้มีชีวิต',
-  'แรงโน้มถ่วงเชื่อมทุกสิ่งไว้ด้วยกัน แม้ดาวที่ห่างกันล้านปีแสง',
-  'ความเงียบของอวกาศไม่ใช่ความเปล่าเปลี่ยว มันคือสันติภาพแบบหนึ่ง',
-  'เราไม่รู้ว่ายังมีอะไรอีกมากในจักรวาล แต่เราก็กล้าเปิดตามองมัน',
-  'ดาวทุกดวงมีวันเกิดและวันดับ เหมือนกับเราทุกคน',
-  'ห้วงอวกาศไม่มีเสียง แต่ถ้ามีคงเต็มไปด้วยบทเพลงที่เราไม่รู้จัก',
-  'บางทีการหลงทางก็คือการเริ่มต้นค้นพบสิ่งใหม่ — เหมือนยานที่ออกจากระบบสุริยะ',
-  'แม้อยู่คนละมุมโลก เราก็มองดาวดวงเดิมกัน',
-];
-const SEED_LETTERS_EN=[
-  'To whoever is reading — may today feel a little lighter than yesterday.',
-  'I don’t know who you are, but I’m glad you found this letter.',
-  'Sometimes just knowing someone else is looking at the same star is enough.',
-  'If you’re tired, rest first — the universe is in no hurry.',
-  'That dream you set aside — come back and look at it sometime.',
-  'Thank you for making it all the way to today.',
-  'I send my longing drifting to you on starlight.',
-  'It’s okay if you haven’t found the answer yet — we’re all still looking.',
-  'Maybe one day we’ll meet somewhere out in this universe.',
-  'To my future self — I hope you’re proud of what we chose today.',
-  'This small world is always beautiful, even on the hard days.',
-  'May whoever reads this line receive something good, when they least expect it.',
-  'The light from that star traveled thousands of years to reach our eyes today.',
-  'We are stardust, asking after its own origin.',
-  'In the dark of space, even a small light can be seen from very far away.',
-  'Every atom in our bodies was once part of some star.',
-  'The Earth circles the Sun every day, yet we so often forget to feel the wonder of it.',
-  'Some nights, just looking at the stars makes every problem feel smaller.',
-  'Stars don’t die — they only change form, and become something new.',
-  'The universe expands every moment, so the possibilities never run out.',
-  'The sunlight touching your skin today traveled 8 minutes to reach you.',
-  'The emptiness of space is full of things we don’t yet understand.',
-  'The universe is 13.8 billion years old, and it chose this moment to give us life.',
-  'Gravity binds everything together, even stars a million light-years apart.',
-  'The silence of space isn’t loneliness — it’s a kind of peace.',
-  'We don’t know how much more is out there, yet we dare to open our eyes and look.',
-  'Every star has a birth and a death, just like all of us.',
-  'Space has no sound — but if it did, it would be full of songs we’ve never heard.',
-  'Maybe getting lost is the start of finding something new — like a craft leaving the Solar System.',
-  'Even on opposite sides of the world, we look up at the same stars.',
-];
 function readLocal(){try{return JSON.parse(localStorage.getItem(LKEY)||'[]');}catch(e){return[];}}
 function writeLocal(a){try{localStorage.setItem(LKEY,JSON.stringify(a.slice(-300)));}catch(e){}}
 // ---- social คำฝาก: cloud cache (null = ยังไม่โหลด → ใช้ local/seed เดิม; graceful ถ้า backend ไม่พร้อม) ----
@@ -4254,8 +3922,6 @@ modeBtn.onclick=()=>setMode(!philo);
 $p('philoReset').onclick=()=>{focusObj=null;setActiveNav(null);controls.target.set(0,0,0);camera.position.set(0,200,440);};
 
 // ============ ECLIPSE FINDER ============
-const SOLAR_EN={total:'Total solar eclipse',annular:'Annular solar eclipse',partial:'Partial solar eclipse',hybrid:'Hybrid solar eclipse'};
-const LUNAR_EN={total:'Total lunar eclipse',partial:'Partial lunar eclipse',penumbral:'Penumbral lunar eclipse'};
 const evRes=document.getElementById('evRes');
 const fmtEN=d=>d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'})+' UTC';
 function jumpTo(date){exitLive();simDate=new Date(date);running=false;play.innerHTML=ICON_PLAY;updateBodies(simDate);updateClock();updatePhysics(simDate);focusOn(EARTH._mesh);}
@@ -4940,50 +4606,6 @@ $p('sigBtn').onclick=()=>{if(_obDismissSignal){_obDismissSignal();_obDismissSign
 
 // ============ GOLDEN RECORD ============
 const GR_KEY='goldenRecord',GR_POOL='grPool',CRAFT_MSG_KEY='craftMsgDate';
-const GR_SEEDS=[
-  // จากแผ่นเสียงจริง — คำทักทายและข้อความ
-  '"Hello from the children of planet Earth." — คำทักทายภาษาอังกฤษที่บันทึกจริงใน Golden Record',
-  '"สวัสดี ท่านผู้ฟังทั้งหลาย ฉันดีใจมากที่ได้ส่งความปรารถนาดีมาให้ท่าน" — คำทักทายภาษาไทยที่อยู่ในแผ่นเสียง',
-  '"This is a present from a small, distant world — a token of our sounds, our science, our images, our music, our thoughts, and our feelings." — Jimmy Carter, 1977',
-  '"We are attempting to survive our time so we may live into yours." — ข้อความจาก Jimmy Carter ที่ส่งไปกับยาน',
-  // เสียงธรรมชาติที่บันทึกจริง
-  'เสียงคลื่นทะเลที่บันทึกไว้ในแผ่นนี้ เกิดขึ้นที่โลกเมื่อปี 1977 — ตอนนี้กำลังเดินทางออกจากกาแล็กซี',
-  'เสียงฝนที่ตกลงมาที่โลก เสียงลมที่พัดผ่าน เสียงฟ้าร้อง — ทั้งหมดบันทึกอยู่ในแผ่นทองคำที่กำลังเดินทางผ่านห้วงอวกาศระหว่างดาว',
-  'เสียงวาฬที่ร้องใต้มหาสมุทร บันทึกอยู่ใน Golden Record — สิ่งมีชีวิตที่ใหญ่ที่สุดบนโลกส่งเสียงออกไปถึงจักรวาล',
-  'เสียงหัวใจเต้น เสียงเด็กทารกร้อง เสียงเสียงหัวเราะ — สิ่งที่เป็นมนุษย์ที่สุดถูกส่งออกไปในความว่างเปล่า',
-  // ดนตรีที่บันทึกจริง
-  'Bach, Beethoven, Chuck Berry, Louis Armstrong, และดนตรีไทย — ทั้งหมดอยู่ในแผ่นเดียวกันที่กำลังเดินทางออกนอกระบบสุริยะ',
-  '"Johnny B. Goode" ของ Chuck Berry เป็นหนึ่งใน 27 เพลงใน Golden Record — John Lennon กล่าวว่า "ควรส่งแค่ Blues เท่านั้น"',
-  // ข้อเท็จจริงเชิงกวี
-  'ณ จุดนี้ ไม่มีใครได้ยินคุณ — และนั่นคือสิ่งที่งดงามที่สุด',
-  'ความมืดระหว่างดาวไม่ว่างเปล่า — เต็มไปด้วยอนุภาคของดาวที่ตายแล้วนานพันล้านปี',
-  'Voyager ส่งสัญญาณด้วยพลังงาน 22 วัตต์ — น้อยกว่าหลอดไฟตู้เย็น — ข้ามระยะทาง 24,000,000,000 กิโลเมตร',
-  'มนุษย์อยู่บนโลกมา 300,000 ปี ใช้เวลา 46 ปีจึงส่งสิ่งแรกออกไปจากระบบสุริยะ',
-  'Ann Druyan บันทึกคลื่นสมองขณะคิดถึงความรัก — ความรู้สึกนั้นพ้นระบบสุริยะไปแล้ว',
-  'ดาวที่ Voyager 1 จะเข้าใกล้มากที่สุดในอีก 40,000 ปี ชื่อ Gliese 445 — ดาวที่ยังไม่มีใครรู้ว่ามีอะไรรออยู่',
-  'สัญญาณวิทยุจากยานจะอ่อนลงเรื่อยๆ แต่ไม่มีวันหายไปจริงๆ — มันแค่เบาลงจนเราฟังไม่ได้ยิน',
-  'แผ่นทองคำสามารถอยู่รอดได้นานกว่าพันล้านปี — นานกว่าดวงอาทิตย์จะยังคงส่องแสง',
-];
-const GR_SEEDS_EN=[
-  '“Hello from the children of planet Earth.” — an English greeting recorded on the real Golden Record',
-  '“Hello to everyone. I am very glad to send my good wishes to you.” — the Thai greeting carried on the record',
-  '“This is a present from a small, distant world — a token of our sounds, our science, our images, our music, our thoughts, and our feelings.” — Jimmy Carter, 1977',
-  '“We are attempting to survive our time so we may live into yours.” — a message from Jimmy Carter sent with the craft',
-  'The sound of ocean waves on this disc was captured on Earth in 1977 — now traveling out of the galaxy.',
-  'Rain falling on Earth, wind passing through, rolling thunder — all recorded on the golden disc now crossing interstellar space.',
-  'The song of whales beneath the ocean is on the Golden Record — Earth’s largest creatures, calling out to the cosmos.',
-  'A beating heart, a baby’s cry, the sound of laughter — the most human things, sent out into the void.',
-  'Bach, Beethoven, Chuck Berry, Louis Armstrong, and Thai music — all on one disc now traveling beyond the Solar System.',
-  'Chuck Berry’s “Johnny B. Goode” is one of 27 tracks on the Golden Record — John Lennon joked, “We should have sent only the blues.”',
-  'Out here, no one can hear you — and that is the most beautiful thing of all.',
-  'The dark between the stars isn’t empty — it’s full of particles from stars that died billions of years ago.',
-  'Voyager transmits on 22 watts — less than a refrigerator bulb — across 24,000,000,000 kilometres.',
-  'Humans have been on Earth for 300,000 years; it took 46 of them to send the first thing beyond the Solar System.',
-  'Ann Druyan recorded her brainwaves while thinking of love — that feeling has already left the Solar System.',
-  'The star Voyager 1 will pass closest to in 40,000 years is Gliese 445 — a star whose secrets no one yet knows.',
-  'The craft’s radio signal grows fainter and fainter, but never truly vanishes — it only fades below what we can hear.',
-  'The golden record can survive more than a billion years — longer than the Sun will keep shining.',
-];
 
 function readGRPool(){try{return JSON.parse(localStorage.getItem(GR_POOL)||'[]');}catch(e){return[];}}
 function writeGRPool(a){try{localStorage.setItem(GR_POOL,JSON.stringify(a));}catch(e){}}
@@ -5173,95 +4795,7 @@ const MOODS=[
 ];
 const moodColor=k=>{const m=MOODS.find(x=>x.k===k);return m?m.c:'#888';};
 const moodLabel=k=>{const m=MOODS.find(x=>x.k===k);return m?(LANG==='en'?m.en:m.label):'';};
-const MOOD_QBANK={
-  radiant:[
-    'วันนี้อะไรที่ทำให้ใจคุณสว่างขึ้น?',
-    'ช่วงเวลาที่ดีที่สุดของวันนี้คือตอนไหน?',
-    'ถ้าจะเก็บความรู้สึกนี้ไว้ คุณอยากจดจำอะไรไว้มากที่สุด?',
-    'มีใคร หรืออะไร ที่คุณอยากขอบคุณในวันนี้?',
-    'แสงในตัวคุณวันนี้ อยากส่งต่อให้ใคร?',
-  ],
-  calm:[
-    'ความสงบของวันนี้มาจากไหน?',
-    'อะไรที่ช่วยให้ใจคุณนิ่งลงได้?',
-    'ในความเงียบนี้ คุณได้ยินอะไรในใจตัวเอง?',
-    'ถ้าจะรักษาความสงบนี้ไว้ คุณต้องวางอะไรลง?',
-    'ตอนนี้ร่างกายและใจคุณได้พักผ่อนพอแล้วหรือยัง?',
-  ],
-  hopeful:[
-    'ความหวังของคุณวันนี้ มีหน้าตาเป็นอย่างไร?',
-    'พรุ่งนี้คุณอยากให้เป็นแบบไหน?',
-    'ตอนนี้คุณกำลังเฝ้ารอคอยอะไรอยู่?',
-    'ก้าวเล็ก ๆ อะไร ที่จะพาคุณเข้าใกล้สิ่งที่ฝันไว้?',
-    'ถ้าได้บอกตัวเองในอนาคต คุณจะให้กำลังใจว่าอย่างไร?',
-  ],
-  faded:[
-    'ความเหงานี้ กำลังบอกอะไรกับคุณ?',
-    'มีใครที่คุณอยากให้อยู่ตรงนี้ด้วยไหม?',
-    'ถ้าได้พูดกับใครสักคนตอนนี้ คุณอยากบอกอะไร?',
-    'วันนี้คุณใจดีกับตัวเองมากพอแล้วหรือยัง?',
-    'อะไรเล็ก ๆ ที่ยังพอเป็นที่ยึดเหนี่ยวใจคุณได้?',
-  ],
-  heavy:[
-    'สิ่งที่หนักที่สุดในใจตอนนี้ คืออะไร?',
-    'ถ้าได้วางมันลงสักครู่ คุณจะรู้สึกอย่างไร?',
-    'มีความคิดไหนวนเวียนทั้งวัน — มันจริงแค่ไหน?',
-    'ตอนนี้คุณต้องการอะไรมากที่สุด?',
-    'วันนี้คุณได้หยุดหายใจลึก ๆ ให้ตัวเองบ้างไหม?',
-  ],
-  turbulent:[
-    'อะไรกำลังปั่นป่วนอยู่ในใจคุณ?',
-    'ความรู้สึกนี้ อยากบอกอะไรกับคุณ?',
-    'ถ้าพายุนี้เป็นสภาพอากาศ เมื่อไหร่มันจะผ่านไป?',
-    'อะไรที่อยู่นอกเหนือการควบคุมของคุณ และพอจะปล่อยมันได้ไหม?',
-    'ตอนนี้สิ่งใด ที่จะช่วยให้คลื่นในใจสงบลง?',
-  ],
-};
 // EN journaling prompts — transcreated for feeling, not machine-translated (gentle, second person, present)
-const MOOD_QBANK_EN={
-  radiant:[
-    'What lit you up today?',
-    'When did today feel its best?',
-    'If you could keep this feeling, what would you hold onto?',
-    'Who or what are you grateful for today?',
-    'Your light today — who would you share it with?',
-  ],
-  calm:[
-    "Where did today's calm come from?",
-    'What helped your mind grow still?',
-    'In this quiet, what do you hear in yourself?',
-    'To keep this calm, what could you set down?',
-    'Have your body and mind had enough rest?',
-  ],
-  hopeful:[
-    'What does your hope look like today?',
-    'What do you want tomorrow to feel like?',
-    'What are you quietly waiting for right now?',
-    'What small step would bring you closer to what you dream of?',
-    'If you could reach your future self, what would you say to keep them going?',
-  ],
-  faded:[
-    'What is this loneliness trying to tell you?',
-    'Is there someone you wish were here with you?',
-    'If you could speak to someone right now, what would you say?',
-    'Have you been kind enough to yourself today?',
-    'What small thing still holds your heart steady?',
-  ],
-  heavy:[
-    'What feels heaviest in you right now?',
-    'If you could set it down for a moment, how would that feel?',
-    'What thought has circled all day — and how true is it really?',
-    'What do you need most right now?',
-    'Did you let yourself breathe deeply today?',
-  ],
-  turbulent:[
-    "What's stirring inside you?",
-    'This feeling — what is it trying to tell you?',
-    'If this storm were weather, when would it pass?',
-    "What's beyond your control — and could you let it go?",
-    'What would help the waves in you settle?',
-  ],
-};
 const QBANK=()=>LANG==='en'?MOOD_QBANK_EN:MOOD_QBANK;
 function moodLocalStr(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function pickMoodQ(k){const a=QBANK()[k]||[];if(!a.length)return '';
@@ -5271,55 +4805,7 @@ function readMood(){try{return JSON.parse(localStorage.getItem(MOOD_KEY)||'{}');
 function writeMood(o){try{localStorage.setItem(MOOD_KEY,JSON.stringify(o));}catch(e){}}
 
 // ===== PHASE B · INNER POOLS — คลังคำห้วงใจ (7 archetype) =====
-//   เรียงบวก→หนัก: ตอนคะแนนเสมอ archetype แรกชนะ (favor บวก)
-const INNER_POOLS={
-  love:['รัก','รักษา','ห่วง','คิดถึง','ผูกพัน','ใกล้ชิด','อบอุ่น','อ้อมกอด','กอด','ซาบซึ้ง','ขอบคุณ','ขอบใจ','ครอบครัว','แม่','พ่อ','เพื่อน','คนรัก','หัวใจ','เพื่อนแท้','เพื่อนรัก','ลูก','พี่','น้อง','สายใย','เคียงข้าง','ไม่โดดเดี่ยว','มีคนรอ','มีคนคิดถึง'],
-  growth:['เรียนรู้','เติบโต','เปลี่ยนแปลง','ก้าวหน้า','พัฒนา','ลองใหม่','ทดลอง','เข้าใจ','ค้นพบ','ตระหนัก','รู้สึกตัว','ยอมรับ','วางแผน','ตั้งใจ','ลงมือ','เริ่มต้น','ก้าวต่อไป','ไม่หยุด','สู้ต่อ','ท้าทาย','ฝึก','ฝึกฝน','ความกล้า','กล้า','ลุกขึ้น','ผ่านมาได้','ผ่านพ้น'],
-  hope:['หวัง','ความหวัง','ฝัน','ความฝัน','อนาคต','วันข้างหน้า','เชื่อ','เชื่อมั่น','ศรัทธา','จะดีขึ้น','ดีขึ้น','แสงสว่าง','แสง','มีทาง','เป็นไปได้','รอคอย','ตั้งตารอ','ใกล้แล้ว','เกือบถึง','ไม่ไกล','สักวัน','วันนั้น','ยังมี','ยังมีเวลา','ไม่สิ้นหวัง','มีความหมาย','คุ้มค่า'],
-  healing:['ให้อภัย','อภัย','รับได้','หายใจ','พัก','พักผ่อน','ฟื้น','ฟื้นตัว','เยียวยา','สงบ','เงียบ','สบายใจ','โอเค','ไม่เป็นไร','ต้องการเวลา','ค่อยๆ','ทีละนิด','แผลเป็น','แข็งแกร่ง','ดูแลตัวเอง','ดูแล','รักตัวเอง','เมตตาตัวเอง'],
-  release:['ปล่อย','ปล่อยวาง','ปล่อยมือ','ปล่อยไป','วาง','ปลดปล่อย','ปลด','ทิ้ง','ละทิ้ง','จบ','จบแล้ว','พอแล้ว','ไม่ยึดติด','ไม่แบก','โล่ง','โล่งใจ','เบาขึ้น','ผ่านมาแล้ว','ก้าวข้าม','ยอมปล่อย','ปลดล็อก'],
-  shadow:['เหนื่อย','ท้อ','ท้อแท้','หมดแรง','สิ้นหวัง','มืด','มืดมน','หม่น','เศร้า','เสียใจ','ร้องไห้','น้ำตา','เจ็บ','เจ็บปวด','แบก','หนัก','อ้างว้าง','ว่างเปล่า','โดดเดี่ยว','เดียวดาย','กลัว','กังวล','เครียด','ทรมาน','พัง','ผิดหวัง'],
-  return:['กลับมา','หวนคืน','หวน','หวนกลับ','คืนสู่','กลับสู่','กลับคืน','กลับบ้าน','ระลึก','รำลึก','รำลึกถึง','ความทรงจำ','คิดถึงอดีต','อดีต','วันวาน','เหมือนเดิม','ที่เดิม','คุ้นเคย','รากเหง้า','วนกลับ']
-};
 // ===== ARCHETYPE — palette + ความหมายของดาว (7 แบบ) =====
-//   cold = มีขั้วน้ำแข็ง · lift = ดัน tier บนบันได class (อารมณ์หนัก→ต่ำ, อารมณ์ฟื้น→สูง)
-const MEM_ARCH={
-  love:   {base:'#a53f2b',accent:'#f0a36f',atmo:'#e68a62',cold:false,lift: 0.3,style:'mars'},    // iron oxide / warm regolith
-  growth: {base:'#166a8f',accent:'#6fbb74',atmo:'#9ed6d5',cold:false,lift: 0.4,style:'earth'},   // ocean + land + cloud
-  hope:   {base:'#1854c6',accent:'#81d8ff',atmo:'#75bbf0',cold:true ,lift: 0.5,style:'neptune'}, // methane-blue bands
-  healing:{base:'#8fc4db',accent:'#f3fbff',atmo:'#d5eff7',cold:true ,lift: 0.2,style:'ice'},     // glacial blue-white
-  release:{base:'#b8a978',accent:'#fff2bf',atmo:'#eadfbd',cold:false,lift:-0.2,style:'venus'},   // pale cloud deck
-  shadow: {base:'#202436',accent:'#7f91b6',atmo:'#657392',cold:false,lift:-0.7,style:'basalt'},  // basalt / dark mare
-  return: {base:'#b87839',accent:'#f0d08b',atmo:'#e9bf79',cold:false,lift: 0.6,style:'jupiter'}, // ochre gas giant
-};
-// คลาสดาว เรียงตามน้ำหนัก (เบา→หนัก) · size=ฐานรัศมี · lum=เปล่งแสง
-const MEM_CLASS={
-  fragment:{size:0.95,rough:1.0 ,lum:false}, // เศษดาว — เล็ก หม่น
-  rocky:   {size:1.5 ,rough:0.96,lum:false}, // ดาวหิน — หลุมอุกกาบาต
-  ice:     {size:1.85,rough:0.8 ,lum:false}, // ดาวน้ำแข็ง — รอยแตก+ขั้ว
-  gas:     {size:2.4 ,rough:0.85,lum:false}, // ดาวก๊าซ — แถบ+พายุ
-  giant:   {size:3.4 ,rough:0.85,lum:false}, // ดาวยักษ์ — แถบใหญ่+วงแหวน
-  luminous:{size:2.7 ,rough:0.5 ,lum:true }, // ดาวเปล่งแสง — เรืองรอง
-};
-// บันได class ของแต่ละ archetype — tier (จาก score) เลือกตำแหน่ง 0..5 บนบันได
-const MEM_LADDER={
-  love:   ['fragment','rocky','rocky','gas','giant','luminous'],
-  growth: ['fragment','rocky','rocky','rocky','gas','giant'],
-  hope:   ['fragment','ice','ice','gas','giant','luminous'],
-  healing:['fragment','ice','ice','rocky','gas','luminous'],
-  release:['fragment','fragment','ice','ice','gas','luminous'],
-  shadow: ['fragment','rocky','rocky','rocky','gas','giant'],
-  return: ['rocky','rocky','gas','giant','giant','luminous'],
-};
-const MEM_TEXTURE_ASSETS={
-  love:'assets/memory-textures/memory-love.png',
-  growth:'assets/memory-textures/memory-growth.png',
-  hope:'assets/memory-textures/memory-hope.png',
-  healing:'assets/memory-textures/memory-healing.png',
-  release:'assets/memory-textures/memory-release.png',
-  shadow:'assets/memory-textures/memory-shadow.png',
-  return:'assets/memory-textures/memory-return.png',
-};
 const MEM_TEXTURE_CACHE={},MEM_TEXTURE_IMAGE_CACHE={};
 function applyMemoryTextureAsset(arch,mat){
   const url=MEM_TEXTURE_ASSETS[arch];if(!url||!mat)return;
@@ -5514,8 +5000,6 @@ function buildMemoryStar(ds,entry,sc,idx,useAsset=true){
 }
 function pal_lift(arch){return MEM_ARCH[arch]?MEM_ARCH[arch].lift:0;}
 // ===== mood (อารมณ์ที่ผู้ใช้กด) → archetype (รูป/ความหมายของดาว) =====
-//   ใช้เป็น (1) ตัวตัดสินตอนคำเสมอ · (2) fallback ตอนโน้ตไม่มีคำในคลัง — แทน default มั่ว
-const MOOD_TO_ARCH={radiant:'love',calm:'healing',hopeful:'hope',faded:'return',heavy:'shadow',turbulent:'growth'};
 function moodArch(m){return(m&&MEM_ARCH[MOOD_TO_ARCH[m]])?MOOD_TO_ARCH[m]:null;}
 function scoreEntry(note,mood,minLen=30){
   const cnt={};for(const k in INNER_POOLS)cnt[k]=0;let total=0;
@@ -5628,57 +5112,6 @@ function saveMood(){
   if(afterStage>beforeStage)setTimeout(()=>celebrateStageUp(STAR_STAGES[afterStage]),650); // เลื่อนระดับ → ฉลอง
 }
 // ============ เสียงสะท้อนจากดาว — daily-style reading จากดาวของผู้ใช้ ============
-const STAR_ECHO_COPY={
-  love:{
-    power:['ความรักที่ไม่ต้องรีบพิสูจน์','ความอบอุ่นที่ค่อยๆ กลับมาอยู่ข้างใน','สายใยบางอย่างที่ยังทำให้ใจไม่โดดเดี่ยว'],
-    feeling:['ใจโทน{mood}วันนี้กำลังอยากได้รับความอ่อนโยนมากกว่าคำตอบ','มีบางส่วนในใจคุณที่อยากถูกมองเห็นโดยไม่ต้องอธิบายเยอะ','วันนี้ความรู้สึกของคุณเหมาะกับการอยู่ใกล้สิ่งที่ทำให้ใจปลอดภัย'],
-    light:['เบาความคาดหวังว่าต้องดูแลทุกคนให้ดีตลอดเวลา','เบาความกลัวว่าจะรักใครหรือรักตัวเองได้ไม่ดีพอ','เบาการพิสูจน์คุณค่าตัวเองผ่านสายตาของคนอื่น'],
-    symbol:['แสงสีส้มอุ่น · ดาววงใน · มือที่ยังไม่ปล่อย','วงแหวนบางๆ · กลิ่นฝนเก่า · ข้อความที่ยังจำได้','ดาวสีแดงนุ่ม · บ้านเล็กๆ · เสียงเรียกชื่อที่ไว้ใจ'],
-    message:['วันนี้เริ่มจากการไม่ทอดทิ้งตัวเองก่อน แล้วความรักจะค่อยๆ มีที่ยืน','ถ้าจะใจดีกับใครสักคนในวันนี้ ให้รวมตัวคุณเองไว้ในนั้นด้วย','บางความผูกพันไม่ต้องดัง แค่ยังอุ่นอยู่ก็พอ']
-  },
-  growth:{
-    power:['การเติบโตที่ไม่จำเป็นต้องรีบ','ก้าวเล็กๆ ที่เริ่มมีแรงโน้มถ่วงของมันเอง','ความกล้าที่ค่อยๆ มีรูปทรง'],
-    feeling:['ใจโทน{mood}วันนี้กำลังเรียนรู้บางอย่างจากเรื่องเดิมในมุมใหม่','มีบางบทเรียนที่ไม่ได้มาเพื่อกดดันคุณ แต่มาเพื่อขยับคุณออกจากที่เดิม','วันนี้เหมาะกับการมองความพยายามของตัวเองอย่างยุติธรรมขึ้น'],
-    light:['เบาความคิดว่าทุกอย่างต้องสำเร็จทันที','เบาการเปรียบเทียบจังหวะของตัวเองกับคนอื่น','เบาความผิดที่เกิดจากการยังไม่เก่งเท่าที่หวัง'],
-    symbol:['พื้นดินหลังฝน · วงโคจรเอียงเล็กน้อย · เมล็ดแสง','ดาวสีเขียวน้ำเงิน · เส้นทางใหม่ · แรงดึงดูดที่นิ่งขึ้น','แผ่นดินแตกร้าวแต่มีต้นอ่อน · ดาววงนอก · ลมหายใจยาว'],
-    message:['วันนี้ไม่ต้องกระโดดไกล แค่ก้าวที่ไม่หักหลังใจตัวเองก็พอ','การค่อยๆ ดีขึ้นยังนับว่าเป็นการเดินทาง แม้ไม่มีใครเห็นตอนเริ่ม','ให้พื้นที่กับตัวเองในการลองใหม่ โดยไม่ใช้ความผิดพลาดเป็นชื่อของคุณ']
-  },
-  hope:{
-    power:['ความหวังที่ยังไม่ยอมดับ','แสงไกลๆ ที่พอให้เดินต่ออีกนิด','ความเป็นไปได้ที่ยังไม่ได้มีชื่อ'],
-    feeling:['ใจโทน{mood}วันนี้ไม่ได้ต้องการคำตอบทั้งหมด แค่ต้องการเหตุผลเล็กๆ ให้ไปต่อ','มีแสงบางชนิดที่ยังสว่างอยู่ แม้คุณจะยังมองไม่เต็มตา','วันนี้คุณอาจไม่ได้มั่นใจเต็มร้อย แต่ยังมีส่วนหนึ่งที่อยากเชื่อ'],
-    light:['เบาความรีบที่จะเห็นปลายทางทั้งหมด','เบาความกลัวว่าความหวังจะทำให้ผิดหวังอีกครั้ง','เบาความคิดว่าถ้ายังไม่ชัด แปลว่าไม่มีทาง'],
-    symbol:['แสงสีฟ้า · ดาวไกล · ประตูที่ยังไม่ปิด','ขอบฟ้าจางๆ · คลื่นน้ำเงิน · จุดสว่างเล็กที่สุด','ดาวเย็นใส · ลมหายใจใหม่ · เส้นขอบฟ้าหลังคืนยาว'],
-    message:['วันนี้ให้ความหวังเป็นตะเกียง ไม่ต้องให้มันเป็นคำสัญญา','ถ้ายังเดินไหวอีกก้าว แสงที่อยู่ไกลก็ยังมีความหมาย','สิ่งดีๆ บางอย่างเริ่มต้นจากการยังไม่ยอมปิดประตูให้ตัวเอง']
-  },
-  healing:{
-    power:['การเยียวยาที่ไม่เร่งรัด','ความสงบที่ค่อยๆ ซึมกลับมา','พื้นที่ปลอดภัยสำหรับส่วนที่ยังอ่อนล้า'],
-    feeling:['ใจโทน{mood}วันนี้อยากพักจากการต้องเข้มแข็งตลอดเวลา','มีแผลบางอย่างที่ไม่ได้ต้องการคำอธิบาย แค่ต้องการความอ่อนโยน','วันนี้เหมาะกับการลดเสียงตำหนิตัวเองลงสักนิด'],
-    light:['เบาความจำเป็นที่จะต้องหายทันที','เบาการย้อนคิดเพื่อทำโทษตัวเองซ้ำๆ','เบาคำว่าไม่เป็นไร ถ้าข้างในยังไม่ไหวจริงๆ'],
-    symbol:['น้ำแข็งใส · แสงขาวนุ่ม · ผ้าห่มบางๆ','ดาวสีฟ้าอ่อน · น้ำนิ่ง · ลมหายใจที่กลับมาเต็มปอด','รอยแตกที่มีแสงลอด · ฝุ่นดาวเงียบ · เส้นชีพจรช้า'],
-    message:['วันนี้ไม่ต้องรีบหาย แค่ไม่ซ้ำเติมตัวเองก็เป็นการเยียวยาแล้ว','การพักไม่ใช่การถอยหลัง มันคือวิธีที่แสงกลับเข้าร่าง','ถ้าคุณยังอ่อนล้า นั่นไม่ได้แปลว่าคุณล้มเหลว']
-  },
-  release:{
-    power:['การปล่อยวางที่เริ่มเบากว่าการแบก','ช่องว่างใหม่หลังมือค่อยๆ คลายออก','ความโล่งที่ยังบาง แต่จริง'],
-    feeling:['ใจโทน{mood}วันนี้กำลังแยกสิ่งที่ควรจำออกจากสิ่งที่ควรวาง','มีบางเรื่องที่คุณอาจไม่ต้องชนะมัน แค่ไม่แบกมันต่อก็พอ','วันนี้เหมาะกับการคืนบางอย่างให้เวลา แทนที่จะเก็บไว้ในอกคนเดียว'],
-    light:['เบาความรู้สึกว่าต้องเข้าใจทุกอย่างก่อนถึงจะปล่อยได้','เบาการถือเรื่องเก่าไว้เพื่อยืนยันว่ามันเคยเจ็บจริง','เบาคำถามที่ไม่มีใครตอบให้คุณได้ในตอนนี้'],
-    symbol:['เมฆสีทองจาง · ประตูเปิดครึ่งหนึ่ง · ฝุ่นที่ลอยออกจากมือ','ดาวสีครีมอ่อน · หลุมดำไกลๆ · เสียงถอนหายใจ','แสงเก่าๆ ที่กำลังลับขอบฟ้า · วงโคจรว่าง · น้ำหนักที่ลดลง'],
-    message:['วันนี้ปล่อยแค่หนึ่งเสี้ยวก็พอ ไม่ต้องปล่อยทั้งจักรวาลในครั้งเดียว','บางอย่างไม่กลับมา ไม่ได้แปลว่ามันไม่เคยมีความหมาย','มือที่ว่างลงอาจยังสั่นอยู่ แต่วันหนึ่งมันจะรับสิ่งใหม่ได้']
-  },
-  shadow:{
-    power:['เงาที่ขอให้ถูกมองอย่างซื่อสัตย์','ความจริงข้างในที่ไม่อยากถูกกลบ','คืนมืดที่ยังมีขอบฟ้า'],
-    feeling:['ใจโทน{mood}วันนี้อาจกำลังพยายามบอกความจริงที่คุณเหนื่อยจะกลบไว้','มีส่วนหนึ่งในใจที่ไม่ได้อยากทำร้ายคุณ แค่อยากให้คุณหันมาฟัง','วันนี้ไม่จำเป็นต้องสว่างทันที แค่ยอมรับว่ามืดตรงไหนก็พอ'],
-    light:['เบาการด่วนตัดสินตัวเองในวันที่ยังไม่ไหว','เบาความคิดว่าความหม่นทำให้คุณไม่น่ารัก','เบาการซ่อนทุกอย่างไว้เพื่อให้ดูเข้มแข็ง'],
-    symbol:['หินบะซอลต์ · ดาวมืด · แสงขอบบาง','ท้องฟ้าไร้จันทร์ · เศษดาวเย็น · ประตูใต้ดิน','เงาสีน้ำเงินเข้ม · ลมหายใจช้า · จุดไฟเล็กๆ'],
-    message:['วันนี้เงาไม่ได้มาเพื่อลากคุณลงไป แต่มาให้คุณรู้ว่าตรงไหนต้องการแสง','คุณไม่จำเป็นต้องสดใสเพื่อมีคุณค่า','บางคืนยาวนาน แต่การยอมอยู่กับมันอย่างอ่อนโยนคือความกล้าแบบหนึ่ง']
-  },
-  return:{
-    power:['การหวนคืนที่พาคุณกลับมาหาตัวเอง','ความทรงจำที่ไม่ได้มีไว้ให้ติดอยู่ แต่ให้เข้าใจ','รากเดิมที่ยังส่งแรงให้วันนี้'],
-    feeling:['ใจโทน{mood}วันนี้อาจกำลังนึกถึงสิ่งเก่า เพื่อหาความหมายใหม่','มีบางความทรงจำที่กลับมา ไม่ใช่เพื่อดึงคุณถอยหลัง แต่เพื่อคืนบางชิ้นส่วนให้คุณ','วันนี้เหมาะกับการมองอดีตด้วยสายตาที่ใจดีกว่าเดิม'],
-    light:['เบาการโทษตัวเองในเรื่องที่ตอนนั้นคุณยังไม่รู้เท่าวันนี้','เบาความคิดว่าการคิดถึงแปลว่ายังไม่ก้าวต่อ','เบาการเอาอดีตทั้งก้อนมาตัดสินตัวเองในตอนนี้'],
-    symbol:['ดาวสีทองน้ำตาล · บ้านไกลๆ · ทางโค้งกลับ','วงแหวนเก่า · กลิ่นฝุ่นหนังสือ · แสงจากหน้าต่างเดิม','ดาวลายพายุอุ่น · เส้นทางวนกลับ · ชื่อที่ยังจำได้'],
-    message:['วันนี้กลับไปมองได้ แต่อย่าลืมพาตัวเองในปัจจุบันกลับมาด้วย','อดีตบางอย่างไม่ได้ขอให้คุณอยู่ต่อ แค่ขอให้คุณเข้าใจมัน','สิ่งที่เคยเป็นคุณยังอยู่ แต่ไม่จำเป็นต้องเป็นกรงของคุณ']
-  }
-};
 STAR_ECHO_COPY.seed={
   power:['การเริ่มต้นอย่างอ่อนโยน','สัญญาณแรกจากท้องฟ้าที่เพิ่งเปิด','ดาวดวงแรกที่ยังไม่ต้องมีชื่อ'],
   feeling:['วันนี้ยังไม่ต้องรู้จักตัวเองทั้งหมด แค่เริ่มฟังเสียงเล็กๆ ข้างในก็พอ','จักรวาลยังไม่มีข้อมูลของคุณมากนัก แต่มันยังพอส่งแสงตั้งต้นมาให้','ก่อนจะมีดาวของคุณจริงๆ คืนนี้อาจเป็นแค่การลองเงยหน้าฟังฟ้า'],
@@ -5686,74 +5119,11 @@ STAR_ECHO_COPY.seed={
   symbol:['ดาวดวงแรก · ประตูแง้ม · แสงก่อนรุ่งเช้า','ฝุ่นดาวสีอ่อน · หน้ากระดาษว่าง · ลมหายใจแรก','ขอบฟ้ามืดนุ่ม · จุดแสงเล็กๆ · เส้นทางที่ยังไม่ตั้งชื่อ'],
   message:['จักรวาลไม่รีบรู้จักคุณ คุณเองก็ไม่ต้องรีบเช่นกัน','ถ้าวันนี้ยังไม่มีคำตอบ แค่เริ่มฝากเสียงไว้สักนิดก็พอ','ดาวของคุณจะค่อยๆ เกิดจากสิ่งที่คุณกล้ารับฟังในตัวเอง']
 };
-const STAR_ECHO_EXTRA={
-  love:{
-    power:['แรงดึงดูดของหัวใจที่ยังไม่หายไปไหน','แสงของคนหรือสิ่งที่ทำให้โลกไม่แข็งเกินไป'],
-    feeling:['วันนี้ดาวความรักไม่ได้ถามว่าคุณให้มากพอไหม แต่มันถามว่าคุณได้รับพอบ้างหรือยัง','มีความอ่อนโยนบางอย่างกำลังรอให้คุณหยุดวิ่งผ่านมัน'],
-    light:['เบาความพยายามทำตัวน่ารักทั้งที่ข้างในอยากพัก','เบาความเงียบที่คุณใช้แทนคำว่าอยากถูกรัก'],
-    symbol:['ดาวคู่จางๆ · แก้วน้ำอุ่น · หน้าต่างที่เปิดไฟรอ','แสงริมขอบฟ้า · เส้นด้ายสีทอง · ชื่อที่ทำให้ใจนุ่มลง'],
-    message:['ความรักที่ดีไม่ควรทำให้คุณหายไปจากตัวเอง','วันนี้ให้หัวใจได้อยู่ในที่ที่ไม่ต้องระวังตัวมากนัก']
-  },
-  growth:{
-    power:['บทใหม่ที่เริ่มจากประโยคสั้นมาก','แรงผลักเบาๆ จากตัวคุณในอนาคต'],
-    feeling:['ดาวแห่งการเติบโตกำลังชี้ไปที่ก้าวเล็กๆ ที่คุณมองข้าม เพราะมันไม่ดูยิ่งใหญ่พอ','วันนี้ความคืบหน้าอาจมาในรูปของการเข้าใจตัวเองมากขึ้นหนึ่งชั้น'],
-    light:['เบาความต้องการเห็นผลทันทีหลังจากพยายาม','เบาภาพตัวเองแบบสมบูรณ์ที่ทำให้คุณเริ่มต้นยาก'],
-    symbol:['บันไดสั้นๆ · แสงเขียวบนพื้นดิน · ดาวที่ขยับวงโคจร','แผนที่ยังวาดไม่จบ · ดินชื้น · เงาของยอดเขาไกล'],
-    message:['บางวันการโตขึ้นคือการไม่กลับไปทำร้ายตัวเองแบบเดิม','ความช้าไม่ได้แปลว่าคุณหลงทาง อาจแปลว่าคุณกำลังเดินอย่างระวังขึ้น']
-  },
-  hope:{
-    power:['ประกายที่ยังดื้อจะอยู่ต่อ','ข่าวดีเล็กๆ จากขอบจักรวาล'],
-    feeling:['คืนนี้ดาวแห่งความหวังไม่ได้สัญญาว่าทุกอย่างจะง่าย แต่มันยืนยันว่าทางยังไม่หมด','บางทีใจคุณไม่ได้ต้องการปาฏิหาริย์ แค่ต้องการเห็นว่าพรุ่งนี้ยังมีช่องว่าง'],
-    light:['เบาความคิดว่าถ้าไม่มั่นใจเต็มร้อยก็ไม่ควรหวัง','เบาการปิดไฟให้ตัวเองก่อนที่เช้าจะมาถึง'],
-    symbol:['ดาวหางไกลๆ · ประตูสีฟ้า · ข้อความที่ยังส่งไม่ถึง','แสงใต้เมฆ · เข็มทิศเก่า · ทางเลี้ยวที่ยังไม่เห็นปลาย'],
-    message:['อย่าเพิ่งตัดสินทั้งท้องฟ้าจากคืนที่เมฆหนา','ความหวังไม่จำเป็นต้องใหญ่ แค่พอให้คุณไม่ทิ้งตัวเองก็พอ']
-  },
-  healing:{
-    power:['การพักที่มีศักดิ์ศรีของมันเอง','แสงรักษาแผลที่ค่อยมาก ไม่บุกเข้ามา'],
-    feeling:['ดาวเยียวยาบอกว่าบางแผลไม่ต้องรีบอธิบายให้ใครเข้าใจ ก่อนที่คุณจะอ่อนโยนกับมันได้','วันนี้ร่างกายและใจอาจอยากให้คุณลดความเร็วลงกว่าปกติ'],
-    light:['เบาความเคยชินที่ต้องตอบว่าไหวทุกครั้ง','เบาการใช้ความเข้มแข็งเป็นกำแพงจนแสงเข้าไม่ได้'],
-    symbol:['ผิวน้ำไม่ไหวติง · แสงขาวหลังม่าน · มือที่วางลงบนอก','หิมะบางๆ · ถ้วยชาร้อน · ดาวที่หมุนช้าลง'],
-    message:['การหายดีไม่ใช่การแข่งขัน และคุณไม่จำเป็นต้องรายงานความคืบหน้าให้ใครทุกวัน','วันนี้ขอให้คุณให้เวลาตัวเองเหมือนที่เคยให้เวลากับคนอื่น']
-  },
-  release:{
-    power:['แรงโน้มถ่วงของการวางลง','พิธีเล็กๆ ของมือที่ยอมคลาย'],
-    feeling:['ดาวปล่อยวางไม่ได้เร่งให้ลืม แต่มันชวนให้คุณหยุดอยู่กับสิ่งนั้นทั้งคืน','บางเรื่องอาจไม่ต้องมีตอนจบที่สวยงาม ถึงจะปล่อยให้มันไกลออกไปได้'],
-    light:['เบาความต้องการให้ทุกคนเข้าใจเหตุผลของคุณ','เบาการเก็บเศษคำพูดเก่าๆ ไว้พิสูจน์ความเจ็บ'],
-    symbol:['ขอบฟ้าเหตุการณ์ · กระดาษที่พับเก็บ · ลมหายใจหลังฝน','วงโคจรที่ว่างลง · เศษแสงสีทอง · ประตูที่ปิดอย่างนุ่มนวล'],
-    message:['ปล่อยวางไม่ใช่แพ้ บางครั้งมันคือการเลือกไม่ให้สิ่งเดิมมีอำนาจเท่าเดิม','สิ่งที่คุณวางลงวันนี้ อาจเปิดพื้นที่ให้คุณกลับมาหายใจในวันหน้า']
-  },
-  shadow:{
-    power:['ความมืดที่เริ่มมีภาษา','เงาที่กำลังขอความจริง ไม่ใช่การลงโทษ'],
-    feeling:['คืนนี้ดาวเงาไม่ได้ทำให้คุณมืดลง แต่มันทำให้คุณเห็นว่าความมืดเริ่มตรงไหน','ถ้าความรู้สึกหนักยังอยู่ แปลว่ามันอาจยังมีบางประโยคที่อยากให้คุณฟัง'],
-    light:['เบาการแกล้งสว่างเพื่อให้คนอื่นสบายใจ','เบาความเชื่อว่าคุณต้องจัดการทุกอย่างคนเดียวในความมืด'],
-    symbol:['ห้องเงียบ · ดาวสีน้ำเงินดำ · ไฟดวงเล็กท้ายทาง','กระจกกลางคืน · พื้นหินเย็น · เสียงหัวใจที่ยังเต้น'],
-    message:['การเห็นเงาของตัวเองไม่ได้น่ากลัวเท่าการต้องหนีมันตลอดเวลา','คืนนี้ไม่ต้องชนะความมืด แค่ไม่ทิ้งตัวเองไว้ในนั้นก็พอ']
-  },
-  return:{
-    power:['การกลับมาที่ไม่เหมือนเดิมอีกแล้ว','ความทรงจำที่เปิดไฟให้ปัจจุบัน'],
-    feeling:['ดาวหวนคืนกำลังแตะอดีตเบาๆ เหมือนถามว่าคุณอยากพาอะไรกลับมา และอยากวางอะไรไว้ตรงนั้น','วันนี้ความคิดถึงอาจไม่ได้ดึงคุณถอยหลัง แค่มาบอกว่าบางสิ่งเคยสำคัญจริง'],
-    light:['เบาความพยายามแก้ไขอดีตด้วยใจของวันนี้','เบาการคิดว่ากลับไปมองแปลว่ายังไม่โต'],
-    symbol:['ทางรถไฟเก่า · ดาวสีอำพัน · กล่องจดหมายที่ยังเปิดได้','บ้านที่เห็นจากไกลๆ · แสงในครัว · วงแหวนของเวลา'],
-    message:['คุณกลับไปทำความเข้าใจได้ แต่อย่าลืมว่าคุณไม่ได้อยู่วันนั้นแล้ว','บางความทรงจำเป็นราก ไม่ใช่โซ่']
-  }
-};
 for(const a in STAR_ECHO_EXTRA){
   for(const k in STAR_ECHO_EXTRA[a]){
     STAR_ECHO_COPY[a][k].push(...STAR_ECHO_EXTRA[a][k]);
   }
 }
-const STAR_ECHO_TITLE_POOL=[
-  'ดาว “{name}” ส่งเสียงวันนี้',
-  'คืนนี้ดาว “{name}” เปิดสัญญาณถึงคุณ',
-  'แสงจากดาว “{name}” มาถึงแล้ว',
-  'ดาว “{name}” ขยับวงโคจรเข้ามาใกล้ใจ',
-  'เสียงเบาๆ จากดาว “{name}” เริ่มดังขึ้น'
-];
-const STAR_ECHO_EMPTY_TITLES=[
-  'จักรวาลยังเงียบ แต่ไม่ได้ว่างเปล่า',
-  'ก่อนดาวดวงแรกจะเกิด เสียงแรกมาถึงแล้ว',
-  'คืนนี้ท้องฟ้าส่งสัญญาณตั้งต้นให้คุณ'
-];
 function starEchoPick(a,rng){return a[Math.floor(rng()*a.length)]||'';}
 const STAR_ECHO_DAILY_KEY='starEchoDaily';
 function readStarEchoDaily(){
@@ -5777,92 +5147,13 @@ function starEchoPool(){
 }
 // โหมดเดโม (?echoDemo=1) — ปลดล็อกวันละครั้ง + สุ่มใหม่ทุกครั้ง เพื่อเทสต์ทุกสี/ทุกธีม
 const ECHO_DEMO=new URLSearchParams(location.search).get('echoDemo')==='1';
-// พาดหัวพิธีแตะดาว — ไม่ชี้นำ โทนเสี่ยงทาย
-const STAR_ECHO_ASK_Q=[
-  'คืนนี้มีดาวส่งสัญญาณถึงคุณ',
-  'มีดาวสองสามดวงกำลังเรียกคุณอยู่',
-  'ท้องฟ้าคืนนี้เปิดให้คุณเลือกหนึ่งดวง'
-];
-const STAR_ECHO_ASK_TITLES=[
-  'ดาวที่คุณเลือกส่งเสียงแล้ว',
-  'ดวงที่ใจคุณถูกดึงไปหา เปิดสัญญาณ',
-  'เสียงสะท้อนจากดาวที่คุณแตะคืนนี้',
-  'ดาวดวงนั้นขยับเข้ามาตอบคุณ'
-];
 // ============ i18n (นำร่อง: Star Echo) — TH เป็นหลัก, EN เป็นส่วนเสริม ============
 // auto-detect: ?lang= → localStorage → ภาษาเบราว์เซอร์ (ไทย→th, นอกนั้น→en) · สลับภาษา = reload พร้อม ?lang=
 // LANG hoisted to top of module (see import block). setAppLang/seLocale stay here.
 function setAppLang(l){try{localStorage.setItem('lang',l);}catch(e){}const u=new URL(location.href);u.searchParams.set('lang',l);location.assign(u.toString());}
 function seLocale(){return LANG==='en'?'en-US':'th-TH-u-ca-gregory-nu-latn';}
-const SE_ARCH_EN={love:'Love',growth:'Growth',hope:'Hope',healing:'Healing',release:'Release',shadow:'Shadow',return:'Return',seed:'Beginning'};
-const SE_MOOD_EN={radiant:'radiant',calm:'calm',hopeful:'hopeful',faded:'faded',heavy:'heavy',turbulent:'restless'};
 function seArchLabel(a){return LANG==='en'?(SE_ARCH_EN[a]||'Memory'):archLabelTH(a);}
 function seMoodText(m){return LANG==='en'?(SE_MOOD_EN[m]||'quiet'):(moodLabel(m)||'ใจของคุณ');}
-// คลังคำ EN — transcreate ให้ได้อารมณ์กวี ไม่ใช่แปลตรง
-const STAR_ECHO_COPY_EN={
-  love:{
-    power:['A love that needs no rush to prove itself','A warmth quietly finding its way back inside you','A thread that still keeps your heart from feeling alone'],
-    feeling:['Your {mood} heart today wants tenderness more than answers','Part of you longs to be seen without having to explain','Today you belong near whatever makes your heart feel safe'],
-    light:['the need to take care of everyone, always','the fear that you love others — or yourself — not well enough','proving your worth through someone else’s eyes'],
-    symbol:['warm amber light · an inner orbit · a hand not yet let go','a thin ring · the scent of old rain · a message still remembered','a soft red star · a small home · a trusted voice calling your name'],
-    message:['Begin today by not abandoning yourself — then love will slowly find room to stand','If you’ll be kind to someone today, fold yourself into that kindness too','Some bonds need not be loud — staying warm is enough']
-  },
-  growth:{
-    power:['A growth that doesn’t have to hurry','Small steps beginning to carry their own gravity','A courage slowly taking shape'],
-    feeling:['Your {mood} heart today is learning something old from a new angle','A lesson came not to pressure you, but to nudge you out of the same place','Today suits looking at your own effort more fairly'],
-    light:['the belief that everything must succeed at once','comparing your pace to everyone else’s','the guilt of not yet being as good as you hoped'],
-    symbol:['ground after rain · a slightly tilted orbit · a seed of light','a blue-green star · a new path · a steadier pull','cracked earth with a sprout · an outer orbit · a long breath'],
-    message:['You don’t need a great leap today — a step that doesn’t betray yourself is enough','Getting slowly better still counts as a journey, even if no one saw the start','Give yourself room to try again, without making the mistake your name']
-  },
-  hope:{
-    power:['A hope that refuses to go out','A far light, just enough to walk one more step','A possibility that doesn’t have a name yet'],
-    feeling:['Your {mood} heart today doesn’t need every answer — only a small reason to go on','Some light is still shining, even if you can’t quite see it yet','You may not feel fully sure today, but part of you still wants to believe'],
-    light:['the rush to see the whole ending at once','the fear that hope will only disappoint you again','the thought that if it isn’t clear yet, there’s no way through'],
-    symbol:['blue light · a distant star · a door left open','a faint horizon · a wave of indigo · the smallest bright point','a clear cold star · a new breath · the edge of dawn after a long night'],
-    message:['Let hope be a lantern today, not a promise','If you can still walk one more step, the far light still means something','Some good things begin simply by not closing the door on yourself']
-  },
-  healing:{
-    power:['A healing that asks for no hurry','A calm slowly soaking back in','A safe place for the part of you that’s still tired'],
-    feeling:['Your {mood} heart today wants a rest from always being strong','Some wounds don’t need an explanation — only tenderness','Today, soften the voice that scolds you, just a little'],
-    light:['the need to be healed right now','replaying things only to punish yourself again','the “I’m fine” you say when inside you really aren’t'],
-    symbol:['clear ice · soft white light · a thin blanket','a pale blue star · still water · a breath that fills the lungs again','a crack that lets the light through · quiet stardust · a slow pulse'],
-    message:['You don’t have to heal fast today — simply not adding to your own pain is already healing','Rest isn’t falling behind — it’s how the light finds its way back into you','If you’re still weary, that doesn’t mean you’ve failed']
-  },
-  release:{
-    power:['A letting-go that already weighs less than the carrying','A new space as the hand slowly opens','A lightness still thin, but real'],
-    feeling:['Your {mood} heart today is sorting what to keep from what to set down','Some things you don’t have to win — not carrying them is enough','Today, return something to time instead of holding it alone'],
-    light:['the feeling that you must understand everything before you can let go','holding old words just to prove the hurt was real','questions no one can answer for you right now'],
-    symbol:['a faint gold cloud · a half-open door · dust drifting from the hand','a pale cream star · a far black hole · a long exhale','old light slipping past the horizon · an empty orbit · a lighter weight'],
-    message:['Let go of just one sliver today — you needn’t release the whole universe at once','Some things not returning doesn’t mean they never mattered','An emptied hand may still tremble — but one day it will hold something new']
-  },
-  shadow:{
-    power:['A shadow asking to be seen honestly','An inner truth that doesn’t want to be buried','A dark night that still has a horizon'],
-    feeling:['Your {mood} heart today may be telling a truth you’re tired of covering','A part of you doesn’t want to hurt you — it just wants you to turn and listen','You don’t have to brighten right now — just naming where it’s dark is enough'],
-    light:['judging yourself harshly on a day you can barely cope','the thought that your heaviness makes you unlovable','hiding everything just to look strong'],
-    symbol:['basalt stone · a dark star · a thin rim of light','a moonless sky · cold star-debris · an underground door','deep indigo shadow · a slow breath · a small lit flame'],
-    message:['Tonight the shadow didn’t come to drag you down — it came to show you where you need light','You don’t have to be bright to have worth','Some nights are long, but staying with them gently is its own kind of courage']
-  },
-  return:{
-    power:['A return that brings you back to yourself','A memory meant not to trap you, but to be understood','Old roots still lending strength to today'],
-    feeling:['Your {mood} heart today may be remembering something old to find new meaning','Some memory came back not to pull you backward, but to return a piece of you','Today suits looking at the past with kinder eyes'],
-    light:['blaming yourself for what you couldn’t have known back then','the thought that missing something means you haven’t moved on','judging yourself now by the whole weight of the past'],
-    symbol:['a golden-brown star · a far-off home · a curving way back','an old ring · the dust-scent of books · light from a familiar window','a warm storm-banded star · a path that loops home · a name still remembered'],
-    message:['You can look back today — just remember to bring your present self home too','Some pasts don’t ask you to stay — only to understand them','Who you used to be is still here, but it needn’t be your cage']
-  },
-  seed:{
-    power:['A gentle beginning','The first signal from a sky just opening','A first star that needs no name yet'],
-    feeling:['You don’t have to know all of yourself today — just begin to hear the small voice inside','The universe doesn’t hold much of your story yet, but it can still send a first light','Before your real star exists, tonight may simply be lifting your face to listen'],
-    light:['the pressure to answer your whole life at once','the feeling that the first try must be perfect','the doubt that small feelings don’t matter'],
-    symbol:['a first star · a door ajar · light before dawn','pale stardust · a blank page · a first breath','a soft dark horizon · a tiny point of light · a path not yet named'],
-    message:['The universe is in no rush to know you — so you needn’t rush either','If there’s no answer today, just leaving a little of your voice is enough','Your star will slowly form from what you dare to hear in yourself']
-  }
-};
-const STAR_ECHO_ASK_Q_EN=['A star is signaling to you tonight','A few stars are calling to you','Tonight’s sky opens — choose one'];
-const STAR_ECHO_ASK_TITLES_EN=['The star you chose has spoken','The one your heart reached for opens its signal','An echo from the star you touched tonight','That star drifts in to answer you'];
-const STAR_ECHO_TITLE_POOL_EN=['The star “{name}” speaks tonight','Tonight “{name}” opens a signal to you','Light from the star “{name}” has reached you','“{name}” drifts a little closer to your heart','A faint voice from “{name}” begins to rise'];
-const STAR_ECHO_EMPTY_TITLES_EN=['The universe is quiet — but not empty','Before your first star is born, a first signal arrives','Tonight the sky offers you a beginning'];
-const SE_ITEMS_TH=['พลังเด่น','จังหวะของใจ','สิ่งที่ควรเบา','สัญลักษณ์นำทาง','คำฝากจากดาว'];
-const SE_ITEMS_EN=['Strength','Your inner tide','What to set down','Guiding symbol','A word from the star'];
 // bundle ของภาษาปัจจุบัน — เลือกครั้งเดียวตอนโหลด (สลับภาษา = reload)
 const SEL={
   copy: LANG==='en'?STAR_ECHO_COPY_EN:STAR_ECHO_COPY,
@@ -5878,15 +5169,6 @@ function seReason(note,arch,mood){
   return w.length?('from the words “'+w.join(' · ')+'”'):('from the feeling of “'+seMoodText(mood)+'”');
 }
 // ดูดวงมี mapping ของตัวเอง แยกจากห้วงใจ (ห้วงใจยังใช้ MOOD_TO_ARCH ตายตัว) — แต่ละสีโยงได้หลายธีม
-// สุ่มตามวัน → แตะสีเดิมคนละวันได้คนละธีม กันเดาทาง แต่ยังคุมโทนอารมณ์ให้ใกล้กัน
-const STAR_ECHO_PICK_ARCH={
-  radiant:  ['love','hope','growth'],
-  calm:     ['healing','return','hope'],
-  hopeful:  ['hope','growth','love'],
-  faded:    ['return','release','shadow'],
-  heavy:    ['shadow','release','healing'],
-  turbulent:['growth','shadow','release']
-};
 // คำตอบจากดาวที่ "แตะเลือก" — สีดาวคงไว้เป็นเอกลักษณ์ ส่วนธีมสุ่มจากชุดของสีนั้นตามวัน
 function buildPickReading(mood,stamp){
   const seed=_strHash(stamp+'|pick|'+mood+(ECHO_DEMO?('|'+Math.random()):''))||1,rng=mulberry32(seed);

@@ -81,6 +81,20 @@ def main():
                 print(f"        - {e[:300]}")
             if errs:
                 failures.append(label)
+
+        # ── data modules: import ทุกไฟล์ใน data/ ต้อง parse ผ่านและมี export ──
+        page = browser.new_page()
+        page.goto(base + "/credits.html", wait_until="load")
+        for f in sorted((ROOT / "data").glob("*.js")):
+            mod = f"/data/{f.name}"
+            try:
+                keys = page.evaluate("m => import(m).then(ns => Object.keys(ns))", mod)
+                assert keys, "no exports"
+                print(f"[OK ] data module             {mod} ({len(keys)} exports)")
+            except Exception as ex:
+                print(f"[FAIL] data module            {mod}\n        - {str(ex)[:300]}")
+                failures.append(mod)
+        page.close()
         browser.close()
     srv.shutdown()
 
