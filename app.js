@@ -21,6 +21,8 @@ import * as Astronomy from 'https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19
 import {MISSION_EN,SOLAR_EN,LUNAR_EN} from './data/i18n-ui.js';
 import {LANG,L,applyUILang} from './js/i18n.js';
 import {audio} from './js/audio.js';
+import {genId,todayStr,checkDailyLimit,setDailyLimit,escapeHtml} from './js/util.js';
+import {initLetters,readLocal,writeLocal,refreshCloudLetters,castLetter,letterPool,pickLetter,checkDispatchDecay,getDispatchStats,cloudMine,getUnseenRepliedIds,markRepliesSeenStore,DISPATCH_PUB_KEY,DISPATCH_PRIV_KEY} from './js/letters.js';
 import {SUN,PLANETS,PLANET_EN,ZODIAC} from './data/bodies.js';
 import {MISSIONS} from './data/missions.js';
 import {QUOTES,QUOTES_EN,BADWORDS,PHILO,PHILO_EN,SEED_LETTERS,SEED_LETTERS_EN,GR_SEEDS,GR_SEEDS_EN} from './data/contemplate.js';
@@ -1923,64 +1925,16 @@ function celebrateStageUp(stage){
 }
 
 // ----- จดหมายในอวกาศ (Hybrid: localStorage ตอนนี้ + วางโครงเผื่อ backend ภายหลัง) -----
-const LKEY='spaceLetters';
-function readLocal(){try{return JSON.parse(localStorage.getItem(LKEY)||'[]');}catch(e){return[];}}
-function writeLocal(a){try{localStorage.setItem(LKEY,JSON.stringify(a.slice(-300)));}catch(e){}}
-// ---- social คำฝาก: cloud cache (null = ยังไม่โหลด → ใช้ local/seed เดิม; graceful ถ้า backend ไม่พร้อม) ----
-let _cloudLetters=null,_cloudMine=null;
-function _mapCloudLetter(r){return {id:'c'+r.id,cid:r.id,text:r.text,sig:r.sig,t:r.ts?Date.parse(r.ts):0,pub:true,replies:r.replies||[],cloud:true};}
-async function refreshCloudLetters(){
-  if(!(window.BSync&&window.BSync.configured&&window.BSync.letters))return;
-  try{
-    const pub=await window.BSync.letters.fetchPublic();if(Array.isArray(pub))_cloudLetters=pub.map(_mapCloudLetter);
-    const mine=await window.BSync.letters.fetchMine(getSignal());if(Array.isArray(mine))_cloudMine=mine.map(_mapCloudLetter);
-    updateLetterStat();
-    if($p('sigModal')&&$p('sigModal').classList.contains('on'))renderSigDispatches();
-  }catch(e){}
-}
-const DISP_STATS='dispatchStats';
-const DISPATCH_PUB_KEY='dispatchDate_pub';
-const DISPATCH_PRIV_KEY='dispatchDate_priv';
-function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
-function todayStr(){return new Date().toISOString().slice(0,10);}
-function checkDailyLimit(key){return localStorage.getItem(key)===todayStr();}
-function setDailyLimit(key){localStorage.setItem(key,todayStr());}
-function getDispatchStats(){try{return JSON.parse(localStorage.getItem(DISP_STATS)||'{"priv":0}');}catch(e){return{priv:0};}}
-function incPrivCount(){const s=getDispatchStats();s.priv=(s.priv||0)+1;localStorage.setItem(DISP_STATS,JSON.stringify(s));}
-function castLetter(text,pub){
-  if(!pub){setDailyLimit(DISPATCH_PRIV_KEY);incPrivCount();updateLetterStat();if(window.bsEvent)bsEvent('release');return;} // ปล่อยวาง — ไม่ spawnDrift (ใช้ ritual ดูดเข้าหลุมดำแทน)
-  setDailyLimit(DISPATCH_PUB_KEY);
-  const a=readLocal(),cid=genId();
-  a.push({id:cid,text,t:Date.now(),pub:true,sig:getSignal(),replies:[],pinned:false});
-  writeLocal(a);spawnDrift(0xfff0c8);updateLetterStat();if(window.bsEvent)bsEvent('letter_cast');
-  // ส่งขึ้น cloud ให้คนอื่นเจอ (graceful: ถ้าไม่พร้อม คำฝากยังอยู่ local)
-  if(window.BSync&&window.BSync.configured&&window.BSync.letters)
-    window.BSync.letters.post({cid,text:text.slice(0,200),sig:getSignal()}).then(()=>refreshCloudLetters());
-}
-function letterPool(){
-  const mySig=getSignal();
-  const seeds=(LANG==='en'?SEED_LETTERS_EN:SEED_LETTERS).map((text,i)=>({id:'seed_'+i,text,t:0,pub:true,sig:null,replies:[]}));
-  // ถ้ามี cloud (cross-user) → discover คำฝากจริงของคนอื่น; ไม่งั้น fallback local
-  const src=(_cloudLetters!==null)?_cloudLetters:readLocal();
-  const avail=src.filter(l=>l.pub&&l.sig!==mySig&&(!l.replies||l.replies.length===0));
-  return seeds.concat(avail);
-}
-function checkDispatchDecay(){
-  const now=Date.now(),D3=3*864e5,D7=7*864e5,a=readLocal();
-  const filtered=a.filter(l=>{
-    if(!l.pub||!l.id)return true;
-    if(l.pinned)return true;
-    if(l.replies&&l.replies.length>0)return(now-l.replies[0].t)<D3;
-    return(now-l.t)<D7;
-  });
-  if(filtered.length<a.length)writeLocal(filtered);
-}
+// letters store (js/letters.js) — ผูกผลข้างเคียงฝั่ง UI/3D เข้ากับชั้นข้อมูล
+initLetters({getSignal:()=>getSignal(),spawnDrift:()=>spawnDrift(0xfff0c8),
+  onStatsChange:()=>updateLetterStat(),
+  onCloudChange:()=>{updateLetterStat();if($p('sigModal')&&$p('sigModal').classList.contains('on'))renderSigDispatches();}});
+function markRepliesSeen(){markRepliesSeenStore();updateSigBadge();}
 function updateLetterStat(){const el=document.getElementById('letterStat');if(!el)return;
   const mySig=getSignal(),a=readLocal();
   const pubCount=a.filter(l=>l.pub&&l.sig===mySig).length;
   const privCount=getDispatchStats().priv||0;
   el.textContent=L('Let go '+privCount+'  ·  Cast '+pubCount+'  ·  Found '+found,'ปล่อยวาง '+privCount+'  ·  ฝากไว้กับดาว '+pubCount+'  ·  เจอแล้ว '+found);}
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
 const msgPanel=$p('msgPanel'),msgInput=$p('msgInput'),msgWarn=$p('msgWarn'),msgRead=$p('msgRead');
 let currentOpenLetter=null;
@@ -2065,9 +2019,7 @@ $p('bhRelease').onclick=()=>{
 };
 
 // ----- ดาวตกจดหมาย: โผล่เองสุ่มในโหมดปรัชญา คลิกจับเพื่อเปิด (มีเวลาจำกัด) -----
-let cometTimer=null,lastFound=-1,found=0;
-function pickLetter(){const p=letterPool();if(!p.length)return null;
-  let i;do{i=Math.floor(Math.random()*p.length);}while(p.length>1&&i===lastFound);lastFound=i;return p[i];}
+let cometTimer=null,found=0;
 const COMET_PAL=[[255,240,200],[150,190,255],[150,235,235],[255,180,210],[200,180,255],[255,200,150],[175,235,190]];
 function flyComet(){
   const el=document.createElement('div');el.className='letterstar';
@@ -2596,11 +2548,11 @@ function renderSigResonance(){
 function renderSigDispatches(){
   const mySig=getSignal();
   let mine=readLocal().filter(l=>l.pub&&l.sig===mySig);
-  if(_cloudMine!==null){ // ดึงคำตอบที่คนอื่นทิ้งไว้บนคำฝากของเรา จาก cloud (match ด้วย cid)
-    const byCid=new Map(_cloudMine.map(c=>[String(c.cid),c]));
+  const _cm=cloudMine();if(_cm!==null){ // ดึงคำตอบที่คนอื่นทิ้งไว้บนคำฝากของเรา จาก cloud (match ด้วย cid)
+    const byCid=new Map(_cm.map(c=>[String(c.cid),c]));
     const localIds=new Set(mine.map(l=>String(l.id)));
     mine=mine.map(l=>{const c=byCid.get(String(l.id));return c?{...l,replies:c.replies||l.replies}:l;});
-    _cloudMine.forEach(c=>{if(!localIds.has(String(c.cid)))mine.push(c);}); // คำฝากที่ฝากจากเครื่องอื่น
+    _cm.forEach(c=>{if(!localIds.has(String(c.cid)))mine.push(c);}); // คำฝากที่ฝากจากเครื่องอื่น
   }
   const a=mine.reverse();
   const privCount=getDispatchStats().priv||0;
@@ -2659,20 +2611,9 @@ window.unpinDispatch=function(id){
   if(idx===-1)return;a[idx].pinned=false;writeLocal(a);renderSigCollection();
 };
 
-function getUnseenRepliedIds(){
-  const mySig=getSignal();
-  const seen=new Set(JSON.parse(localStorage.getItem('seenReplies')||'[]'));
-  return readLocal().filter(l=>l.pub&&l.sig===mySig&&l.replies&&l.replies.length>0&&!seen.has(l.id)).map(l=>l.id);
-}
 function updateSigBadge(){
   const badge=$p('sigBadge');if(!badge)return;
   badge.classList.toggle('on',getUnseenRepliedIds().length>0);
-}
-function markRepliesSeen(){
-  const mySig=getSignal();
-  const allRepliedIds=readLocal().filter(l=>l.pub&&l.sig===mySig&&l.replies&&l.replies.length>0).map(l=>l.id);
-  try{localStorage.setItem('seenReplies',JSON.stringify(allRepliedIds.slice(-200)));}catch(e){}
-  updateSigBadge();
 }
 
 function animateRelease(text,anchorEl){
