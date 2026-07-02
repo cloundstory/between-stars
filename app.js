@@ -23,10 +23,11 @@ import {LANG,L,applyUILang} from './js/i18n.js';
 import {audio} from './js/audio.js';
 import {genId,todayStr,checkDailyLimit,setDailyLimit,escapeHtml} from './js/util.js';
 import {initLetters,readLocal,writeLocal,refreshCloudLetters,castLetter,letterPool,pickLetter,checkDispatchDecay,getDispatchStats,cloudMine,getUnseenRepliedIds,markRepliesSeenStore,DISPATCH_PUB_KEY,DISPATCH_PRIV_KEY} from './js/letters.js';
+import {MOODS,moodColor,moodLabel,moodLocalStr,pickMoodQ,readMood,writeMood,moodStreak,moodRecent} from './js/mood.js';
 import {SUN,PLANETS,PLANET_EN,ZODIAC} from './data/bodies.js';
 import {MISSIONS} from './data/missions.js';
 import {QUOTES,QUOTES_EN,BADWORDS,PHILO,PHILO_EN,SEED_LETTERS,SEED_LETTERS_EN,GR_SEEDS,GR_SEEDS_EN} from './data/contemplate.js';
-import {INNER_POOLS,MEM_ARCH,MEM_ARCH_TH,MEM_CLASS,MEM_LADDER,MEM_TEXTURE_ASSETS,MEM_ORBIT_BASE,MOOD_QBANK,MOOD_QBANK_EN,MOOD_TO_ARCH} from './data/memory-stars.js';
+import {INNER_POOLS,MEM_ARCH,MEM_ARCH_TH,MEM_CLASS,MEM_LADDER,MEM_TEXTURE_ASSETS,MEM_ORBIT_BASE,MOOD_TO_ARCH} from './data/memory-stars.js';
 import {STAR_ECHO_COPY,STAR_ECHO_EXTRA,STAR_ECHO_TITLE_POOL,STAR_ECHO_EMPTY_TITLES,STAR_ECHO_ASK_Q,STAR_ECHO_ASK_TITLES,SE_ARCH_EN,SE_MOOD_EN,STAR_ECHO_COPY_EN,STAR_ECHO_ASK_Q_EN,STAR_ECHO_ASK_TITLES_EN,STAR_ECHO_TITLE_POOL_EN,STAR_ECHO_EMPTY_TITLES_EN,SE_ITEMS_TH,SE_ITEMS_EN,STAR_ECHO_PICK_ARCH} from './data/star-echo.js';
 
 
@@ -1809,7 +1810,6 @@ const msDust=new THREE.Points(_dustGeo,new THREE.PointsMaterial({map:radialTex([
 msBody.add(msDust);
 let _msScale=0.001,_msTarget=0,_msScore=0.5,_msSize=0.5,_msSizeTarget=0.5,_msGlowBase=0.32,_msStageIdx=0,_msFlare=0;
 const _msColor=new THREE.Color(0xfdfcf6),_msColorTarget=new THREE.Color(0xfdfcf6),_msLabelV=new THREE.Vector3(),_msTmp=new THREE.Color(),_msWhite=new THREE.Color(0xfdfcf6);
-function moodRecent(n){const j=readMood();return Object.keys(j).sort().slice(-n).map(k=>j[k]);}
 function moodLongestStreak(keys){ // keys = วันที่เรียง asc; นับช่วงต่อเนื่องยาวสุด (monotonic — โตอย่างเดียว)
   let best=0,run=0,prev=null;
   keys.forEach(k=>{const t=new Date(k+'T00:00:00').getTime();
@@ -2976,25 +2976,6 @@ function maybeShowCosmicDaily(){
 }
 
 // ============ ห้วงใจ · MOOD JOURNAL ============
-const MOOD_KEY='moodJournal';
-const MOODS=[
-  {k:'radiant',  label:'สว่าง',     en:'Radiant',  c:'#f3c97a'},
-  {k:'calm',     label:'สงบ',       en:'Calm',     c:'#8fb8e8'},
-  {k:'hopeful',  label:'เปี่ยมหวัง', en:'Hopeful',  c:'#7fd6b8'},
-  {k:'faded',    label:'เลือนราง',   en:'Faded',    c:'#b3a4e6'},
-  {k:'heavy',    label:'หม่น',       en:'Heavy',    c:'#7d8aa3'},
-  {k:'turbulent',label:'คุกรุ่น',    en:'Restless', c:'#e0895a'},
-];
-const moodColor=k=>{const m=MOODS.find(x=>x.k===k);return m?m.c:'#888';};
-const moodLabel=k=>{const m=MOODS.find(x=>x.k===k);return m?(LANG==='en'?m.en:m.label):'';};
-// EN journaling prompts — transcreated for feeling, not machine-translated (gentle, second person, present)
-const QBANK=()=>LANG==='en'?MOOD_QBANK_EN:MOOD_QBANK;
-function moodLocalStr(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
-function pickMoodQ(k){const a=QBANK()[k]||[];if(!a.length)return '';
-  if(a.length<2||!_moodQText)return a[Math.floor(Math.random()*a.length)];
-  let q;do{q=a[Math.floor(Math.random()*a.length)];}while(q===_moodQText);return q;}
-function readMood(){try{return JSON.parse(localStorage.getItem(MOOD_KEY)||'{}');}catch(e){return{};}}
-function writeMood(o){try{localStorage.setItem(MOOD_KEY,JSON.stringify(o));}catch(e){}}
 
 // ===== PHASE B · INNER POOLS — คลังคำห้วงใจ (7 archetype) =====
 // ===== ARCHETYPE — palette + ความหมายของดาว (7 แบบ) =====
@@ -3213,7 +3194,6 @@ function scoreEntry(note,mood,minLen=30){
   const archetype=(ma&&top.includes(ma))?ma:top[0];
   return{archetype,score:note.length+total*8,keywords:total};
 }
-function moodStreak(){const j=readMood();let n=0,d=new Date();while(j[moodLocalStr(d)]){n++;d.setDate(d.getDate()-1);}return n;}
 
 let _moodSel=null,_moodQText='',_moodCalRef=new Date(),_moodDaySel=null;
 
@@ -3228,7 +3208,7 @@ function renderMoodChips(){
     const el=document.createElement('div');el.className='mood-chip'+(_moodSel===m.k?' sel':'');
     el.style.setProperty('--mc',m.c);
     el.innerHTML='<span class="dot"></span>'+moodLabel(m.k);
-    el.onclick=()=>{_moodSel=m.k;_moodQText=pickMoodQ(m.k);renderMoodChips();renderMoodHero();renderMoodQ();$p('moodSave').disabled=false;};
+    el.onclick=()=>{_moodSel=m.k;_moodQText=pickMoodQ(m.k,_moodQText);renderMoodChips();renderMoodHero();renderMoodQ();$p('moodSave').disabled=false;};
     wrap.appendChild(el);
   });
 }
@@ -3479,7 +3459,7 @@ function openStarEcho(){
   $p('starEchoModal').classList.add('on');
 }
 function closeStarEcho(){$p('starEchoModal').classList.remove('on');}
-$p('moodReroll').onclick=()=>{if(!_moodSel)return;_moodQText=pickMoodQ(_moodSel);renderMoodQ();};
+$p('moodReroll').onclick=()=>{if(!_moodSel)return;_moodQText=pickMoodQ(_moodSel,_moodQText);renderMoodQ();};
 $p('moodCalToggle').onclick=()=>{
   const c=document.querySelector('.mood-card'),on=c.classList.toggle('show-cal');
   $p('moodCalToggle').textContent=on?(LANG==='en'?'▲ Hide calendar':'▲ ซ่อนปฏิทิน'):(LANG==='en'?'📅 Past entries':'📅 ดูปฏิทินย้อนหลัง');
@@ -3497,7 +3477,7 @@ $p('starEchoMoodCta').onclick=()=>{
   closeStarEcho();openMoodPanel();
   // แตะดาวแล้วอยากเก็บ → เปิดห้วงใจพร้อมเลือกอารมณ์ของดวงนั้นให้ (ไม่ทับของที่มีอยู่)
   const mood=r&&r.pickMood;
-  if(mood&&!_moodSel){_moodSel=mood;_moodQText=pickMoodQ(mood);renderMoodChips();renderMoodHero();renderMoodQ();$p('moodSave').disabled=false;}
+  if(mood&&!_moodSel){_moodSel=mood;_moodQText=pickMoodQ(mood,_moodQText);renderMoodChips();renderMoodHero();renderMoodQ();$p('moodSave').disabled=false;}
 };
 $p('moodBtn').onclick=openMoodPanel;
 $p('moodClose').onclick=closeMoodPanel;
