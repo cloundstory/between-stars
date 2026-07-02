@@ -15,6 +15,8 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="th_TH">
+<link rel="alternate" hreflang="th" href="https://between-stars.vercel.app/light-echo.html">
+<link rel="alternate" hreflang="en" href="https://between-stars.vercel.app/light-echo.html?lang=en">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://between-stars.vercel.app/og-image.png">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -109,42 +111,64 @@
 </div>
 
 <script>
-// ดาวมีชื่อ + ระยะปีแสงจริง (โดยประมาณ) + คำบรรยายเชิงดาราศาสตร์
+// ── ภาษา: TH หลักใน HTML, EN เสริมทับ (แบบเดียวกับหน้าอื่นทั้งเว็บ) ──
+const LANG=(()=>{try{const q=new URLSearchParams(location.search).get('lang');if(q==='en'||q==='th'){localStorage.setItem('lang',q);return q;}
+  const s=localStorage.getItem('lang');if(s==='en'||s==='th')return s;}catch(e){}
+  return (navigator.language||'').toLowerCase().startsWith('th')?'th':'en';})();
+const EN=LANG==='en',L=(en,th)=>EN?en:th;
+if(EN){try{
+  document.documentElement.lang='en';
+  document.title='The Light from Your Day · Between Stars';
+  const set=(sel,val)=>{const m=document.querySelector(sel);if(m)m.setAttribute('content',val);};
+  set('meta[name="description"]','The light that left Earth on your special day has never stopped traveling. How far is it now — and which star is it reaching tonight? Based on real stellar distances.');
+  set('meta[property="og:title"]','The Light from Your Day · Light Echo');
+  set('meta[property="og:description"]','How far has the light from your special day traveled — and which star is it touching tonight?');
+  set('meta[property="og:locale"]','en_US');
+  document.querySelector('.back').textContent='← Between Stars';
+  document.querySelector('h1').textContent='The light from your day';
+  document.querySelector('.lead').textContent='The light and radio waves that left Earth on your special day have never stopped traveling — every year, one light-year farther. Where are they tonight, and which star are they touching?';
+  document.querySelector('.ask label').textContent='Pick a day that matters to you';
+  document.getElementById('go').textContent='Send the light ✦';
+  document.getElementById('share').textContent='✦ Share where your light is';
+  document.getElementById('again').textContent='Try another day';
+  document.querySelector('footer').innerHTML='ห้วงดาว · Between Stars · <a href="credits.html">Credits</a> · star distances are approximate, from real parallax measurements';
+}catch(e){}}
+// ดาวมีชื่อ + ระยะปีแสงจริง (โดยประมาณ) + คำบรรยายเชิงดาราศาสตร์ (d = ไทย, de = อังกฤษ transcreate)
 const STARS=[
-  {th:'พรอกซิมา เซนทอรี',en:'Proxima Centauri',ly:4.24,d:'ดาวแคระแดงจาง ๆ — เพื่อนบ้านที่ใกล้ดวงอาทิตย์ที่สุด'},
-  {th:'แอลฟา เซนทอรี',en:'Rigil Kentaurus',ly:4.37,d:'ระบบดาวสามดวงคล้ายดวงอาทิตย์ ปลายทางในฝันของยานอวกาศ'},
-  {th:'ดาวบาร์นาร์ด',en:"Barnard's Star",ly:5.96,d:'ดาวแคระแดงที่เคลื่อนผ่านท้องฟ้าเร็วที่สุดเท่าที่รู้จัก'},
-  {th:'วูลฟ์ 359',en:'Wolf 359',ly:7.86,d:'ดาวแคระแดงจิ๋ว เลือนรางจนแทบมองไม่เห็น'},
-  {th:'ลาล็องด์ 21185',en:'Lalande 21185',ly:8.31,d:'ดาวแคระแดงเงียบ ๆ ในกลุ่มดาวหมีใหญ่'},
-  {th:'ดาวซิริอุส',en:'Sirius',ly:8.6,d:'ดาวที่สว่างที่สุดบนท้องฟ้ายามค่ำคืน ส่องประกายสีน้ำเงินขาว'},
-  {th:'เอปไซลอน เอริดานี',en:'Epsilon Eridani',ly:10.5,d:'ดาวอ่อนวัยที่มีจานฝุ่นและอาจมีดาวเคราะห์'},
-  {th:'ดาวพรอกไซออน',en:'Procyon',ly:11.46,d:'ดาวสว่างในกลุ่มสุนัขเล็ก คู่กับดาวแคระขาว'},
-  {th:'เทา เซตี',en:'Tau Ceti',ly:11.9,d:'ดาวคล้ายดวงอาทิตย์ที่สุดดวงหนึ่งในละแวกใกล้เคียง'},
-  {th:'ดาวอัลแทร์',en:'Altair',ly:16.7,d:'ดาวสว่างในกลุ่มนกอินทรี หมุนเร็วจนแบนเป็นวงรี'},
-  {th:'เดลตา พาโวนิส',en:'Delta Pavonis',ly:19.9,d:'ดาวเหลืองอมส้ม คล้ายดวงอาทิตย์ในวัยชรากว่า'},
-  {th:'ดาวเวกา',en:'Vega',ly:25.0,d:'ดาวสีน้ำเงินขาว เคยเป็นดาวเหนือเมื่อ 12,000 ปีก่อน'},
-  {th:'ดาวโฟมัลฮอต',en:'Fomalhaut',ly:25.1,d:'ดาวเดียวดายแห่งฤดูใบไม้ร่วง ล้อมด้วยวงแหวนฝุ่น'},
-  {th:'คารา',en:'Chara',ly:27.4,d:'ดาวเหลืองเงียบสงบในกลุ่มสุนัขล่าเนื้อ'},
-  {th:'ดาวพอลลักซ์',en:'Pollux',ly:33.8,d:'ดาวยักษ์สีส้มในกลุ่มคนคู่ มีดาวเคราะห์โคจรรอบ'},
-  {th:'ดาวอาร์คตูรุส',en:'Arcturus',ly:36.7,d:'ดาวยักษ์สีส้มเก่าแก่ พุ่งผ่านดาราจักรด้วยความเร็วสูง'},
-  {th:'ดาวคาเพลลา',en:'Capella',ly:42.9,d:'แสงเหลืองทองจากดาวยักษ์สี่ดวงที่โคจรพันกัน'},
-  {th:'แกมมา เลพอริส',en:'Gamma Leporis',ly:29.3,d:'ดาวคู่สีขาว-เหลืองในกลุ่มกระต่าย'},
-  {th:'ดาวแคสเตอร์',en:'Castor',ly:51,d:'ระบบดาวหกดวงที่ดูเป็นจุดเดียวด้วยตาเปล่า'},
-  {th:'แอลฟา ลินซิส',en:'Alpha Lyncis',ly:62,d:'ดาวยักษ์สีส้มโดดเดี่ยวในกลุ่มแมวป่า'},
-  {th:'ดาวอัลเดบารัน',en:'Aldebaran',ly:65,d:'ดวงตาสีแดงของวัว ดาวยักษ์ที่จ้องมองมายังโลก'},
-  {th:'อัปไซลอน แอนดรอเมดา',en:'Upsilon Andromedae',ly:44,d:'ดาวที่มีระบบดาวเคราะห์หลายดวงเป็นแห่งแรก ๆ ที่พบ'},
-  {th:'ดาวเรกูลุส',en:'Regulus',ly:79,d:'หัวใจของสิงโต ดาวสีน้ำเงินขาวที่หมุนเร็วมาก'},
-  {th:'ดาวอัลกอล',en:'Algol',ly:90,d:'ดาวปีศาจที่หรี่แสงเป็นจังหวะ เพราะมีดาวคู่บังกัน'},
-  {th:'ดาวมิซาร์',en:'Mizar',ly:83,d:'ดาวคู่ในหางหมีใหญ่ บททดสอบสายตาของคนโบราณ'},
-  {th:'ดาวเมรัก',en:'Merak',ly:79.7,d:'หนึ่งในดาวชี้ทางสู่ดาวเหนือ ในกระบวยใหญ่'},
-  {th:'ดาวดูเบ',en:'Dubhe',ly:123,d:'ดาวยักษ์สีส้มที่ปลายกระบวยใหญ่ ชี้ตรงสู่ดาวเหนือ'},
-  {th:'ดาวอัลฟาร์ด',en:'Alphard',ly:177,d:'หัวใจอันโดดเดี่ยวของงูไฮดรา สีส้มอมแดง'},
-  {th:'ดาวสไปกา',en:'Spica',ly:250,d:'รวงข้าวสีน้ำเงินของหญิงสาว แท้จริงเป็นดาวคู่ร้อนแรง'},
-  {th:'ดาวโพลาริส',en:'Polaris',ly:433,d:'ดาวเหนือ เข็มทิศของนักเดินทางมานับพันปี'},
-  {th:'ดาวแอนทาเรส',en:'Antares',ly:550,d:'หัวใจสีแดงก่ำของแมงป่อง ยักษ์ใหญ่ที่ใกล้สิ้นอายุ'},
-  {th:'ดาวบีเทลจุส',en:'Betelgeuse',ly:642,d:'ยักษ์แดงบนไหล่นายพราน ที่สักวันจะระเบิดเป็นซูเปอร์โนวา'},
-  {th:'ดาวไรเจล',en:'Rigel',ly:860,d:'แสงสีน้ำเงินขาวอันทรงพลังที่เท้าของนายพราน'},
-  {th:'ดาวเดเนบ',en:'Deneb',ly:2615,d:'ดาวยักษ์ที่ส่องสว่างราวแสนดวงอาทิตย์ ในหางหงส์'}
+  {th:'พรอกซิมา เซนทอรี',en:'Proxima Centauri',ly:4.24,d:'ดาวแคระแดงจาง ๆ — เพื่อนบ้านที่ใกล้ดวงอาทิตย์ที่สุด',de:'a faint red dwarf — the Sun’s nearest neighbour'},
+  {th:'แอลฟา เซนทอรี',en:'Rigil Kentaurus',ly:4.37,d:'ระบบดาวสามดวงคล้ายดวงอาทิตย์ ปลายทางในฝันของยานอวกาศ',de:'a triple system much like our Sun — the dream destination of starships'},
+  {th:'ดาวบาร์นาร์ด',en:"Barnard's Star",ly:5.96,d:'ดาวแคระแดงที่เคลื่อนผ่านท้องฟ้าเร็วที่สุดเท่าที่รู้จัก',de:'the fastest-moving star across our sky'},
+  {th:'วูลฟ์ 359',en:'Wolf 359',ly:7.86,d:'ดาวแคระแดงจิ๋ว เลือนรางจนแทบมองไม่เห็น',de:'a tiny red dwarf, so faint it is almost invisible'},
+  {th:'ลาล็องด์ 21185',en:'Lalande 21185',ly:8.31,d:'ดาวแคระแดงเงียบ ๆ ในกลุ่มดาวหมีใหญ่',de:'a quiet red dwarf in the Great Bear'},
+  {th:'ดาวซิริอุส',en:'Sirius',ly:8.6,d:'ดาวที่สว่างที่สุดบนท้องฟ้ายามค่ำคืน ส่องประกายสีน้ำเงินขาว',de:'the brightest star of the night, blazing blue-white'},
+  {th:'เอปไซลอน เอริดานี',en:'Epsilon Eridani',ly:10.5,d:'ดาวอ่อนวัยที่มีจานฝุ่นและอาจมีดาวเคราะห์',de:'a young star wrapped in dust, perhaps with worlds of its own'},
+  {th:'ดาวพรอกไซออน',en:'Procyon',ly:11.46,d:'ดาวสว่างในกลุ่มสุนัขเล็ก คู่กับดาวแคระขาว',de:'the bright star of the Little Dog, circled by a white dwarf'},
+  {th:'เทา เซตี',en:'Tau Ceti',ly:11.9,d:'ดาวคล้ายดวงอาทิตย์ที่สุดดวงหนึ่งในละแวกใกล้เคียง',de:'one of the most Sun-like stars in our neighbourhood'},
+  {th:'ดาวอัลแทร์',en:'Altair',ly:16.7,d:'ดาวสว่างในกลุ่มนกอินทรี หมุนเร็วจนแบนเป็นวงรี',de:'the bright star of the Eagle, spinning so fast it flattens'},
+  {th:'เดลตา พาโวนิส',en:'Delta Pavonis',ly:19.9,d:'ดาวเหลืองอมส้ม คล้ายดวงอาทิตย์ในวัยชรากว่า',de:'a golden-orange star — our Sun, grown a little older'},
+  {th:'ดาวเวกา',en:'Vega',ly:25.0,d:'ดาวสีน้ำเงินขาว เคยเป็นดาวเหนือเมื่อ 12,000 ปีก่อน',de:'blue-white Vega, the north star of 12,000 years ago'},
+  {th:'ดาวโฟมัลฮอต',en:'Fomalhaut',ly:25.1,d:'ดาวเดียวดายแห่งฤดูใบไม้ร่วง ล้อมด้วยวงแหวนฝุ่น',de:'the lonely star of autumn, ringed by dust'},
+  {th:'คารา',en:'Chara',ly:27.4,d:'ดาวเหลืองเงียบสงบในกลุ่มสุนัขล่าเนื้อ',de:'a calm yellow star in the Hunting Dogs'},
+  {th:'ดาวพอลลักซ์',en:'Pollux',ly:33.8,d:'ดาวยักษ์สีส้มในกลุ่มคนคู่ มีดาวเคราะห์โคจรรอบ',de:'an orange giant in the Twins, with a planet of its own'},
+  {th:'ดาวอาร์คตูรุส',en:'Arcturus',ly:36.7,d:'ดาวยักษ์สีส้มเก่าแก่ พุ่งผ่านดาราจักรด้วยความเร็วสูง',de:'an ancient orange giant, racing through the Galaxy'},
+  {th:'ดาวคาเพลลา',en:'Capella',ly:42.9,d:'แสงเหลืองทองจากดาวยักษ์สี่ดวงที่โคจรพันกัน',de:'golden light from four suns locked in orbit'},
+  {th:'แกมมา เลพอริส',en:'Gamma Leporis',ly:29.3,d:'ดาวคู่สีขาว-เหลืองในกลุ่มกระต่าย',de:'a white-and-gold double star in the Hare'},
+  {th:'ดาวแคสเตอร์',en:'Castor',ly:51,d:'ระบบดาวหกดวงที่ดูเป็นจุดเดียวด้วยตาเปล่า',de:'six stars that look like one to the naked eye'},
+  {th:'แอลฟา ลินซิส',en:'Alpha Lyncis',ly:62,d:'ดาวยักษ์สีส้มโดดเดี่ยวในกลุ่มแมวป่า',de:'a lone orange giant in the Lynx'},
+  {th:'ดาวอัลเดบารัน',en:'Aldebaran',ly:65,d:'ดวงตาสีแดงของวัว ดาวยักษ์ที่จ้องมองมายังโลก',de:'the red eye of the Bull — a giant gazing back at Earth'},
+  {th:'อัปไซลอน แอนดรอเมดา',en:'Upsilon Andromedae',ly:44,d:'ดาวที่มีระบบดาวเคราะห์หลายดวงเป็นแห่งแรก ๆ ที่พบ',de:'among the first stars found holding several planets'},
+  {th:'ดาวเรกูลุส',en:'Regulus',ly:79,d:'หัวใจของสิงโต ดาวสีน้ำเงินขาวที่หมุนเร็วมาก',de:'the heart of the Lion, blue-white and spinning furiously'},
+  {th:'ดาวอัลกอล',en:'Algol',ly:90,d:'ดาวปีศาจที่หรี่แสงเป็นจังหวะ เพราะมีดาวคู่บังกัน',de:'the Demon Star, dimming in rhythm as its companion passes'},
+  {th:'ดาวมิซาร์',en:'Mizar',ly:83,d:'ดาวคู่ในหางหมีใหญ่ บททดสอบสายตาของคนโบราณ',de:'the double star in the Bear’s tail — an ancient test of eyesight'},
+  {th:'ดาวเมรัก',en:'Merak',ly:79.7,d:'หนึ่งในดาวชี้ทางสู่ดาวเหนือ ในกระบวยใหญ่',de:'one of the pointer stars to Polaris, in the Big Dipper'},
+  {th:'ดาวดูเบ',en:'Dubhe',ly:123,d:'ดาวยักษ์สีส้มที่ปลายกระบวยใหญ่ ชี้ตรงสู่ดาวเหนือ',de:'the orange giant at the Dipper’s rim, pointing the way north'},
+  {th:'ดาวอัลฟาร์ด',en:'Alphard',ly:177,d:'หัวใจอันโดดเดี่ยวของงูไฮดรา สีส้มอมแดง',de:'the solitary heart of the Water Snake, glowing orange-red'},
+  {th:'ดาวสไปกา',en:'Spica',ly:250,d:'รวงข้าวสีน้ำเงินของหญิงสาว แท้จริงเป็นดาวคู่ร้อนแรง',de:'the Maiden’s ear of wheat — in truth a fierce pair of blue stars'},
+  {th:'ดาวโพลาริส',en:'Polaris',ly:433,d:'ดาวเหนือ เข็มทิศของนักเดินทางมานับพันปี',de:'the North Star, compass of travellers for a thousand years'},
+  {th:'ดาวแอนทาเรส',en:'Antares',ly:550,d:'หัวใจสีแดงก่ำของแมงป่อง ยักษ์ใหญ่ที่ใกล้สิ้นอายุ',de:'the deep-red heart of the Scorpion, a giant near the end of its life'},
+  {th:'ดาวบีเทลจุส',en:'Betelgeuse',ly:642,d:'ยักษ์แดงบนไหล่นายพราน ที่สักวันจะระเบิดเป็นซูเปอร์โนวา',de:'the red giant on Orion’s shoulder that will one day go supernova'},
+  {th:'ดาวไรเจล',en:'Rigel',ly:860,d:'แสงสีน้ำเงินขาวอันทรงพลังที่เท้าของนายพราน',de:'the mighty blue-white light at Orion’s foot'},
+  {th:'ดาวเดเนบ',en:'Deneb',ly:2615,d:'ดาวยักษ์ที่ส่องสว่างราวแสนดวงอาทิตย์ ในหางหงส์',de:'a supergiant blazing like a hundred thousand Suns, in the tail of the Swan'}
 ];
 STARS.sort((a,b)=>a.ly-b.ly);
 const KMS={day:864e5};
@@ -154,7 +178,7 @@ function pickStar(ly){
   for(const s of STARS){const diff=Math.abs(s.ly-ly);if(diff<bd){bd=diff;best=s;}}
   return best;
 }
-function fmt(n){return n.toLocaleString('th-TH',{maximumFractionDigits:1});}
+function fmt(n){return n.toLocaleString(EN?'en-US':'th-TH',{maximumFractionDigits:1});}
 
 let lastResult=null;
 function reveal(d){
@@ -163,22 +187,22 @@ function reveal(d){
   const star=pickStar(ly);
   const idx=STARS.indexOf(star);
   const di=new Date(d);
-  const dateStr=di.toLocaleDateString('th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('rdist').textContent='แสงเดินทางมาแล้ว '+fmt(ly)+' ปีแสง';
+  const dateStr=di.toLocaleDateString(EN?'en-GB':'th-TH-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('rdist').textContent=L('Your light has traveled '+fmt(ly)+' light-years','แสงเดินทางมาแล้ว '+fmt(ly)+' ปีแสง');
   const notReached=ly<STARS[0].ly;
   if(notReached){
-    document.getElementById('rstar').innerHTML='<span class="g">✦</span>ยังอยู่ระหว่างทาง';
-    document.getElementById('rstaren').textContent='แสงของคุณยังไม่ถึงดาวดวงใด';
-    document.getElementById('rdesc').textContent='แสงจาก'+dateStr+' ยังเดินทางอยู่ในความมืดอันกว้างใหญ่ระหว่างดวงดาว ยังอ่อนเยาว์เกินกว่าจะถึงดาวดวงใด — แต่มันไม่เคยหยุด';
-    document.getElementById('rnext').textContent='อีก '+fmt(STARS[0].ly-ly)+' ปี มันจะไปถึง '+STARS[0].th+' ('+STARS[0].en+') ดาวที่ใกล้ที่สุด';
+    document.getElementById('rstar').innerHTML='<span class="g">✦</span>'+L('Still on its way','ยังอยู่ระหว่างทาง');
+    document.getElementById('rstaren').textContent=L('your light has not reached a star yet','แสงของคุณยังไม่ถึงดาวดวงใด');
+    document.getElementById('rdesc').textContent=L('The light from '+dateStr+' is still traveling through the vast dark between the stars — too young to have reached one. But it has never stopped.','แสงจาก'+dateStr+' ยังเดินทางอยู่ในความมืดอันกว้างใหญ่ระหว่างดวงดาว ยังอ่อนเยาว์เกินกว่าจะถึงดาวดวงใด — แต่มันไม่เคยหยุด');
+    document.getElementById('rnext').textContent=L('In '+fmt(STARS[0].ly-ly)+' more years it will reach '+STARS[0].en+', the nearest star','อีก '+fmt(STARS[0].ly-ly)+' ปี มันจะไปถึง '+STARS[0].th+' ('+STARS[0].en+') ดาวที่ใกล้ที่สุด');
   }else{
-    document.getElementById('rstar').innerHTML='<span class="g">★</span>'+star.th;
-    document.getElementById('rstaren').textContent=star.en+' · '+fmt(star.ly)+' light-years';
-    document.getElementById('rdesc').textContent='ในค่ำคืนนี้ แสงจาก'+dateStr+' กำลังส่องถึง'+star.th+'พอดี — '+star.d;
+    document.getElementById('rstar').innerHTML='<span class="g">★</span>'+(EN?star.en:star.th);
+    document.getElementById('rstaren').textContent=EN?(fmt(star.ly)+' light-years away'):(star.en+' · '+fmt(star.ly)+' light-years');
+    document.getElementById('rdesc').textContent=L('Tonight, the light from '+dateStr+' is reaching '+star.en+' — '+star.de,'ในค่ำคืนนี้ แสงจาก'+dateStr+' กำลังส่องถึง'+star.th+'พอดี — '+star.d);
     const next=STARS[idx+1];
-    document.getElementById('rnext').textContent=next?('อีก '+fmt(next.ly-ly)+' ปี แสงของคุณจะไปถึง '+next.th):'';
+    document.getElementById('rnext').textContent=next?L('In '+fmt(next.ly-ly)+' more years your light will reach '+next.en,'อีก '+fmt(next.ly-ly)+' ปี แสงของคุณจะไปถึง '+next.th):'';
   }
-  document.getElementById('rmeta').textContent='จากวันนั้นถึงวันนี้ แสงเดินทาง ≈ '+fmt(ly*9.461)+' ล้านล้านกิโลเมตร';
+  document.getElementById('rmeta').textContent=L('From that day to tonight, it has covered ≈ '+fmt(ly*9.461)+' trillion kilometres','จากวันนั้นถึงวันนี้ แสงเดินทาง ≈ '+fmt(ly*9.461)+' ล้านล้านกิโลเมตร');
   document.getElementById('result').classList.add('on');
   lastResult={dateStr,ly,star};
   animateEcho(star,ly);
@@ -291,7 +315,7 @@ function animateEcho(star,ly){
     x.fillStyle='#7ac5ff';x.beginPath();x.arc(ex,ey,5.5,0,6.28);x.fill();
     x.strokeStyle='rgba(200,235,255,0.5)';x.lineWidth=0.8;x.beginPath();x.arc(ex,ey,5.5,0,6.28);x.stroke();
     x.fillStyle='rgba(180,220,255,0.78)';x.font='10.5px "Space Grotesk",sans-serif';x.textAlign='left';
-    x.fillText('โลก · '+(new Date().getFullYear()+543),ex+13,ey+4);
+    x.fillText(L('Earth · '+new Date().getFullYear(),'โลก · '+(new Date().getFullYear()+543)),ex+13,ey+4);
 
     // ดาวปลายทาง
     const reach=Math.max(0,Math.min(1,(k-0.78)/0.22));
@@ -348,9 +372,9 @@ const dInput=document.getElementById('d');
 const today=new Date();dInput.max=today.toISOString().slice(0,10);dInput.min='1900-01-01';
 function run(){
   const v=dInput.value;const warn=document.getElementById('warn');
-  if(!v){warn.textContent='เลือกวันก่อนนะ';return;}
+  if(!v){warn.textContent=L('Pick a day first','เลือกวันก่อนนะ');return;}
   const d=new Date(v+'T00:00:00');
-  if(isNaN(d)||d>new Date()){warn.textContent='เลือกวันที่ผ่านมาแล้ว';return;}
+  if(isNaN(d)||d>new Date()){warn.textContent=L('Pick a day in the past','เลือกวันที่ผ่านมาแล้ว');return;}
   warn.textContent='';
   history.replaceState(null,'','?d='+v);
   reveal(d);
@@ -363,6 +387,13 @@ const SHARE_SITE='between-stars.vercel.app';
 function wrapThai(x,text,maxW){const lines=[];let line='';
   for(const ch of text){const t=line+ch;
     if(x.measureText(t).width>maxW&&line){lines.push(line);line=ch;}else line=t;}
+  if(line)lines.push(line);return lines;}
+// EN ตัดตามคำ (ตัดกลางคำแบบไทยไม่ได้) — ไทยใช้ตัวเดิมทีละอักษร
+function wrapText(x,text,maxW){
+  if(!EN)return wrapThai(x,text,maxW);
+  const lines=[];let line='';
+  for(const w of text.split(' ')){const t=line?line+' '+w:w;
+    if(x.measureText(t).width>maxW&&line){lines.push(line);line=w;}else line=t;}
   if(line)lines.push(line);return lines;}
 function buildLightCard(r){
   const W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
@@ -405,7 +436,7 @@ function buildLightCard(r){
   x.fillStyle=eH;x.beginPath();x.arc(ex,ey,40,0,6.28);x.fill();
   x.fillStyle='#7ac5ff';x.beginPath();x.arc(ex,ey,7,0,6.28);x.fill();
   x.fillStyle='rgba(180,220,255,0.65)';x.font='500 22px "Space Grotesk",sans-serif';x.textAlign='left';
-  x.fillText('โลก',ex+16,ey+6);
+  x.fillText(L('Earth','โลก'),ex+16,ey+6);
 
   // ดาวปลายทาง — focal point ของภาพ
   const halo3=x.createRadialGradient(fx,fy,0,fx,fy,reached?280:120);
@@ -447,17 +478,17 @@ function buildLightCard(r){
 
   // วันที่
   x.fillStyle='rgba(238,242,251,0.48)';x.font='300 28px "Noto Sans Thai",sans-serif';
-  x.fillText('แสงจาก '+r.dateStr,W/2,H*0.635);
+  x.fillText(L('Light from '+r.dateStr,'แสงจาก '+r.dateStr),W/2,H*0.635);
 
   // ชื่อดาว — ใหญ่
   x.fillStyle='#ffffff';x.font='300 72px "Noto Sans Thai",sans-serif';
   x.shadowColor='rgba(243,201,122,0.3)';x.shadowBlur=40;
-  x.fillText(reached?r.star.th:'ยังอยู่ระหว่างทาง',W/2,H*0.635+90);
+  x.fillText(reached?(EN?r.star.en:r.star.th):L('Still on its way','ยังอยู่ระหว่างทาง'),W/2,H*0.635+90);
   x.shadowBlur=0;
 
   // en name + ระยะ
   x.fillStyle='rgba(243,201,122,0.88)';x.font='500 24px "Space Grotesk",sans-serif';x.letterSpacing='0.12em';
-  x.fillText(reached?(r.star.en.toUpperCase()+' · '+fmt(r.star.ly)+' LY'):'STILL TRAVELING',W/2,H*0.635+148);x.letterSpacing='0';
+  x.fillText(reached?(EN?(fmt(r.star.ly)+' LIGHT-YEARS AWAY'):(r.star.en.toUpperCase()+' · '+fmt(r.star.ly)+' LY')):'STILL TRAVELING',W/2,H*0.635+148);x.letterSpacing='0';
 
   // เส้นคั่น
   x.strokeStyle='rgba(243,201,122,0.22)';x.lineWidth=1;
@@ -465,9 +496,9 @@ function buildLightCard(r){
 
   // คำบรรยาย
   x.fillStyle='rgba(238,242,251,0.65)';x.font='300 27px "Noto Sans Thai",sans-serif';
-  const desc=reached?('คืนนี้แสงของคุณกำลังส่องถึง'+r.star.th+'พอดี — '+r.star.d)
-    :'แสงจากวันนั้นยังเดินทางอยู่ในความมืดอันกว้างใหญ่ ไม่เคยหยุด';
-  wrapThai(x,desc,W-220).forEach((ln,i)=>x.fillText(ln,W/2,H*0.635+224+i*42));
+  const desc=reached?L('Tonight your light is reaching '+r.star.en+' — '+r.star.de,'คืนนี้แสงของคุณกำลังส่องถึง'+r.star.th+'พอดี — '+r.star.d)
+    :L('The light from that day is still traveling through the vast dark — and it has never stopped.','แสงจากวันนั้นยังเดินทางอยู่ในความมืดอันกว้างใหญ่ ไม่เคยหยุด');
+  wrapText(x,desc,W-220).forEach((ln,i)=>x.fillText(ln,W/2,H*0.635+224+i*42));
 
   // ระยะกิโลเมตร
   x.fillStyle='rgba(238,242,251,0.30)';x.font='300 20px "Space Grotesk",sans-serif';
@@ -482,23 +513,27 @@ function buildLightCard(r){
 document.getElementById('share').onclick=async()=>{
   if(!lastResult)return;
   const b=document.getElementById('share'),orig=b.textContent;
-  const txt='✦ แสงจากวันที่ '+lastResult.dateStr+' เดินทางมาแล้ว '+fmt(lastResult.ly)+' ปีแสง\n'+
-    (lastResult.ly>=STARS[0].ly?('คืนนี้มันกำลังส่องถึงดาว '+lastResult.star.th+' ('+lastResult.star.en+')\n'):'แสงของคุณยังเดินทางอยู่ในความมืดระหว่างดวงดาว\n')+
-    '— ลองหาปลายทางแสงของคุณที่ ห้วงดาว';
+  const txt=EN
+    ?('✦ The light from '+lastResult.dateStr+' has traveled '+fmt(lastResult.ly)+' light-years\n'+
+      (lastResult.ly>=STARS[0].ly?('Tonight it is reaching '+lastResult.star.en+'\n'):'Your light is still traveling through the dark between the stars\n')+
+      '— find where your light is, at Between Stars')
+    :('✦ แสงจากวันที่ '+lastResult.dateStr+' เดินทางมาแล้ว '+fmt(lastResult.ly)+' ปีแสง\n'+
+      (lastResult.ly>=STARS[0].ly?('คืนนี้มันกำลังส่องถึงดาว '+lastResult.star.th+' ('+lastResult.star.en+')\n'):'แสงของคุณยังเดินทางอยู่ในความมืดระหว่างดวงดาว\n')+
+      '— ลองหาปลายทางแสงของคุณที่ ห้วงดาว');
   try{
-    b.textContent='✦ กำลังสร้างการ์ด...';
+    b.textContent=L('✦ Making your card...','✦ กำลังสร้างการ์ด...');
     try{await document.fonts.ready;}catch(e){}        // รอฟอนต์โหลดก่อนวาด ไม่งั้นได้ฟอนต์ fallback
     const canvas=buildLightCard(lastResult);
     const blob=await new Promise(res=>canvas.toBlob(res,'image/png'));
     const file=new File([blob],'light-echo.png',{type:'image/png'});
     b.textContent=orig;
     if(navigator.canShare&&navigator.canShare({files:[file]})){
-      await navigator.share({files:[file],title:'แสงจากวันของคุณ · ห้วงดาว',text:txt});
+      await navigator.share({files:[file],title:L('The light from your day · Between Stars','แสงจากวันของคุณ · ห้วงดาว'),text:txt});
     }else{ // เดสก์ท็อป/เบราว์เซอร์ที่แชร์ไฟล์ไม่ได้ → ดาวน์โหลดรูป + คัดลอกข้อความ
       const a=document.createElement('a');a.download='light-echo.png';a.href=URL.createObjectURL(blob);a.click();
       setTimeout(()=>URL.revokeObjectURL(a.href),4000);
       try{await navigator.clipboard.writeText(txt+'\n'+location.href);}catch(e){}
-      b.textContent='✓ บันทึกรูปแล้ว';setTimeout(()=>b.textContent=orig,2200);
+      b.textContent=L('✓ Card saved','✓ บันทึกรูปแล้ว');setTimeout(()=>b.textContent=orig,2200);
     }
   }catch(e){b.textContent=orig;}
 };
