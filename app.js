@@ -20,6 +20,7 @@ import * as Astronomy from 'https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19
 // ── data modules (เฟส 1: ข้อมูลล้วน แยกไฟล์เพื่อ cache/แก้ง่าย) ──
 import {MISSION_EN,SOLAR_EN,LUNAR_EN} from './data/i18n-ui.js';
 import {LANG,L,applyUILang} from './js/i18n.js';
+import {audio} from './js/audio.js';
 import {SUN,PLANETS,PLANET_EN,ZODIAC} from './data/bodies.js';
 import {MISSIONS} from './data/missions.js';
 import {QUOTES,QUOTES_EN,BADWORDS,PHILO,PHILO_EN,SEED_LETTERS,SEED_LETTERS_EN,GR_SEEDS,GR_SEEDS_EN} from './data/contemplate.js';
@@ -606,27 +607,27 @@ function finishChronosTravelFX(){
 }
 function chronosWarpSound(){
   try{
-    if(!audioCtx){audioCtx=new (window.AudioContext||window.webkitAudioContext)();ambient=buildAmbient(audioCtx);}
-    if(audioCtx.state==='suspended')audioCtx.resume();
-    const t=audioCtx.currentTime,o=audioCtx.createOscillator(),g=audioCtx.createGain(),f=audioCtx.createBiquadFilter();
+    const ctx=audio.ensureCtx();if(!ctx)return;
+    if(ctx.state==='suspended')ctx.resume();
+    const t=ctx.currentTime,o=ctx.createOscillator(),g=ctx.createGain(),f=ctx.createBiquadFilter();
     o.type='sine';o.frequency.setValueAtTime(180,t);o.frequency.exponentialRampToValueAtTime(760,t+1.15);
     f.type='lowpass';f.frequency.setValueAtTime(900,t);f.frequency.exponentialRampToValueAtTime(2600,t+1.15);
     g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.11,t+0.08);g.gain.exponentialRampToValueAtTime(0.0001,t+1.35);
-    o.connect(f).connect(g).connect(audioCtx.destination);o.start(t);o.stop(t+1.45);
+    o.connect(f).connect(g).connect(ctx.destination);o.start(t);o.stop(t+1.45);
   }catch(e){}
 }
 function chronosOpenSound(){
   try{
-    if(!audioCtx||!soundOn)return;
-    const t=audioCtx.currentTime,g=audioCtx.createGain(),f=audioCtx.createBiquadFilter();
+    const ctx=audio.ctx;if(!ctx||!audio.on)return;
+    const t=ctx.currentTime,g=ctx.createGain(),f=ctx.createBiquadFilter();
     f.type='lowpass';f.frequency.value=2400;g.gain.setValueAtTime(0.0001,t);
     g.gain.exponentialRampToValueAtTime(0.055,t+0.04);g.gain.exponentialRampToValueAtTime(0.0001,t+1.05);
     [523.25,783.99,1046.5].forEach((hz,i)=>{
-      const o=audioCtx.createOscillator();o.type='sine';o.frequency.value=hz;o.detune.value=i*3;
-      const og=audioCtx.createGain();og.gain.value=0.34/(i+1);
+      const o=ctx.createOscillator();o.type='sine';o.frequency.value=hz;o.detune.value=i*3;
+      const og=ctx.createGain();og.gain.value=0.34/(i+1);
       o.connect(og).connect(f);o.start(t+i*0.055);o.stop(t+1.1);
     });
-    f.connect(g).connect(audioCtx.destination);
+    f.connect(g).connect(ctx.destination);
   }catch(e){}
 }
 
@@ -673,15 +674,15 @@ chronosPreview.innerHTML=
 document.body.appendChild(chronosPreview);
 
 function shutterClick(){
-  if(!audioCtx||!soundOn)return;
-  const t=audioCtx.currentTime;
-  const sr=audioCtx.sampleRate,len=Math.floor(sr*0.06);
-  const buf=audioCtx.createBuffer(1,len,sr);
+  const ctx=audio.ctx;if(!ctx||!audio.on)return;
+  const t=ctx.currentTime;
+  const sr=ctx.sampleRate,len=Math.floor(sr*0.06);
+  const buf=ctx.createBuffer(1,len,sr);
   const d=buf.getChannelData(0);
   for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.5)*0.5;
-  const src=audioCtx.createBufferSource();src.buffer=buf;
-  const g=audioCtx.createGain();g.gain.value=0.35;
-  src.connect(g);g.connect(audioCtx.destination);src.start(t);
+  const src=ctx.createBufferSource();src.buffer=buf;
+  const g=ctx.createGain();g.gain.value=0.35;
+  src.connect(g);g.connect(ctx.destination);src.start(t);
 }
 
 let capturedBaseDataURL=null;
@@ -1054,7 +1055,7 @@ MISSIONS.forEach(m=>{const b=document.createElement('button');b.className='mrow'
 function updateMissionDash(){for(const m of MISSIONS){const el=document.getElementById('md-'+m.id);if(el)el.textContent=missionStatText(m);}}
 
 function openMissionInfo(m){
-  selected=null;selectedMission=m;stopPlanetSound();if(soundOn)startCraftBeeps();
+  selected=null;selectedMission=m;audio.stopPlanetSound();if(audio.on)audio.startCraftBeeps();
   selectedObj=m.marker.visible?m.marker:null;setActiveNav(null);
   document.getElementById('i-focus').textContent=L('Zoom to this spacecraft','ซูมไปที่ยานลำนี้');
   const me=(LANG==='en'&&typeof MISSION_EN!=='undefined')?MISSION_EN[m.id]:null; // EN mission content; null → Thai original
@@ -1126,6 +1127,7 @@ function setActiveNav(data){navItems.forEach(it=>it._row.classList.toggle('activ
 
 // ============ INTERACTION ============
 const ray=new THREE.Raycaster(),mouse=new THREE.Vector2();let hovered=null,selected=null,selectedObj=null,selectedMission=null;
+audio.bindMission(()=>selectedMission);
 // touch-friendly pick: raycast ก่อน → ถ้าพลาด หาดาวที่ใกล้จุดแตะสุดในรัศมีพิกเซล (จับเป้าเล็กบนมือถือ)
 const TAP_R=isMobile?26:14;const _pp=new THREE.Vector3();
 function _shown(o){for(let n=o;n;n=n.parent){if(n.visible===false)return false;}return true;}
@@ -1218,8 +1220,8 @@ function openInfo(o,obj){selected=o;selectedObj=obj;
     irb.textContent='RESONANCE'+(cnt?' · '+cnt:'');irb.onclick=()=>openResonance(o);
   }else{irb.style.display='none';}
   info.classList.add('open');}
-function selectBody(data,obj){selectedMission=null;stopCraftBeeps();openInfo(data,obj);focusOn(obj);setActiveNav(data);if(data.orbitData)physPlanet=data;startPlanetSound(data.en);}
-document.getElementById('close').onclick=()=>{info.classList.remove('open');selected=null;selectedMission=null;focusObj=null;setActiveNav(null);stopPlanetSound();stopCraftBeeps();};
+function selectBody(data,obj){selectedMission=null;audio.stopCraftBeeps();openInfo(data,obj);focusOn(obj);setActiveNav(data);if(data.orbitData)physPlanet=data;audio.startPlanetSound(data.en);}
+document.getElementById('close').onclick=()=>{info.classList.remove('open');selected=null;selectedMission=null;focusObj=null;setActiveNav(null);audio.stopPlanetSound();audio.stopCraftBeeps();};
 document.getElementById('i-focus').onclick=()=>{if(selectedObj)focusOn(selectedObj);};
 
 // ============ TIME ============
@@ -1326,193 +1328,26 @@ const _tLang=document.getElementById('tLang');if(_tLang)_tLang.onclick=()=>setAp
 const _tGuide=document.getElementById('tGuide');if(_tGuide)_tGuide.onclick=()=>openGuide();   // คู่มือฟีเจอร์ — เด่น ข้างปุ่มภาษา
 applyUILang();
 
-// ============ AMBIENT AUDIO — เสียงอวกาศสังเคราะห์ (Web Audio, ไม่มีไฟล์นอก) ============
-let audioCtx=null,ambient=null,soundOn=false;
-const MAXVOL=0.9;let vol=0.55;
-function makeImpulse(ctx,dur,decay){const rate=ctx.sampleRate,len=rate*dur|0,buf=ctx.createBuffer(2,len,rate);
-  for(let c=0;c<2;c++){const d=buf.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,decay);}return buf;}
-function makeNoise(ctx,dur){const rate=ctx.sampleRate,len=rate*dur|0,buf=ctx.createBuffer(1,len,rate),d=buf.getChannelData(0);
-  let last=0;for(let i=0;i<len;i++){const w=Math.random()*2-1;last=(last+0.02*w)/1.02;d[i]=last*3.2;}return buf;}
-function buildAmbient(ctx){
-  const master=ctx.createGain();master.gain.value=0;
-  const comp=ctx.createDynamicsCompressor();comp.threshold.value=-10;comp.ratio.value=6;// ลิมิตเตอร์กันแตก
-  master.connect(comp);comp.connect(ctx.destination);
-  const conv=ctx.createConvolver();conv.buffer=makeImpulse(ctx,4,2.4);
-  const wet=ctx.createGain();wet.gain.value=0.45;const dry=ctx.createGain();dry.gain.value=0.85;
-  const bus=ctx.createGain();bus.connect(dry).connect(master);bus.connect(conv);conv.connect(wet).connect(master);
-  const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1300;lp.Q.value=0.4;lp.connect(bus);
-  // แพดคอร์ดช่วงกลาง (A2/E3/A3/C#4/E4) ลำโพงเล็กเล่นได้ชัด + หายใจช้า
-  [110,164.81,220,277.18,329.63].forEach((f,i)=>{
-    const o=ctx.createOscillator();o.type='sine';o.frequency.value=f;o.detune.value=Math.random()*8-4;
-    const g=ctx.createGain();g.gain.value=0.16/(i*0.55+1);o.connect(g).connect(lp);o.start();
-    const lfo=ctx.createOscillator();lfo.type='sine';lfo.frequency.value=0.03+Math.random()*0.05;
-    const lg=ctx.createGain();lg.gain.value=0.05/(i*0.55+1);lfo.connect(lg).connect(g.gain);lfo.start();
-  });
-  // sub เบาๆ ให้อิ่ม
-  const sub=ctx.createOscillator();sub.type='sine';sub.frequency.value=55;
-  const sg=ctx.createGain();sg.gain.value=0.05;sub.connect(sg).connect(bus);sub.start();
-  // กวาดฟิลเตอร์ช้า ๆ ให้มีลมหายใจ
-  const flfo=ctx.createOscillator();flfo.type='sine';flfo.frequency.value=0.02;
-  const flg=ctx.createGain();flg.gain.value=400;flfo.connect(flg).connect(lp.frequency);flfo.start();
-  // ลมอวกาศเบา ๆ
-  const noise=ctx.createBufferSource();noise.buffer=makeNoise(ctx,5);noise.loop=true;
-  const nlp=ctx.createBiquadFilter();nlp.type='lowpass';nlp.frequency.value=900;
-  const ng=ctx.createGain();ng.gain.value=0.02;noise.connect(nlp).connect(ng).connect(bus);noise.start();
-  // planet soundscape input — connects through master for volume control
-  const planetBus=ctx.createGain();planetBus.gain.value=0.38;planetBus.connect(master);
-  return {master,planetBus,bus};
-}
-// ===== PLANET SOUNDSCAPE =====
-let pSnd=null,pSndTimer=null;
-function buildPlanetSound(ctx,en,out){
-  const g=ctx.createGain();g.gain.value=0;g.connect(out);
-  const nodes=[];let extraStop=null;
-  function osc(f,type='sine',v=0.15,det=0){
-    const o=ctx.createOscillator(),og=ctx.createGain();
-    o.type=type;o.frequency.value=f;o.detune.value=det;og.gain.value=v;
-    o.connect(og).connect(g);o.start();nodes.push(o);return{o,og};}
-  function lfo(rate,amt,target){
-    const l=ctx.createOscillator(),lg=ctx.createGain();
-    l.frequency.value=rate;lg.gain.value=amt;l.connect(lg).connect(target);l.start();nodes.push(l);}
-  function wind(freq=300,q=1.2,v=0.12){
-    const s=ctx.createBufferSource(),b=ctx.createBuffer(1,ctx.sampleRate*3,ctx.sampleRate),d=b.getChannelData(0);
-    let lv=0;for(let i=0;i<d.length;i++){const w=Math.random()*2-1;lv=(lv+0.005*w)/1.005;d[i]=lv*18;}
-    s.buffer=b;s.loop=true;const f=ctx.createBiquadFilter();f.type='bandpass';f.frequency.value=freq;f.Q.value=q;
-    const ng=ctx.createGain();ng.gain.value=v;s.connect(f).connect(ng).connect(g);s.start();nodes.push(s);return f;}
-  function dust(freq=900,q=5,v=0.05){
-    const s=ctx.createBufferSource(),b=ctx.createBuffer(1,ctx.sampleRate*2,ctx.sampleRate),d=b.getChannelData(0);
-    for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*0.8;
-    s.buffer=b;s.loop=true;const f=ctx.createBiquadFilter();f.type='bandpass';f.frequency.value=freq;f.Q.value=q;
-    const ng=ctx.createGain();ng.gain.value=v;s.connect(f).connect(ng).connect(g);s.start();nodes.push(s);return f;}
-  function pulse(freq=440,wait=2.4,v=0.08,type='sine'){
-    let alive=true;extraStop=()=>{alive=false;};
-    (function tick(){if(!alive)return;const o=ctx.createOscillator(),pg=ctx.createGain(),t=ctx.currentTime;
-      o.type=type;o.frequency.value=freq*(0.92+Math.random()*0.16);
-      pg.gain.setValueAtTime(0,t);pg.gain.linearRampToValueAtTime(v,t+0.02);pg.gain.setTargetAtTime(0,t+0.06,0.24);
-      o.connect(pg).connect(g);o.start(t);o.stop(t+1.4);nodes.push(o);
-      if(alive)setTimeout(tick,(wait+Math.random()*wait)*1000);})();
-  }
-  switch(en){
-    case 'The Sun':{// solar wind drone + slow corona pulse
-      const{og}=osc(45,'sine',0.5);lfo(0.055,18,og.gain);
-      osc(90,'sawtooth',0.08);osc(180,'triangle',0.07,8);dust(520,1.1,0.035);
-      break;}
-    case 'Mercury':{// sparse metallic pings — near silence
-      osc(1100,'sine',0.04);osc(1650,'sine',0.025);
-      let alive=true;extraStop=()=>{alive=false;};
-      (function ping(){if(!alive)return;
-        const p=ctx.createOscillator(),pg=ctx.createGain();
-        p.frequency.value=900+Math.random()*1200;pg.gain.setValueAtTime(0.1,ctx.currentTime);
-        pg.gain.setTargetAtTime(0,ctx.currentTime+0.01,0.22);
-        p.connect(pg).connect(g);p.start();nodes.push(p);
-        setTimeout(()=>{try{p.stop();}catch(e){}},1200);
-        if(alive)setTimeout(ping,2000+Math.random()*3500);})();
-      break;}
-    case 'Venus':{// dense suffocating dissonance
-      [185,188.5,196,277,370].forEach((f,i)=>osc(f,'sawtooth',0.075/(i*0.35+1),i*6));
-      const vf=wind(760,0.8,0.11);lfo(0.05,180,vf.frequency);
-      const{og}=osc(92,'sine',0.13);lfo(0.035,10,og.gain);
-      break;}
-    case 'Earth':{// Schumann resonance 7.83Hz + warm major chord
-      osc(110,'sine',0.18);osc(146.8,'sine',0.12);osc(220,'triangle',0.07);
-      const{og}=osc(55,'sine',0.12);lfo(0.0356,18,og.gain);// 7.83/220
-      dust(1250,2.6,0.018);
-      break;}
-    case 'Mars':{// thin eerie wind
-      const wf=wind(310,0.55,0.2);lfo(0.14,150,wf.frequency);
-      dust(1800,7,0.035);osc(185,'sine',0.035);pulse(620,3.6,0.035,'triangle');
-      break;}
-    case 'Jupiter':{// magnetosphere rumble + Voyager whistlers
-      const{og}=osc(32,'sine',0.42);lfo(0.23,12,og.gain);
-      osc(64,'square',0.08);osc(128,'triangle',0.07);
-      const{o:wo}=osc(520,'sine',0.06);lfo(1.8,430,wo.frequency);
-      pulse(980,4.8,0.045,'sine');
-      break;}
-    case 'Saturn':{// ring harmonic series
-      [73.4,110,146.8,220,293.6,440,660].forEach((f,i)=>osc(f,'sine',0.12/(i*0.42+1)));
-      const{og}=osc(36.7,'sine',0.12);lfo(0.08,5,og.gain);
-      pulse(1320,2.8,0.035,'sine');
-      break;}
-    case 'Uranus':{// icy irregular — tilted magnetic axis
-      [[392,0.045],[523,0.05],[659,0.04],[987,0.025]].forEach(([f,v])=>{
-        const{og}=osc(f,'sine',v);lfo(0.35+Math.random()*0.25,0.028,og.gain);});
-      const{o}=osc(262,'triangle',0.055);lfo(0.11,35,o.frequency);pulse(1760,5.2,0.028,'sine');
-      break;}
-    case 'Neptune':{// wind rush 2100 km/h
-      const nf=wind(120,0.5,0.34);lfo(0.09,95,nf.frequency);
-      const{og}=osc(48,'sine',0.1);lfo(0.18,28,og.gain);dust(420,1.2,0.05);
-      break;}
-    case 'Pluto':{// near silence, cold sparse
-      osc(1046,'sine',0.018);osc(1568,'sine',0.012);
-      const{og}=osc(523,'sine',0.025);lfo(0.025,0.018,og.gain);pulse(2092,6.5,0.025,'sine');
-      break;}
-  }
-  g.gain.setTargetAtTime(0.5,ctx.currentTime,1.6);
-  const stop=()=>{if(extraStop)extraStop();g.gain.setTargetAtTime(0,ctx.currentTime,0.7);
-    pSndTimer=setTimeout(()=>nodes.forEach(n=>{try{n.stop();}catch(e){}}),3000);};
-  return{g,stop};
-}
-function startPlanetSound(en){
-  if(!audioCtx||!ambient||!soundOn)return;
-  if(pSndTimer){clearTimeout(pSndTimer);pSndTimer=null;}
-  if(pSnd)pSnd.stop();
-  pSnd=buildPlanetSound(audioCtx,en,ambient.planetBus);
-}
-function stopPlanetSound(){
-  if(!pSnd)return;pSnd.stop();pSnd=null;
-}
-// ===== END PLANET SOUNDSCAPE =====
+window.__audio=()=>audio.debug();
 
-// ===== SPACECRAFT TELEMETRY BEEPS — เสียงบี๊บยานสำรวจส่งสัญญาณกลับโลก =====
-let beepOn=false,beepTimer=null;
-function craftPing(t0,freq,vmul){ // บี๊บหนึ่งครั้ง: square ผ่าน bandpass ให้กลิ่นวิทยุ + หางสะท้อนจาก reverb bus
-  const o=audioCtx.createOscillator();o.type='square';o.frequency.value=freq;
-  const bp=audioCtx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=freq;bp.Q.value=6;
-  const g=audioCtx.createGain();g.gain.value=0;
-  o.connect(bp).connect(g);g.connect(ambient.bus);   // ผ่าน bus → ได้ reverb อวกาศ + คุม volume/mute ตาม master
-  g.gain.setValueAtTime(0,t0);
-  g.gain.linearRampToValueAtTime(0.16*vmul,t0+0.006); // attack คม
-  g.gain.setTargetAtTime(0,t0+0.045,0.03);            // decay สั้น = "บี๊บ"
-  o.start(t0);o.stop(t0+0.25);
-}
-function craftBeep(){
-  if(!beepOn)return;
-  if(audioCtx&&ambient&&soundOn&&selectedMission){
-    const craftVisible=selectedMission.marker&&selectedMission.marker.visible;
-    const t=audioCtx.currentTime,base=1180+Math.random()*160;
-    craftPing(t,base,craftVisible?1:0.55);                 // บี๊บ
-    if(Math.random()<0.6)craftPing(t+0.17,base*1.5,craftVisible?0.85:0.45); // บี๊บ-บี๊บ (บางครั้งสองพยางค์)
-  }
-  beepTimer=setTimeout(craftBeep,3200+Math.random()*3200); // เว้นจังหวะไม่สม่ำเสมอ ให้เหมือนสัญญาณจริง
-}
-function startCraftBeeps(){if(beepOn)return;beepOn=true;craftBeep();}
-function stopCraftBeeps(){beepOn=false;if(beepTimer){clearTimeout(beepTimer);beepTimer=null;}}
-// ===== END SPACECRAFT BEEPS =====
-
-function fadeAudio(v){if(!ambient)return;const t=audioCtx.currentTime;
-  ambient.master.gain.cancelScheduledValues(t);ambient.master.gain.setTargetAtTime(v,t,0.8);}
-window.__audio=()=>({state:audioCtx&&audioCtx.state,soundOn,vol,master:ambient?ambient.master.gain.value:null});
 function tryStartAudio(){
-  if(!audioCtx){try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();ambient=buildAmbient(audioCtx);
-    // iOS unlock — เล่น buffer เงียบ 1 ครั้งให้ปลดล็อก WebAudio
-    try{const b=audioCtx.createBuffer(1,1,22050),s=audioCtx.createBufferSource();s.buffer=b;s.connect(audioCtx.destination);s.start(0);}catch(e){}
-  }catch(e){return;}}
-  const apply=()=>{fadeAudio(soundOn?vol:0);if(selected&&soundOn)startPlanetSound(selected.en);
-    if(selectedMission&&soundOn)startCraftBeeps();else stopCraftBeeps();};
-  if(audioCtx.state==='suspended'){const p=audioCtx.resume();if(p&&p.then)p.then(apply).catch(apply);else apply();}
+  const ctx=audio.ensureCtx({unlock:true});if(!ctx)return;
+  const apply=()=>{audio.fade(audio.on?audio.vol:0);if(selected&&audio.on)audio.startPlanetSound(selected.en);
+    if(selectedMission&&audio.on)audio.startCraftBeeps();else audio.stopCraftBeeps();};
+  if(ctx.state==='suspended'){const p=ctx.resume();if(p&&p.then)p.then(apply).catch(apply);else apply();}
   else apply();
 }
 const ICON_SOUND='<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16.5 8.5a4 4 0 0 1 0 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
 const ICON_MUTE='<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 5V4L8 9H4z"/><line x1="16" y1="9.5" x2="22" y2="15.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="22" y1="9.5" x2="16" y2="15.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
 const soundBtn=document.getElementById('sound');soundBtn.innerHTML=ICON_MUTE;soundBtn.classList.add('off');
 const volPop=document.getElementById('volPop'),volSlider=document.getElementById('vol');
-function refreshSoundIcon(){soundBtn.innerHTML=soundOn?ICON_SOUND:ICON_MUTE;soundBtn.classList.toggle('off',!soundOn);}
+function refreshSoundIcon(){soundBtn.innerHTML=audio.on?ICON_SOUND:ICON_MUTE;soundBtn.classList.toggle('off',!audio.on);}
 soundBtn.onclick=e=>{e.stopPropagation();volPop.classList.toggle('open');tryStartAudio();};
-volSlider.oninput=()=>{vol=MAXVOL*(volSlider.value/100);soundOn=vol>0;refreshSoundIcon();tryStartAudio();};
+volSlider.oninput=()=>{audio.vol=audio.MAXVOL*(volSlider.value/100);audio.on=audio.vol>0;refreshSoundIcon();tryStartAudio();};
 addEventListener('pointerdown',e=>{if(volPop.classList.contains('open')&&!volPop.contains(e.target)&&e.target!==soundBtn)volPop.classList.remove('open');});
 // เริ่ม/resume เสียงเมื่อมี gesture (ทนกว่า once — บางครั้ง resume ครั้งแรกไม่ติด)
-function audioGesture(){if(soundOn)tryStartAudio();
-  if(audioCtx&&audioCtx.state==='running'){removeEventListener('pointerdown',audioGesture);removeEventListener('keydown',audioGesture);}}
+function audioGesture(){if(audio.on)tryStartAudio();
+  if(audio.ctx&&audio.ctx.state==='running'){removeEventListener('pointerdown',audioGesture);removeEventListener('keydown',audioGesture);}}
 addEventListener('pointerdown',audioGesture);addEventListener('keydown',audioGesture);
 
 // ============ PHILOSOPHY MODE — Pale Blue Dot + ฝากข้อความ + คำคม ============
@@ -2309,7 +2144,7 @@ function setMode(p){philo=p;document.body.classList.toggle('philo',p);
     webb.visible=false;webbHit.visible=false; // ซ่อน Chronos Lens ในโหมดใคร่ครวญ
     liveMode=true;tLive.classList.add('on');running=true;play.innerHTML=ICON_PAUSE;simDate=new Date();updateBodies(simDate);updateClock();updatePhysics(simDate);// บังคับ LIVE
     tO.classList.remove('on');tO.classList.add('disabled');
-    prevSound=soundOn;prevVol=vol;soundOn=true;vol=0.3;volSlider.value=Math.round(vol/MAXVOL*100);refreshSoundIcon();tryStartAudio();// ambient อัตโนมัติ
+    prevSound=audio.on;prevVol=audio.vol;audio.on=true;audio.vol=0.3;volSlider.value=Math.round(audio.vol/audio.MAXVOL*100);refreshSoundIcon();tryStartAudio();// ambient อัตโนมัติ
     viewsPop.classList.remove('open');layersBtn.classList.remove('on');
     focusOn(msCore);                                            // กล้องโฟกัสดาวเรา
     setTimeout(()=>{if(philo&&focusObj===msCore){focusObj=null;following=false;}},1800);
@@ -2328,7 +2163,7 @@ function setMode(p){philo=p;document.body.classList.toggle('philo',p);
     philoHint(false);closeMemoryCard();memPlanetGroup.visible=false;memBeltGroup.visible=false;updateMemoryBelts(0);
     $p('memCandidate').classList.remove('on');$p('memVault').classList.remove('on');
     tO.classList.remove('disabled');tO.classList.toggle('on',showOrbits);
-    soundOn=prevSound;vol=prevVol;volSlider.value=Math.round(vol/MAXVOL*100);refreshSoundIcon();fadeAudio(soundOn?vol:0);// คืนค่าเสียงเดิม
+    audio.on=prevSound;audio.vol=prevVol;volSlider.value=Math.round(audio.vol/audio.MAXVOL*100);refreshSoundIcon();audio.fade(audio.on?audio.vol:0);// คืนค่าเสียงเดิม
     stopQuotes();stopComets();msgPanel.classList.remove('open');msgRead.classList.remove('on');$p('sigModal').classList.remove('on');
     if(focusObj===bhHorizon){focusObj=null;following=false;}
     $p('bhPanel').classList.remove('on');$p('moodModal').classList.remove('on');$p('starEchoModal').classList.remove('on');$p('myStarPanel').classList.remove('on');
