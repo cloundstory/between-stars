@@ -25,6 +25,7 @@ import {genId,todayStr,checkDailyLimit,setDailyLimit,escapeHtml} from './js/util
 import {initLetters,readLocal,writeLocal,refreshCloudLetters,castLetter,letterPool,pickLetter,checkDispatchDecay,getDispatchStats,cloudMine,getUnseenRepliedIds,markRepliesSeenStore,DISPATCH_PUB_KEY,DISPATCH_PRIV_KEY} from './js/letters.js';
 import {MOODS,moodColor,moodLabel,moodLocalStr,pickMoodQ,readMood,writeMood,moodStreak,moodRecent} from './js/mood.js';
 import {readGRPool,hasWrittenGR,sealGR,craftDailyMessage} from './js/golden-record.js';
+import {SIGKEY,STORMKEY,RES_STORM_DAYS,STAR_NAMES,getSignal,getSignalFull,readBoard,writeBoard,readLikes,readReports,checkStorm,postResonance,likeResonance,reportResonance} from './js/resonance.js';
 import {SUN,PLANETS,PLANET_EN,ZODIAC} from './data/bodies.js';
 import {MISSIONS} from './data/missions.js';
 import {QUOTES,QUOTES_EN,BADWORDS,PHILO,PHILO_EN,SEED_LETTERS,SEED_LETTERS_EN} from './data/contemplate.js';
@@ -2320,43 +2321,9 @@ animate();
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){clock.getDelta();animate();}});
 
 // ===== RESONANCE BOARD =====
-const RKEY='resonanceBoard',SIGKEY='resonanceSignal',STORMKEY='resonanceStorm',RLIKES='resonanceLikes',RREPORTS='resonanceReports';
-const RES_CAP=30,RES_KEEP=10,RES_STORM_DAYS=7;
-const STAR_NAMES=['Vega','Sirius','Rigel','Betelgeuse','Arcturus','Capella','Altair','Aldebaran',
-  'Antares','Spica','Pollux','Fomalhaut','Deneb','Regulus','Castor','Procyon',
-  'Mimosa','Acrux','Hadar','Canopus','Achernar','Adhara','Bellatrix','Elnath','Alnitak'];
-
-function getSignal(){let s=localStorage.getItem(SIGKEY);if(!s){const n=STAR_NAMES[Math.floor(Math.random()*STAR_NAMES.length)];const hr=String(Math.floor(Math.random()*8900)+100).padStart(4,'0');s=n+' · HR '+hr;localStorage.setItem(SIGKEY,s);}return s;}
-function readBoard(){try{return JSON.parse(localStorage.getItem(RKEY)||'{}');}catch(e){return{};}}
-function writeBoard(b){try{localStorage.setItem(RKEY,JSON.stringify(b));}catch(e){}}
-function readLikes(){try{return new Set(JSON.parse(localStorage.getItem(RLIKES)||'[]'));}catch(e){return new Set();}}
-function readReports(){try{return new Set(JSON.parse(localStorage.getItem(RREPORTS)||'[]'));}catch(e){return new Set();}}
-function saveLikes(s){try{localStorage.setItem(RLIKES,JSON.stringify([...s]));}catch(e){}}
-function saveReports(s){try{localStorage.setItem(RREPORTS,JSON.stringify([...s]));}catch(e){}}
-
-function checkStorm(){
-  const last=+(localStorage.getItem(STORMKEY)||0),now=Date.now();
-  if(now-last<RES_STORM_DAYS*864e5)return;
-  const b=readBoard();
-  Object.keys(b).forEach(en=>{if(b[en].length>RES_KEEP)b[en]=[...b[en]].sort((a,c)=>(c.likes||0)-(a.likes||0)).slice(0,RES_KEEP);});
-  writeBoard(b);localStorage.setItem(STORMKEY,String(now));
-}
 checkStorm();
 checkDispatchDecay();
 
-function postResonance(en,text){
-  const b=readBoard();if(!b[en])b[en]=[];
-  const id=Date.now().toString(36)+Math.random().toString(36).slice(2,5);
-  b[en].unshift({id,text,sig:getSignal(),t:Date.now(),likes:0});
-  if(b[en].length>RES_CAP)b[en]=b[en].slice(0,RES_CAP);
-  writeBoard(b);
-}
-function likeResonance(en,id){
-  const b=readBoard(),likes=readLikes();if(likes.has(id))return false;
-  const item=b[en]?.find(r=>r.id===id);if(!item)return false;
-  item.likes=(item.likes||0)+1;writeBoard(b);likes.add(id);saveLikes(likes);return true;
-}
-function reportResonance(id){const r=readReports();r.add(id);saveReports(r);}
 
 let resCurrentPlanet=null;
 function openResonance(o){
@@ -2433,12 +2400,6 @@ function applyCreatorSignal(){
 function sigHue(s){let h=0;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))%360;return h;}
 function sigColor(sig){if(sig===CREATOR_SIGNAL)return'#f3c97a';return'hsl('+sigHue(sig)+',70%,72%)';}
 
-function getSignalFull(){
-  let s=localStorage.getItem(SIGKEY);
-  if(!s){const n=STAR_NAMES[Math.floor(Math.random()*STAR_NAMES.length)];const hr=String(Math.floor(Math.random()*8900)+100).padStart(4,'0');s=n+' · HR '+hr;localStorage.setItem(SIGKEY,s);}
-  if(!localStorage.getItem('sigCreated'))localStorage.setItem('sigCreated',String(Date.now()));
-  return s;
-}
 
 function openSignal(startTab){
   const sig=getSignalFull(),col=sigColor(sig);
