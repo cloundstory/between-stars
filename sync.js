@@ -54,7 +54,7 @@ async function boot(){
         return error ? false : (data ? data.id : true); }catch(e){ return false; } },
     async reply(id,text,sig){ try{ const { data, error } = await sb.rpc('letter_reply',{ p_id:id, p_text:text, p_sig:sig });
         return error ? false : (data===true); }catch(e){ return false; } },
-    async report(id){ try{ await sb.rpc('letter_report',{ p_id:id }); }catch(e){} },
+    async report(id, sig){ try{ await sb.rpc('letter_report',{ p_id:id, p_sig:sig||null }); }catch(e){} },
   };
 
   function setSession(s){

@@ -4077,7 +4077,7 @@ function openLetter(letter,meta){
   msgRead.classList.add('on');}
 function showMsg(m){openLetter((m&&m.text)||m,'');}
 $p('msgReadClose').onclick=()=>msgRead.classList.remove('on');
-$p('msgReport').onclick=()=>{if(currentOpenLetter&&currentOpenLetter.cloud&&window.BSync&&window.BSync.letters){window.BSync.letters.report(currentOpenLetter.cid);}
+$p('msgReport').onclick=()=>{if(currentOpenLetter&&currentOpenLetter.cloud&&window.BSync&&window.BSync.letters){window.BSync.letters.report(currentOpenLetter.cid,getSignal());}
   $p('msgReport').textContent=L('Reported · thank you','รายงานแล้ว · ขอบคุณ');setTimeout(()=>msgRead.classList.remove('on'),1100);};
 $p('replyToggle').onclick=()=>{const o=$p('replyBox').classList.toggle('open');$p('replyToggle').style.display=o?'none':'';if(o)$p('replyInput').focus();};
 $p('replySend').onclick=()=>{let t=($p('replyInput').value||'').trim();
